@@ -20,24 +20,28 @@ const Register = function ({  }) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [values, setValues] = useState({
-        amount: '',
         password: '',
-        weight: '',
-        weightRange: '',
+        confirmPassword: '',
         showPassword: false,
+        showConfirmPassword: false
     });
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
     };
 
-    const handleClickShowPassword = () => {
-        setValues({ ...values, showPassword: !values.showPassword });
+    const handleClickShowPassword = (prop) => {
+        setValues({ ...values, [prop]: !values[prop] });
     };
 
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
+    const handleLogin = () => {
+        if ()
+        console.log(userName, email, firstName, lastName, values );
+    }
 
     return (            
         <div style={{ display:'flex', height:'100%', width:'100%', justifyContent:'center', alignItems:'center'}} id='fondo'>
@@ -57,7 +61,7 @@ const Register = function ({  }) {
                         variant="outlined"
                     />
                     <TextField
-                        value={lastName}
+                        value={lastName} 
                         onChange={(value) => setLastName(value.target.value)}
                         id="userName"
                         size='small'
@@ -98,7 +102,7 @@ const Register = function ({  }) {
                             <InputAdornment position="end">
                                 <IconButton
                                 aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
+                                onClick={() => handleClickShowPassword('showPassword')}
                                 onMouseDown={handleMouseDownPassword}
                                 edge="end"
                                 >
@@ -110,22 +114,22 @@ const Register = function ({  }) {
                         />
                     </FormControl>
                     <FormControl size='small' required variant="outlined">
-                        <InputLabel htmlFor="outlined-adornment-password">Confirm Password</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-confirm-password">Confirm Password</InputLabel>
                         <OutlinedInput
-                            id="outlined-adornment-password"
-                            type={values.showPassword ? 'text' : 'password'}
-                            value={values.password}
+                            id="outlined-adornment-confirm-password"
+                            type={values.showConfirmPassword ? 'text' : 'password'}
+                            value={values.confirmPassword}
                             style={{ marginBottom: 60, minWidth:300 }}
-                            onChange={handleChange('password')}
+                            onChange={handleChange('confirmPassword')}
                             endAdornment={
                             <InputAdornment position="end">
                                 <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
+                                aria-label="toggle confirm password visibility"
+                                onClick={() => handleClickShowPassword('showConfirmPassword')}
                                 onMouseDown={handleMouseDownPassword}
                                 edge="end"
                                 >
-                                {values.showPassword ? <Visibility /> : <VisibilityOff />}
+                                {values.showConfirmPassword ? <Visibility /> : <VisibilityOff />}
                                 </IconButton>
                             </InputAdornment>
                             }
@@ -135,7 +139,7 @@ const Register = function ({  }) {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent:'center' }}>
-                    <Button  variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
+                    <Button onClick={handleLogin} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
                         Login
                     </Button>
                 </div>

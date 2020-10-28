@@ -1,46 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import clsx from 'clsx';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import InputLabel from '@material-ui/core/InputLabel';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
 
 const Register = function ({  }) {
 
-    const classes = useStyles();
     const [userName, setUserName] = useState('');
+    const [errorUserName, setErrorUserName] = useState(false);
     const [email, setEmail] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [values, setValues] = useState({
-        password: '',
-        confirmPassword: '',
-        showPassword: false,
-        showConfirmPassword: false
-    });
+    const [errorEmail, setErrorEmail] = useState(false);
+    const [fullName, setFullName] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorPassword, setErrorPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
 
-    const handleChange = (prop) => (event) => {
-        setValues({ ...values, [prop]: event.target.value });
-    };
+    const checkForm = () => {
+        if (!userName) setErrorUserName(true);
+        if (!email) setErrorEmail(true);
+        if (password !== confirmPassword) setErrorConfirmPassword(true);
+        if (!password || password.length < 8) setErrorPassword(true);
+        if (!confirmPassword) setErrorConfirmPassword(true);
+        
+    }
 
-    const handleClickShowPassword = (prop) => {
-        setValues({ ...values, [prop]: !values[prop] });
-    };
+    const handleinput = (type) => (value) => {
 
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
+        switch (type) {
+            case 'userName':
+                    setUserName(value.target.value);
+                    setErrorUserName(false);
+                break;
+            case 'email':
+                    setEmail(value.target.value);
+                    setErrorEmail(false);
+                break;
+            case 'password':
+                    setPassword(value.target.value);
+                    setErrorPassword(false);
+                break;
+            case 'confirmPassword':
+                    setConfirmPassword(value.target.value);
+                    setErrorConfirmPassword(false);
+                break;
+        
+            default:
+                break;
+        }
+    }
 
     const handleLogin = () => {
-        if ()
-        console.log(userName, email, firstName, lastName, values );
+        checkForm()
+        console.log(userName, email, fullName );
     }
 
     return (            
@@ -52,27 +64,19 @@ const Register = function ({  }) {
                 </b>
                 <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
                     <TextField
-                        value={firstName}
+                        value={fullName}
                         style={{ marginBottom: 40, minWidth:300 }}
-                        onChange={(value) => setFirstName(value.target.value)}
+                        onChange={(value) => setFullName(value.target.value)}
                         id="userName"
                         size='small'
-                        label="First Name"
-                        variant="outlined"
-                    />
-                    <TextField
-                        value={lastName} 
-                        onChange={(value) => setLastName(value.target.value)}
-                        id="userName"
-                        size='small'
-                        style={{ marginBottom: 40, minWidth:300 }}
-                        label="Last Name"
+                        label="Full Name"
                         variant="outlined"
                     />
                     <TextField
                         value={userName}
                         required
-                        onChange={(value) => setUserName(value.target.value)}
+                        error={errorUserName}
+                        onChange={handleinput('userName')}
                         id="userName"
                         size='small'
                         style={{ marginBottom: 40, minWidth:300 }}
@@ -82,7 +86,8 @@ const Register = function ({  }) {
                     <TextField
                         value={email}
                         required
-                        onChange={(value) => setEmail(value.target.value)}
+                        error={errorEmail}
+                        onChange={handleinput('email')}
                         id="email"
                         type='email'
                         size='small'
@@ -90,59 +95,38 @@ const Register = function ({  }) {
                         label="Email"
                         variant="outlined"
                     />
-                    <FormControl size='small' required variant="outlined">
-                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                        <OutlinedInput
-                            id="outlined-adornment-password"
-                            type={values.showPassword ? 'text' : 'password'}
-                            value={values.password}
-                            style={{ marginBottom: 40, minWidth:300 }}
-                            onChange={handleChange('password')}
-                            endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={() => handleClickShowPassword('showPassword')}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="end"
-                                >
-                                {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                            }
-                            // labelWidth={70}
-                        />
-                    </FormControl>
-                    <FormControl size='small' required variant="outlined">
-                        <InputLabel htmlFor="outlined-adornment-confirm-password">Confirm Password</InputLabel>
-                        <OutlinedInput
-                            id="outlined-adornment-confirm-password"
-                            type={values.showConfirmPassword ? 'text' : 'password'}
-                            value={values.confirmPassword}
-                            style={{ marginBottom: 60, minWidth:300 }}
-                            onChange={handleChange('confirmPassword')}
-                            endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                aria-label="toggle confirm password visibility"
-                                onClick={() => handleClickShowPassword('showConfirmPassword')}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="end"
-                                >
-                                {values.showConfirmPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                            }
-                            // labelWidth={70}
-                        />
-                    </FormControl>
+                    <TextField
+                        value={password}
+                        required
+                        error={errorPassword}
+                        onChange={handleinput('password')}
+                        id="password"
+                        type='password'
+                        size='small'
+                        style={{  marginBottom: 40, minWidth:300 }}
+                        label="Password"
+                        variant="outlined"
+                    />
+                    <TextField
+                        value={confirmPassword}
+                        required
+                        error={errorConfirmPassword}
+                        onChange={handleinput('confirmPassword')}
+                        id="confirm-password"
+                        type='password'
+                        size='small'
+                        style={{  marginBottom: 40, minWidth:300 }}
+                        label="Confirm Password"
+                        variant="outlined"
+                    />
                 </div>
 
-                <div style={{ display: 'flex', justifyContent:'center' }}>
+                <div style={{ display: 'flex', justifyContent:'center', marginBottom: 20 }}>
                     <Button onClick={handleLogin} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
-                        Login
+                        Sign up
                     </Button>
                 </div>
+                <a style={{ textAlign: 'center', fontSize: 12, color:'grey' }}>Password: minimum 8 characters</a>
             </Paper>
             {/* </div> */}
         </div>

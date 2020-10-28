@@ -6,40 +6,22 @@ from .app import app
 client = TestClient(app)
 
 
-def test_post_create_user():
-    register_data = {
-        "username": "Diana12", 
-        "email": "wonderwoman@justiceleague.com",
-        "password": "2uh218bu3",
-        "full_name": "Diana Lescano"
-        }
-    response = client.post("/user/", 
-        data=register_data)
-    assert response.status_code == 201
 
-def test_post_create_user_with_existing_username():
-    register_data = {
-        "username": "Diana12", 
-        "email":"wonderwoman12@justiceleague.com",
-        "password": "6654dkdqjh2", 
-        "full_name": "Diana Romero"
-        }
-    response = client.post("/user/", 
-        data=register_data)
-    assert response.status_code == 403
-    assert response.json() == {
-        "detail":" E-mail or username already exists"
-        }
 
-def test_post_create_user_with_existing_email():
-    register_data = {
-        "username": "Diana34",  
-        "email": "wonderwoman@justiceleague.com", 
-        "password": "6654dkdqjh2" 
+def test_post_login_incorrect():
+    loguin_data = {
+        "username": "Diana12", 
+        "password": "jdhfiehwejire"
         }
-    response = client.post("/user/", 
-        data=register_data)
-    assert response.status_code == 403
-    assert response.json() == {
-        "detail": " E-mail or username already exists"
+    response = client.post("/login", 
+        data=loguin_data)
+    assert response.status_code == 401
+
+def test_post_login():
+    loguin_data = {
+        "username": "Diana12", 
+        "password": "2uh218bu3"
         }
+    response = client.post("/login", 
+        data=loguin_data)
+    assert response.status_code == 200

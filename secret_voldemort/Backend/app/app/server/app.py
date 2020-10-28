@@ -8,7 +8,7 @@ from .authentication import *
 from .models.user import User
 
 
-# creating FastAPI instance 
+# FastAPI instance 
 app = FastAPI()
 
 

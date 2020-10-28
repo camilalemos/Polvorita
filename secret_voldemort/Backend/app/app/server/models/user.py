@@ -4,9 +4,9 @@ from typing import Optional
 
 #User Model
 class User(BaseModel):
-    userName: str
+    username: str
     email: EmailStr
-    password: str
-    fullName: str = ""
-    playerName: str = ""
-    activeSession: bool = False 
+    hashed_password: str
+    full_name: Optional[str] = ""
+    player_name: str = ""
+    disabled: bool = False 

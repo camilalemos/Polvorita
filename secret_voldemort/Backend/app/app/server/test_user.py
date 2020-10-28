@@ -7,39 +7,38 @@ client = TestClient(app)
 
 
 def test_post_create_user():
-    response = client.post("/users/", 
-        json={
-        "userName": "Diana12", 
-        "fullName": "Diana Lescano", 
-        "password": "2uh218bu3", "email": 
-        "wonderwoman@justiceleague.com"
-        })
-    assert response.status_code == 201
-    assert response.json() == {
+    register_data = {
         "username": "Diana12", 
-        "operation_result": " Succesfully created"
+        "email": "wonderwoman@justiceleague.com",
+        "password": "2uh218bu3",
+        "full_name": "Diana Lescano"
         }
+    response = client.post("/user/", 
+        data=register_data)
+    assert response.status_code == 201
 
 def test_post_create_user_with_existing_username():
-    response = client.post("/users/", 
-        json={
-        "userName": "Diana12", 
-        "firstName": "Diana Romero", 
-        "password": "6654dkdqjh2", "email": 
-        "wonderwoman12@justiceleague.com"
-        })
+    register_data = {
+        "username": "Diana12", 
+        "email":"wonderwoman12@justiceleague.com",
+        "password": "6654dkdqjh2", 
+        "full_name": "Diana Romero"
+        }
+    response = client.post("/user/", 
+        data=register_data)
     assert response.status_code == 403
     assert response.json() == {
         "detail":" E-mail or username already exists"
         }
 
 def test_post_create_user_with_existing_email():
-    response = client.post("/users/", 
-        json={
-        "userName": "Diana34",  
-        "password": "6654dkdqjh2", "email": 
-        "wonderwoman@justiceleague.com"
-        })
+    register_data = {
+        "username": "Diana34",  
+        "email": "wonderwoman@justiceleague.com", 
+        "password": "6654dkdqjh2" 
+        }
+    response = client.post("/user/", 
+        data=register_data)
     assert response.status_code == 403
     assert response.json() == {
         "detail": " E-mail or username already exists"

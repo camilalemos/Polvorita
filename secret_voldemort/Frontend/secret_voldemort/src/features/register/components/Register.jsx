@@ -21,20 +21,20 @@ const Register = function ({ registerUser, status }) {
 
     const validate = (email) => {
         const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
-        console.log(expression.test(String(email).toLowerCase()), "EMEIAL CHECK??");
+
         return expression.test(String(email).toLowerCase())
     }
 
     const checkForm = () => {
 
         if (!userName) setErrorUserName(true);
+        if (validate(userName) || userName.search('@') !== -1) setErrorUserName(true);
         if (!validate(email)) setErrorEmail(true);
         if (!email) setErrorEmail(true);
-        
         if (password !== confirmPassword) setErrorConfirmPassword(true);
         if (!password || password.length < 8) setErrorPassword(true);
         if (!confirmPassword) setErrorConfirmPassword(true);
-        
+
     }
 
     const handleinput = (type) => (value) => {
@@ -62,15 +62,30 @@ const Register = function ({ registerUser, status }) {
         }
     }
 
-    const handleLogin = () => {
+    useEffect(() => {
+        if (status === 'success') history.push('/login');
+    },[status])
+
+    const handleRegister = () => {
         checkForm();
+        if (userName && 
+            !validate(userName) && 
+            userName.search('@') === -1 &&
+            validate(email) &&
+            email &&
+            password === confirmPassword && 
+            password &&
+            password.length >= 8 && 
+            confirmPassword
+        )
+
         registerUser({userName, email, fullName, password});
     }
 
     return (            
-        <div style={{ display:'flex', height:'100%', width:'100%', justifyContent:'center', alignItems:'center', backgroundImage: `url(${require('../../../constants/images/Fondo.jpg')})`}} id='fondo'>
+        <div style={{ display:'flex', height:'100%', justifyContent:'center', alignItems:'center', backgroundImage: `url(${require('../../../constants/images/Fondo.jpg')})`}} id='fondo'>
             {/* <div style={{ display: 'flex', flexDirection: 'column' }} id='login'> */}
-            <Paper style={{ display: 'flex', flexDirection: 'column', padding: 32, borderRadius:12, opacity:0.7 }} elevation={8} square >
+            <Paper style={{ display: 'flex', flexDirection: 'column', padding: 32, borderRadius:12, opacity:.8 }} elevation={8} square >
                 <b style={{ fontSize:40, textAlign:'center', marginBottom:20}}>
                     SECRET VOLDEMORT
                 </b>
@@ -133,11 +148,12 @@ const Register = function ({ registerUser, status }) {
                     />
                 </div>
                 <a style={{ textAlign: 'center', fontSize: 12, color:'black' }}>Password: minimum 8 characters</a>
+                <a style={{ textAlign: 'center', fontSize: 12, color:'black' }}>Username: symbols are not accepted</a>
                 <div style={{ display: 'flex', justifyContent:'center', marginBottom: 20, marginTop: 20 }}>
                     {status === 'loading' ? 
                         <CircularProgress />
                     :
-                        <Button onClick={handleLogin} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
+                        <Button onClick={handleRegister} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
                             Sign up
                         </Button>
                     }
@@ -154,19 +170,3 @@ const Register = function ({ registerUser, status }) {
 }
 
 export default Register;
-
-const useStyles = makeStyles((theme) => ({
-    // root: {
-    //   display: 'flex',
-    //   flexWrap: 'wrap',
-    // },
-    // margin: {
-    //   margin: theme.spacing(1),
-    // },
-    // withoutLabel: {
-    //   marginTop: theme.spacing(3),
-    // },
-    // textField: {
-    //   width: '25ch',
-    // },
-  }));

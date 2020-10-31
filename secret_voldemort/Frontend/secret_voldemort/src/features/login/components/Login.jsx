@@ -9,7 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 const Login = function ({ }) {
 
     const history = useHistory();
-    console.log(history, "HISTORY");
+
     const [userNameOrEmail, setUserNameOrEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorPassword, setErrorPassword] = useState(false);
@@ -99,13 +99,13 @@ const Login = function ({ }) {
                         <CircularProgress />
                     :
                         <Button onClick={null} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
-                            Sign up
+                            Sign in
                         </Button>
                     }
                 </div>
                 <div style={{flexDirection:'row', textAlign:'center'}}>
-                    <a style={{ fontSize: 12, color:'black' }}>Todavia no tienes una cuenta? </a>
-                    <a style={{ fontSize: 12, color:'blue', cursor:'pointer' }} onClick={() => history.push('/register')}>Registrate</a>
+                    <a style={{ fontSize: 12, color:'black' }}>You do not have an account? </a>
+                    <a style={{ fontSize: 12, color:'blue', cursor:'pointer' }} onClick={() => history.push('/register')}>Create account</a>
                 </div>
             </Paper>
             {/* </div> */}

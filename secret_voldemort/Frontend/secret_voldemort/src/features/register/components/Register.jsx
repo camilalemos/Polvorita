@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -7,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 const Register = function ({ registerUser, status }) {
 
+    const history = useHistory();
     const [userName, setUserName] = useState('');
     const [errorUserName, setErrorUserName] = useState(false);
     const [email, setEmail] = useState('');
@@ -140,7 +142,10 @@ const Register = function ({ registerUser, status }) {
                         </Button>
                     }
                 </div>
-                <a style={{ textAlign: 'center',verticalAlign:'bottom' ,fontSize: 12, color:'black' }}>Ya tenes una cuenta? inicia sesión</a>
+                <div style={{flexDirection:'row', textAlign:'center'}}>
+                    <a style={{ fontSize: 12, color:'black' }}>Already have an account? </a>
+                    <a style={{ fontSize: 12, color:'blue', cursor:'pointer' }} onClick={() => history.push('/login')}>Login</a>
+                </div>
             </Paper>
             {/* </div> */}
         </div>

@@ -2,6 +2,7 @@ from pony.orm import db_session, get, select, delete, exists
 from fastapi import FastAPI, HTTPException, status, Form
 from pydantic import EmailStr
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
 
 from . import db
 from .authentication import *
@@ -11,6 +12,19 @@ from .models.user import User
 # FastAPI instance 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Endpoint to create user
 @app.post("/user/", status_code=200)

@@ -28,7 +28,7 @@ def test_post_create_user_with_existing_username():
         data=register_data)
     assert response.status_code == 403
     assert response.json() == {
-        "detail":"Username already exist"
+        "detail":"Username or E-mail already exist"
         }
 
 def test_post_create_user_with_existing_email():
@@ -41,5 +41,5 @@ def test_post_create_user_with_existing_email():
         data=register_data)
     assert response.status_code == 403
     assert response.json() == {
-        "detail": "E-mail already exist"
+        "detail": "Username or E-mail already exist"
         }

@@ -18,19 +18,13 @@ async def register_user(username: str = Form(..., min_length=5, max_length=20, r
                         email: EmailStr = Form(...),
                         password: str = Form(..., min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),
                         full_name: Optional[str] = Form("", min_length=8, max_length=30, regex="^[A-Z a-z]*$")):
-
     with db_session:
-        valid_username = not exists(p for p in db.User if p.username == username)
-        valid_email = not exists(p for p in db.User if p.email == email)
+        hashed_password = get_password_hash(password)
+        user = User(username=username, email=email, hashed_password=hashed_password, full_name=full_name)
 
-        if valid_username and valid_email:
-            hashed_password = get_password_hash(password)
-            user = User(username=username, email=email, hashed_password=hashed_password, full_name=full_name)
-            db.User(**user.dict())
-        elif not valid_username:
-            raise HTTPException(status_code=403, detail="Username already exist")
-        elif not valid_email:
-            raise HTTPException(status_code=403, detail="E-mail already exist")
+        try:
+            user_id = db.User(**user.dict()).to_dict()['id']
+        except Exception:
+            raise HTTPException(status_code=403, detail="Username or E-mail already exist")
 
-        user_id = get(p for p in db.User if p.username == username and p.email == email).id
         return user_id

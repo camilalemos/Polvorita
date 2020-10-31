@@ -66,10 +66,10 @@ const Register = function ({ registerUser, status }) {
     }
 
     return (            
-        <div style={{ display:'flex', height:'100%', width:'100%', justifyContent:'center', alignItems:'center'}} id='fondo'>
+        <div style={{ display:'flex', height:'100%', width:'100%', justifyContent:'center', alignItems:'center', backgroundImage: `url(${require('../../../constants/images/Fondo.jpg')})`}} id='fondo'>
             {/* <div style={{ display: 'flex', flexDirection: 'column' }} id='login'> */}
-            <Paper style={{ display: 'flex', flexDirection: 'column', padding: 32, borderRadius:12 }} elevation={8} square >
-                <b style={{ fontSize:40, textAlign:'center', marginBottom:20 }}>
+            <Paper style={{ display: 'flex', flexDirection: 'column', padding: 32, borderRadius:12, opacity:0.7 }} elevation={8} square >
+                <b style={{ fontSize:40, textAlign:'center', marginBottom:20}}>
                     SECRET VOLDEMORT
                 </b>
                 <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
@@ -130,7 +130,7 @@ const Register = function ({ registerUser, status }) {
                         variant="outlined"
                     />
                 </div>
-                <a style={{ textAlign: 'center', fontSize: 12, color:'grey' }}>Password: minimum 8 characters</a>
+                <a style={{ textAlign: 'center', fontSize: 12, color:'black' }}>Password: minimum 8 characters</a>
                 <div style={{ display: 'flex', justifyContent:'center', marginBottom: 20, marginTop: 20 }}>
                     {status === 'loading' ? 
                         <CircularProgress />
@@ -140,7 +140,7 @@ const Register = function ({ registerUser, status }) {
                         </Button>
                     }
                 </div>
-                <a style={{ textAlign: 'center',verticalAlign:'bottom' ,fontSize: 12, color:'grey' }}>Ya tenes una cuenta? inicia sesión</a>
+                <a style={{ textAlign: 'center',verticalAlign:'bottom' ,fontSize: 12, color:'black' }}>Ya tenes una cuenta? inicia sesión</a>
             </Paper>
             {/* </div> */}
         </div>

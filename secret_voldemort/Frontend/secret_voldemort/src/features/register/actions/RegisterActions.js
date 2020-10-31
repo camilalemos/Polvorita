@@ -27,9 +27,7 @@ const _registerUser = async (data, dispatch) => {
             data: bodyFormData,
             headers: { 'Content-Type':'multipart/form-data' },
         });
-        console.log(response, "RESPONSE");
 
-        if (response.status !== 200) throw response 
         {dispatch({type: REGISTER_USER_SUCCESS})}
         
     } catch (error) {

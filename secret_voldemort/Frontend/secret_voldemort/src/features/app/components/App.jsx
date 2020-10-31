@@ -3,7 +3,8 @@ import { HashRouter as Router, Redirect, Route } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import RegisterContainer from '../../register/containers/RegisterContainers'
-import LoginContainer from '../../login/containers/LoginContainer'
+import LoginContainer from '../../login/containers/LoginContainers';
+import { SnackbarProvider } from 'notistack';
 
 
 const theme = createMuiTheme({
@@ -25,13 +26,15 @@ class App extends Component {
     render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <Router>
-                    <Route exact path="/">
-                        <Redirect to="/Login" />
-                    </Route>
-                    <Route exact path='/login' component={LoginContainer} />
-                    <Route exact path='/register' component={RegisterContainer} />
-                </Router>
+                <SnackbarProvider maxSnack={3}>
+                    <Router>
+                        <Route exact path="/">
+                            <Redirect to="/login" />
+                        </Route>
+                        <Route exact path='/login' component={LoginContainer} />
+                        <Route exact path='/register' component={RegisterContainer} />
+                    </Router>
+                </SnackbarProvider>
             </MuiThemeProvider>
         );
     }

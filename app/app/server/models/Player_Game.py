@@ -21,5 +21,10 @@ class Response_App(BaseModel):
      code: int
      description: str
     
-
+class Envelopes(BaseModel):
+     gamename: str
+     role: str
+     loyalty: str
+     occupied: bool
+    
 

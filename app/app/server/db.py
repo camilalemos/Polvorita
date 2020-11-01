@@ -22,6 +22,11 @@ class Game(db.Entity):
 	num_players = Required(int,  default=5)
 	started     = Optional(bool, default=False)
     
+class Envelopes(db.Entity):
+        gamename  = Required(str)
+        role      = Required(str)
+        loyalty   = Required(str) 
+        occupied  = Required(bool)  
 
 db.bind('sqlite', 'game_player.sqlite', create_db=True)  
 db.generate_mapping(create_tables=True)  

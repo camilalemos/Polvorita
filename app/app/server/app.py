@@ -3,13 +3,14 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from . import db
 from .methods import *
+from .Envelopers import *
 from .models.Player_Game import *
 from typing import List , Optional
 app = FastAPI()
 
 # create game
-@app.post("/game/{gameName}",response_model=Response_App)
-async def new_game(gameName: str,password: Optional[str] = None):
+@app.post("/game/{gameName,player_name}",response_model=Response_App)
+async def new_game(gameName: str,player_name: str,password: Optional[str] = None):
         with db_session:
           if db.Game.exists(game_name= gameName):
               raise HTTPException(status_code=403, detail="game name already exist")
@@ -20,8 +21,13 @@ async def new_game(gameName: str,password: Optional[str] = None):
               id_count = len([p.to_dict() for p in id_num]) + 1
               new_game = Game(id_game= id_count,game_name=gameName,password=password,
                          num_players = 5,started=False)
-              db.Game(**new_game.dict()).to_dict()          
-          return Response_App(code= 201,description= "game successfully created")
+              db.Game(**new_game.dict()).to_dict()   
+              # preparing card envelopes for the game
+              prepare_envelopes(gameName) 
+              # add game creator player
+              selectedEnvelope = distEnvToPlayers(gameName)  
+              createPlayer(player_name,id_count,selectedEnvelope)    
+          return Response_App(code= 200,description= "game successfully created")
 
 
 @app.put("/minister/{game_Name}", response_model=str)

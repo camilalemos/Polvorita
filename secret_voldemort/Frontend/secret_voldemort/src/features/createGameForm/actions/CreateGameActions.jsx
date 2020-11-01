@@ -13,24 +13,27 @@ const _createGame = async (dispatch, data) => {
 	try {
 		dispatch({type: CREATE_GAME});
 		
-		let bodyFormData = new FormData();
-		
-		bodyFormData.append('gamename', data.gameName);
-        bodyFormData.append('password', data.password);
+        let bodyFormData = new FormData();
+    
+    
+        bodyFormData.append('game_name', data.gameName);
+        bodyFormData.append('password', data.gamePassword);
 
         const response = await axios({
             method: 'post',
             url: `${api.url}/game/`,
             data: bodyFormData,
-            headers: { 'Content-Type':'multipart/form-data' },
+            headers: { 
+            'Content-Type':'multipart/form-data',
+            }
         });
 		console.log(response, "RESPONSE");
 
         dispatch({type: CREATE_GAME_SUCCESS})
         
     } catch (error) {
-    	let requestError = error.message.split(' ');
-        dispatch({type: CREATE_GAME_FAIL, payload: {statusCode: requestError[requestError.length -1]}});
+        console.log(error, "ERROR")
+        dispatch({type: CREATE_GAME_FAIL});
 		
 	}
 };

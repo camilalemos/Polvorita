@@ -5,7 +5,8 @@ import {
 } from '../../../constants/actionTypes/register';
 
 const initialState= {
-    status: 'unknow'
+    status: 'unknow',
+    statusCode: ''
 }
 
 export default (state = initialState, action) => {
@@ -18,7 +19,8 @@ export default (state = initialState, action) => {
         case REGISTER_USER_FAIL:
             return {
                 ...state,
-                status: 'failed'
+                status: 'failed',
+                statusCode: action.payload.statusCode
             }
         case REGISTER_USER_SUCCESS:
             return {

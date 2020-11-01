@@ -5,8 +5,10 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { withSnackbar } from 'notistack';
+import useDidMountEffect from '../../../constants/hooks/useDidMountEffect'
 
-const Register = function ({ registerUser, status }) {
+const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }) {
 
     const history = useHistory();
     const [userName, setUserName] = useState('');
@@ -31,8 +33,14 @@ const Register = function ({ registerUser, status }) {
         if (validate(userName) || userName.search('@') !== -1) setErrorUserName(true);
         if (!validate(email)) setErrorEmail(true);
         if (!email) setErrorEmail(true);
-        if (password !== confirmPassword) setErrorConfirmPassword(true);
-        if (!password || password.length < 8) setErrorPassword(true);
+        if (password !== confirmPassword){ 
+            setErrorConfirmPassword(true);
+            enqueueSnackbar('Passwords do not match', { variant: 'error'});
+        }
+        if (!password || password.length < 8){ 
+            setErrorPassword(true);
+            enqueueSnackbar('Password must have a minimum of 8 characters', { variant: 'error'});
+        }
         if (!confirmPassword) setErrorConfirmPassword(true);
 
     }
@@ -62,8 +70,15 @@ const Register = function ({ registerUser, status }) {
         }
     }
 
-    useEffect(() => {
-        if (status === 'success') history.push('/login');
+    useDidMountEffect(() => {
+        if (statusCode === '403') enqueueSnackbar('Sign up Failed, Username/email al ready exists', { variant: 'error'});
+    },[statusCode])
+
+    useDidMountEffect(() => {
+        if (status === 'success') {
+            enqueueSnackbar('Sign In successfully', { variant: 'success'});
+            history.push('/login');
+        }
     },[status])
 
     const handleRegister = () => {
@@ -169,4 +184,4 @@ const Register = function ({ registerUser, status }) {
 
 }
 
-export default Register;
+export default withSnackbar(Register);

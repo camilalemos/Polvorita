@@ -7,7 +7,8 @@ import { registerUser } from '../actions/RegisterActions';
 
 function mapStateToProps(state) {
     return {
-        status: state.register.status
+        status: state.register.status,
+        statusCode: state.register.statusCode
     };
 }
 

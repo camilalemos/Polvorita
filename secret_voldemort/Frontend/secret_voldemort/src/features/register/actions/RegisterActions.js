@@ -31,8 +31,9 @@ const _registerUser = async (data, dispatch) => {
         {dispatch({type: REGISTER_USER_SUCCESS})}
         
     } catch (error) {
-    console.log(error, "ERROR")
-        dispatch({type: REGISTER_USER_FAIL});
+    console.log(error, "ERROR");
+        let requestError = error.message.split(' ');
+        dispatch({type: REGISTER_USER_FAIL, payload: {statusCode: requestError[requestError.length -1]}});
     }
 
 };

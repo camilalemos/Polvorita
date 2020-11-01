@@ -6,6 +6,7 @@ import FormControl from '@material-ui/core/FormControl';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { useHistory } from "react-router-dom";
 
 const CreateGameForm = function ({ createGame, status }) {
 
@@ -13,18 +14,20 @@ const CreateGameForm = function ({ createGame, status }) {
     const [gameName, setGameName] = useState('');
     const [gamePassword, setPassword] = useState('');
     const [errorGameName, setGameNameError] = useState(false);
+    const history = useHistory();
 
-    const checkInput = () => {
-        if (gameName === '') {
-            setGameNameError(true);
-        }
-    }
 
     const handleContinue = () => {
-        checkInput();
-        console.log("Game name: " + gameName, "\nPassword: " + gamePassword);
-        createGame({ gameName, gamePassword })
-    }
+        if (!gameName) {
+            setGameNameError(true);
+        }else{
+            createGame({ gameName, gamePassword })
+        }
+	} 
+    
+    useEffect(() => {
+        if (status === 'success') history.push(gameName)
+    },[status])
 
     return (            
         <div style={{ display:'flex', height:'100%', width:'100%', justifyContent:'center', alignItems:'center'}} id='fondo'>

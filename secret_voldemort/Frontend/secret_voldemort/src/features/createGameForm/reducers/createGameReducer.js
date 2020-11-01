@@ -5,27 +5,27 @@ import {
 } from '../../../constants/actionTypes/createGame';
 
 const initialState= {
-  status: 'unknow'
+	status: 'unknow'
 }
 
 export default (state = initialState, action) => {
-  switch (action.type) {
-      case CREATE_GAME:
-          return {
-              ...state,
-              status: 'loading'
-          }
-      case CREATE_GAME_FAIL:
-          return {
-              ...state,
-              status: 'failed'
-          }
-      case CREATE_GAME_SUCCESS:
-          return {
-              ...state, 
-              status: 'success'
-          }
-      default:
-          return {...state};
-  }
+	switch (action.type) {
+		case CREATE_GAME:
+			return {
+				...state,
+				status: 'loading'
+			}
+		case CREATE_GAME_FAIL:
+			return {
+				...state,
+				status: 'failed'
+			}
+		case CREATE_GAME_SUCCESS:
+			return {
+				...state, 
+				status: 'success'
+			}
+		default:
+			return {...state};
+	}
 };

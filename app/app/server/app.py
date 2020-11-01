@@ -29,6 +29,7 @@ async def new_game(gameName: str,player_name: str,password: Optional[str] = None
               createPlayer(player_name,id_count,selectedEnvelope)    
           return Response_App(code= 200,description= "game successfully created")
 
+# note: this endpoint only runs when starting the game (with all 5 players) or within the game.
 
 @app.put("/minister/{game_Name}", response_model=str)
 def select_minister(game_Name: str):

@@ -13,11 +13,13 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
 
     const [userNameOrEmail, setUserNameOrEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorUserNameOrEmail, setErrorUserNameOrEmail] = useState(false);
+    const [errorPassword, setErrorPassword] = useState(false);
 
     const handleLogin = () => loginUser({userNameOrEmail, password});
 
     useEffect(() => {
-        if (status === 'failed') enqueueSnackbar('Sign In Failed', { variant: 'error'});
+        if (status === 'failed') enqueueSnackbar('Sign In Failed, Username/email or password do not match', { variant: 'error'});
         if (status === 'success') enqueueSnackbar('Sign In successfully', { variant: 'success'});
     },[status])
     
@@ -31,6 +33,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
                 <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
                     <TextField
                         value={userNameOrEmail}
+                        error={errorUserNameOrEmail}
                         style={{ marginBottom: 40, minWidth:300 }}
                         onChange={value => setUserNameOrEmail(value.target.value)}
                         id="userNameOrEmail"
@@ -42,6 +45,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
 
                     <TextField
                         value={password}
+                        error={errorPassword}
                         required
                         onChange={value => setPassword(value.target.value)}
                         id="password"

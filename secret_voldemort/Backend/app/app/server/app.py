@@ -1,16 +1,25 @@
 from pony.orm import db_session, get, select, delete
-from fastapi import FastAPI, HTTPException, status, Form
+from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from pydantic import EmailStr
+from passlib.context import CryptContext
 from typing import Optional
+
+from fastapi import FastAPI, Depends, Form, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from pony.orm import db_session, get, select, delete, exists
+from pydantic import BaseModel, EmailStr
 
 from . import db
 from .authentication import *
-from .models.user import User
+from .models.user import *
+from .models.game import *
+from .models.enums import *
+from .wsmanager import *
 
 
-# FastAPI instance 
+
+
 app = FastAPI()
 
 origins = [
@@ -27,19 +36,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Endpoint to user login 
-@app.post("/login/", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(db.User, form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
 
+
+#ENACT PROCLAMATION
+@app.put("/game/{game_name}/proclamation/")
+async def enact_proclamation(game_name: str, player_name: str, loyalty: Loyalty, user: User = Depends(get_current_active_user)):
+    game = manager.games.get(game_name)
+    if game and game.game_status == 'STARTED':
+        #if game.players.get(player_name).player_status == 'HEADMASTER':
+        game.board.enact_proclamation(loyalty)
+        game.finish_game()
+        #else:
+         #   raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact proclamation")
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+    
+    return game

@@ -11,13 +11,17 @@ class PlayerStatus(str, Enum):
     headmaster = 'HEADMASTER'
     common = 'COMMON'
 
+class Vote(str, Enum):
+    lumos = 'LUMOS'
+    nox = 'NOX'
+
 class Role(str, Enum):
     voldemort = 'VOLDEMORT'
     harry = 'SNAPE'
 
 class Loyalty(str, Enum):
-    phoenixOrder = 'PHOENIX_ORDER'
-    deathEaters = 'DEATH_EATERS'
+    phoenix_order = 'PHOENIX_ORDER'
+    death_eaters = 'DEATH_EATERS'
 
 class Spell(str, Enum):
     crucio = 'CRUCIO'

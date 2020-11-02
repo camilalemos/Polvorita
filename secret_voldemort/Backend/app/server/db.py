@@ -1,10 +1,9 @@
-from datetime import date
+from pony.orm import Database, PrimaryKey, Optional, Required
 
-from pony.orm import Database, PrimaryKey, Optional, Required, Set
-from .enums import *
 
 db = Database()
 db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
+
 
 class User(db.Entity):
     id = PrimaryKey(int, auto=True)

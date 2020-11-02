@@ -1,7 +1,8 @@
-from datetime import date
-from typing import Set, Optional, List, Tuple
+from typing import Optional, List, Dict
 
+from fastapi import HTTPException, status
 from pydantic import BaseModel, EmailStr
+
 from .enums import *
 
 
@@ -26,32 +27,46 @@ class Player(BaseModel):
     loyalty: Loyalty = None
     player_status: PlayerStatus = None
 
-class Board(BaseModel):
-    phoenixOrderProclamations: int
-    deathEatersProclamations: int
-    proclamations: List[Loyalty]
-    enactedProclamations: List[Loyalty]
-    discardedProclamations: List[Loyalty]
-    spells: List[Spell]
-
-class Candidates(BaseModel):
-    minister_player_id: int
-    headmaster_player_id: int
-
-class Vote(BaseModel):
-    vote: bool
-    player_id: int
+    def kill(self):
+        self.is_alive = True
 
 class Elections(BaseModel):
-    candidates: Candidates
-    votes: List[Vote]
+    minister_candidate: Player = None
+    headmaster_candidate: Player = None
+    votes: Dict[str, Vote] = {}
+
+class Board(BaseModel):
+    phoenix_order_proclamations: int = 0
+    death_eaters_proclamations: int = 0
+    proclamations: List[Loyalty] = []
+    enacted_proclamations: List[Loyalty] = []
+    discarded_proclamations: List[Loyalty] = []
+    spells: List[Spell] = []
+    elections: Elections = None
+
+    def init_board(self):
+        self.elections = Elections()
+
+    def enact_proclamation(self, loyalty: Loyalty):
+        if loyalty == 'PHOENIX_ORDER':
+            self.phoenix_order_proclamations += 1
+        elif loyalty == 'DEATH_EATERS':
+            self.death_eaters_proclamations += 1
 
 class Game(BaseModel):
     game_name: str
+    owner_name: str
     password: Optional[str] = None
     num_players: int = 5
-    players: List[Player] = list()
+    players: Dict[str, Player] = {}
     game_status: GameStatus = 'CREATED'
-    chat: List[str] = []
     board: Board = None
-    elections: Elections = None
+    chat: List[str] = []
+
+    def start(self):
+        if self.game_status == 'CREATED' and len(self.players) == self.num_players:
+            self.game_status = 'STARTED'
+            self.board = Board()
+            self.board.init_board()
+        else:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game must have 5 players")

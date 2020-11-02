@@ -5,24 +5,58 @@ from fastapi.responses import HTMLResponse
 
 from .models import Game
 
-html = """
+
+game = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Game</title>
+    </head>
+    <body>
+        <h1>WebSocket Game</h1>
+        <h2>Game: <span id="ws-id"></span></h2>
+        <form action="" onsubmit="sendMessage(event)">
+            <button>View game</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            var game_name = "juego"
+            document.querySelector("#ws-id").textContent = game_name;
+            var ws = new WebSocket(`ws://localhost:8000/game/${game_name}`);
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                ws.send(event)
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
+"""
+
+lobby = """
 <!DOCTYPE html>
 <html>
     <head>
         <title>Lobby</title>
     </head>
     <body>
-        <h1>LOBBY</h1>
-        <h2>Your ID: <span id="ws-id"></span></h2>
+        <h1>WebSocket Lobby</h1>
+        <h2>Player: <span id="ws-id"></span></h2>
         <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Enter lobby</button>
+            <button>View lobby</button>
         </form>
         <ul id='messages'>
         </ul>
         <script>
-            var client_id = Date.now()
-            document.querySelector("#ws-id").textContent = client_id;
+            var player_name = "pepe"
+            document.querySelector("#ws-id").textContent = player_name;
             var ws = new WebSocket(`ws://localhost:8000/lobby/`);
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
@@ -32,8 +66,7 @@ html = """
                 messages.appendChild(message)
             };
             function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
+                ws.send(event)
                 event.preventDefault()
             }
         </script>
@@ -41,31 +74,37 @@ html = """
 </html>
 """
 
-
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: List[WebSocket] = []
-        self.active_games: List[Game] = []
+        self.lobby_connections: List[WebSocket] = []
+        self.players: Dict[str, WebSocket] = {}
+        self.games: Dict[str, Game] = {}
+        self.game_connections: Dict[str, List[WebSocket]] = {}
 
-    async def connect(self, websocket: WebSocket):
+    async def connect_lobby(self, websocket: WebSocket):
         await websocket.accept()
-        self.active_connections.append(websocket)
+        self.lobby_connections.append(websocket)
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
+    def disconnect_lobby(self, websocket: WebSocket):
+        self.lobby_connections.remove(websocket)
 
-    def create_game(self, game: Game):
-        self.active_games.append(game)
+    async def connect_game(self, websocket: WebSocket, game_name: str):
+        connections = self.game_connections.get(game_name)
+        if game_name in self.game_connections and websocket not in connections and len(connections) < 5:
+            await websocket.accept()
+            connections.append(websocket)
 
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
+    def disconnect_game(self, websocket: WebSocket, game_name: str):
+        connections = self.game_connections.get(game_name)
+        if game_name in self.game_connections and websocket in connections:
+            connections.remove(websocket)
 
-    async def broadcast_text(self, message: str):
-        for connection in self.active_connections:
+    async def broadcast_text(self, message: str, dst: List[WebSocket]):
+        for connection in dst:
             await connection.send_text(message)
 
-    async def broadcast_json(self, message: any):
-        for connection in self.active_connections:
+    async def broadcast_json(self, message: any, dst: List[WebSocket]):
+        for connection in dst:
             await connection.send_json(message)
 
 manager = ConnectionManager()

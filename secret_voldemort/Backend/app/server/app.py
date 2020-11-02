@@ -32,38 +32,15 @@ app.add_middleware(
 )
 
 
-#JOIN GAME
-@app.put("/game/")
-async def join_game(game_name: str = Form(...),
-                    player_name: str = Form(...),
-                    password: Optional[str] = Form(None),
-                    user: User = Depends(get_current_active_user)):
+#ENACT PROCLAMATION
+@app.put("/game/{game_name}/proclamation/")
+async def enact_proclamation(game_name: str, player_name: str, loyalty: Loyalty, user: User = Depends(get_current_active_user)):
     game = manager.games.get(game_name)
-    if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
-    elif len(game.players) == game.num_players:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game full")
-    else:
-        password_match = game.password == password
-        if player_name in game.players:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Player name already exist in this game")
-        elif not password_match:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong password")
+    if game and game.game_status == 'STARTED':
+        if game.players.get(player_name).player_status == 'HEADMASTER':
+            game.board.enact_proclamation(loyalty)
         else:
-            player = Player(player_name=player_name)
-            game.players[player_name] = player
-
-    return game
-
-#START GAME
-@app.put("/game/{game_name}")
-async def start_game(game_name: str, player_name: str, user: User = Depends(get_current_active_user)):
-    game = manager.games.get(game_name)
-    if game:
-        if game.owner_name == player_name:
-            game.start()
-        else:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact proclamation")
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
     

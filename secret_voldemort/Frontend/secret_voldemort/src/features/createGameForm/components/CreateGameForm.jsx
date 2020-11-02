@@ -23,7 +23,7 @@ const CreateGameForm = function ({ createGame, status }) {
         if (!gameName || !playerName) {
             setPlayerOrGameNameError(true);
         }else{
-            createGame({ gameName, gamePassword })
+            createGame({ playerName, gameName, gamePassword })
         }
 	} 
     
@@ -38,17 +38,6 @@ const CreateGameForm = function ({ createGame, status }) {
                     New Game
                 </b>
                 <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
-                <TextField
-                        value={playerName}
-                        required
-                        error={PlayerOrGameNameError}
-                        style={{ marginBottom: 40, minWidth:300 }}
-                        onChange={(value) => setPlayerName(value.target.value)}
-                        id="gameName"
-                        size='small'
-                        label="Game Name"
-                        variant="outlined"
-                    />
                     <TextField
                         value={gameName}
                         required
@@ -58,6 +47,17 @@ const CreateGameForm = function ({ createGame, status }) {
                         id="gameName"
                         size='small'
                         label="Game Name"
+                        variant="outlined"
+                    />
+                    <TextField
+                        value={playerName}
+                        required
+                        error={PlayerOrGameNameError}
+                        style={{ marginBottom: 40, minWidth:300 }}
+                        onChange={(value) => setPlayerName(value.target.value)}
+                        id="playerName"
+                        size='small'
+                        label="Player Name"
                         variant="outlined"
                     />
                     <FormControl size='small' variant="outlined">

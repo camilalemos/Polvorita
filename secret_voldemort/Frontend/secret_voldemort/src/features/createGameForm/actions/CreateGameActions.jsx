@@ -6,19 +6,18 @@ import {
 import axios from 'axios'
 import api from '../../../configs/api'
 
-export const createGame = (data) => (dispatch) => _createGame(dispatch, data);
-const _createGame = async (dispatch, data) => {
+export const createGame = (data) => (dispatch, getState) => _createGame(dispatch, getState, data);
+const _createGame = async (dispatch, getState, data) => {
 
 	try {
         dispatch({type: CREATE_GAME});
         
-        let {acces_token} = {...getState().login}
+        let {access_token} = {...getState().login}
         
         let bodyFormData = new FormData();
-    
-    
+
         bodyFormData.append('game_name', data.gameName);
-        bodyFormData.append('player_name', data.playername);
+        bodyFormData.append('player_name', data.playerName);
         bodyFormData.append('password', data.gamePassword);
 
         const response = await axios({
@@ -27,7 +26,7 @@ const _createGame = async (dispatch, data) => {
             data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
-            "Authorization" : 'Bearer $(acces_tokenn)'
+            "Authorization" : `Bearer ${access_token}`
             }
         });
 		console.log(response, "RESPONSE");

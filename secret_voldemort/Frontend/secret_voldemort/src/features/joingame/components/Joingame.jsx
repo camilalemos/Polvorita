@@ -9,19 +9,19 @@ import LockIcon from '@material-ui/icons/Lock';
 //import axios from 'axios';
 
 const GameList = () => {
-  const [orders, setOrders] = useState([]);
+  const [gameInfo, setGameInfo] = useState([]);
 
   useEffect(() => {
 
     const ws = new WebSocket('ws://localhost:8000/lobby/');
 
     ws.onopen = () => {
-        ws.send({event: 'lobby:subscribe'});
+      ws.send(JSON.stringify({event: 'lobby:subscribe'}));
     };
     
    ws.onmessage = (event) => {
-   setOrders(event.data);
-   console.log(event.data);
+   setGameInfo(JSON.parse(event.data));
+   console.log(gameInfo);
     };
     
     ws.onclose = () => {
@@ -32,8 +32,6 @@ const GameList = () => {
       ws.close();
     };
   });
-
-  const { game_name , owner_name } = orders;
 
   const orderGames = (arr) =>
     arr &&
@@ -57,7 +55,7 @@ const GameList = () => {
     <div className="order-container">
       <table>
         <h2>Partidas</h2>
-        <tbody>{orderGames(game_name)}</tbody>
+        <tbody>{orderGames(gameInfo)}</tbody>
       </table>
     </div>
   );

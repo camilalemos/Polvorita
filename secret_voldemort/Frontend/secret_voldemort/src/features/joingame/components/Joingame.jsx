@@ -1,5 +1,5 @@
-
 import React,{useEffect,useState} from 'react';
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -8,49 +8,59 @@ import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
 //import axios from 'axios';
 
-//import { socket } from 'socketUtil.js';
-import { useDispatch } from 'react-redux';
+const GameList = () => {
+  const [orders, setOrders] = useState([]);
 
-function ChatRoomComponent(){
-    const distpatch = useDispatch();
+  useEffect(() => {
 
-}
+    const ws = new WebSocket('ws://localhost:8000/lobby/');
 
-export default function GameList({}) {
-
-    const [gameName, setGameName] = useState('');
-    //const [userName, setUserName] = useState('');
-    //const [password, setPassword] = useState('');
+    ws.onopen = () => {
+        ws.send({event: 'lobby:subscribe'});
+    };
     
-   /* useEffect(() => {
-        axios.get('https://restcountries.eu/rest/v2/all')
-        .then(res => {
-            setGameName(res.data);
-            setFormShowPassword(true);
-        })
-        .catch(err => {
-            setPassword(err.message);
-            setFormShowPassword(true);
-        })
-    }, []) */
+   ws.onmessage = (event) => {
+   setOrders(event.data);
+   console.log(event.data);
+    };
     
-    return (
-        <div>
-        <h2>Partidas</h2>
-        <List component="nav" className='asd' aria-label="contacts">
-        <ListItem disableGutters>
-            <ListItemText primary="Chelsea Otakan" />
-            <ListItemText primary="number players: " />
-            <ListItemIcon>
-                <LockIcon/>
-            </ListItemIcon>
-            <Button variant="contained" >Join Game</Button>
+    ws.onclose = () => {
+      ws.close();
+    };
+
+    return () => {
+      ws.close();
+    };
+  });
+
+  const { game_name , owner_name } = orders;
+
+  const orderGames = (arr) =>
+    arr &&
+    arr.map((item, index) => (
+    <List component="nav" className='asd' aria-label="contacts">
+    <ListItem disableGutters>
+    <ListItemText primary="Chelsea Otakan"/>
+        <tr key={index}>
+            <td> {item[1]} </td>
+            <td> {item[0]} </td>
+        </tr>
+        <ListItemIcon>
+            <LockIcon/>
+        </ListItemIcon>
+        <Button variant="contained" >Join Game</Button>
         </ListItem>
-        </List>
+    </List>
+    ));        
+
+  return (
+    <div className="order-container">
+      <table>
+        <h2>Partidas</h2>
+        <tbody>{orderGames(game_name)}</tbody>
+      </table>
     </div>
-    );
-}
+  );
+};
 
-
-
-
+export default GameList;

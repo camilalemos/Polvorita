@@ -16,11 +16,14 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
     const [errorUserNameOrEmail, setErrorUserNameOrEmail] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
 
-    const handleLogin = () => loginUser({userNameOrEmail, password});
+    const handleLogin = () => {loginUser({userNameOrEmail, password})}
 
     useEffect(() => {
         if (status === 'failed') enqueueSnackbar('Sign In Failed, Username/email or password do not match', { variant: 'error'});
-        if (status === 'success') enqueueSnackbar('Sign In successfully', { variant: 'success'});
+        if (status === 'success') {
+            enqueueSnackbar('Sign In successfully', { variant: 'success'});
+            history.push('/NewGame')
+        }
     },[status])
     
     return (            

@@ -7,19 +7,21 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useHistory } from "react-router-dom";
+import { withRouter } from 'react-router';
 
 const CreateGameForm = function ({ createGame, status }) {
 
 
     const [gameName, setGameName] = useState('');
+    const [playerName, setPlayerName] = useState('');
     const [gamePassword, setPassword] = useState('');
-    const [errorGameName, setGameNameError] = useState(false);
+    const [PlayerOrGameNameError, setPlayerOrGameNameError] = useState(false);
     const history = useHistory();
 
 
     const handleContinue = () => {
-        if (!gameName) {
-            setGameNameError(true);
+        if (!gameName || !playerName) {
+            setPlayerOrGameNameError(true);
         }else{
             createGame({ gameName, gamePassword })
         }
@@ -36,10 +38,21 @@ const CreateGameForm = function ({ createGame, status }) {
                     New Game
                 </b>
                 <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
+                <TextField
+                        value={playerName}
+                        required
+                        error={PlayerOrGameNameError}
+                        style={{ marginBottom: 40, minWidth:300 }}
+                        onChange={(value) => setPlayerName(value.target.value)}
+                        id="gameName"
+                        size='small'
+                        label="Game Name"
+                        variant="outlined"
+                    />
                     <TextField
                         value={gameName}
                         required
-                        error={errorGameName}
+                        error={PlayerOrGameNameError}
                         style={{ marginBottom: 40, minWidth:300 }}
                         onChange={(value) => setGameName(value.target.value)}
                         id="gameName"
@@ -73,5 +86,4 @@ const CreateGameForm = function ({ createGame, status }) {
     );
 }
 
-export default CreateGameForm;
-
+export default withRouter(CreateGameForm);

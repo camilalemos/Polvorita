@@ -23,6 +23,10 @@ const theme = createMuiTheme({
 
 class App extends Component {
 
+    componentDidMount() {
+        this.props.getUserData()
+    }
+
     render() {
         return (
             <MuiThemeProvider theme={theme}>

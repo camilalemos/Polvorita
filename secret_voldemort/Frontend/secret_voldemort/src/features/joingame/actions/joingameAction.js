@@ -7,8 +7,8 @@ import {
 import axios from 'axios';
 import api from '../../../configs/api';
 
-export const joingame = (data) => (dispatch, getState) => _joingame(dispatch, getState, data);
-const _joingame = async (dispatch, getState, data) => {
+export const joingame = (gameName, playerName, gamePassword) => (dispatch, getState) => _joingame(gameName, playerName, gamePassword, dispatch, getState);
+const _joingame = async (gameName, playerName, gamePassword, dispatch, getState) => {
 
     try {
         dispatch({type: JOIN_GAME});
@@ -17,9 +17,9 @@ const _joingame = async (dispatch, getState, data) => {
         
         let bodyFormData = new FormData()
 
-        bodyFormData.append('game_name', data.gameName);
-        bodyFormData.append('player_name', data.playerName);
-        bodyFormData.append('password', data.gamePassword);
+        bodyFormData.append('game_name', gameName);
+        bodyFormData.append('player_name', playerName);
+        bodyFormData.append('password', gamePassword);
 
         const response = await axios({
             method: 'put',
@@ -27,7 +27,7 @@ const _joingame = async (dispatch, getState, data) => {
             data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
-            "Authorization" : `Bearer ${access_token}`
+            "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJHcml3b2xkIiwiZXhwIjoxNjA0Mzg0MTkyfQ.YCmX3iKLSNyfgriAz6xMcHSiYcg48kF8-KHD86PhPCM`
             }
         });
 		console.log(response, "RESPONSE");

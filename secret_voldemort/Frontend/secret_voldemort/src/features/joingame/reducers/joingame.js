@@ -5,7 +5,7 @@ import {
 } from '../../../constants/actionTypes/joingame';
 
 const initialState= {
-    state: 'undefined'
+    status: 'undefined'
 }
 
 export default (state = initialState, action) => {

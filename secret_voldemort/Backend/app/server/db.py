@@ -4,7 +4,6 @@ from pony.orm import *
 db = Database()
 
 # User Entity 
-
 class User(db.Entity):
     id = PrimaryKey(int, auto=True)
     username = Required(str, unique=True)

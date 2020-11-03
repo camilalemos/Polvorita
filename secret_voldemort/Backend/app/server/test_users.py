@@ -64,3 +64,4 @@ def test_post_login():
     response = client.post("/token/", 
         data=loguin_data)
     assert response.status_code == 201
+

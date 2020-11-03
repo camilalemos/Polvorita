@@ -6,7 +6,6 @@ import App from '../components/App';
 import { getUserData } from '../../login/actions/LoginAction';
 
 function mapStateToProps(state) {
-    console.log(state, "STATE");
     return {
         statusLogin: state.login.statusLogin
     };

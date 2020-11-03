@@ -8,13 +8,15 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { useHistory } from "react-router-dom";
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
+import { withSnackbar } from 'notistack';
+
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-const CreateGameForm = function ({ createGame, status, open, onClose }) {
+const CreateGameForm = function ({ createGame, status, open, onClose, enqueueSnackbar }) {
 
     const [gameName, setGameName] = useState('');
     const [playerName, setPlayerName] = useState('');
@@ -32,6 +34,7 @@ const CreateGameForm = function ({ createGame, status, open, onClose }) {
 	} 
     
     useEffect(() => {
+        if (status === 'failed') enqueueSnackbar('Game name is already in use', { variant: 'error'});
         if (status === 'success') history.push(gameName)
     },[status])
 
@@ -100,4 +103,4 @@ const CreateGameForm = function ({ createGame, status, open, onClose }) {
     );
 }
 
-export default CreateGameForm;
+export default withSnackbar(CreateGameForm);

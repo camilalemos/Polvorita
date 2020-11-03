@@ -55,7 +55,7 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 			<a style={{flex: 1, textAlign: 'center', fontSize:30}}></a>
 		</div>
         {gameInfo.map(currentGame => (
-			<div >
+			<div key={currentGame.game_name}>
 				<div style={{display:'flex',alignItems:'center'}}>
 					<a style={{flex: 1, fontSize: 20}}>{currentGame.game_name}</a>
 					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{currentGame.owner_name}</a>

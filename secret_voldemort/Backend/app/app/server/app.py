@@ -27,7 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/user/", status_code=200)
+@app.post("/user/", status_code=201)
 async def register_user(username: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
                         email: EmailStr = Form(...),
                         password: str = Form(..., min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),
@@ -44,7 +44,7 @@ async def register_user(username: str = Form(..., min_length=5, max_length=20, r
         return user_id
 
 # Endpoint to user login 
-@app.post("/token/", response_model=Token)
+@app.post("/token/", status_code=201, response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(db.User, form_data.username, form_data.password)
     if not user:

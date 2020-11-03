@@ -5,7 +5,6 @@ from .app import app
 
 client = TestClient(app)
 
-
 def test_post_create_user():
     register_data = {
         "username": "Diana12", 
@@ -43,3 +42,26 @@ def test_post_create_user_with_existing_email():
     assert response.json() == {
         "detail": "Username or E-mail already exist"
         }
+
+def test_post_login_incorrect():
+    loguin_data = {
+        "username": "Diana12", 
+        "password": "jdhfiehwejire"
+        }
+    response = client.post("/token/", 
+        data=loguin_data)
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail":"Incorrect credentials"
+        }
+
+
+def test_post_login():
+    loguin_data = {
+        "username": "Diana12", 
+        "password": "2uh218bu3"
+        }
+    response = client.post("/token/", 
+        data=loguin_data)
+    assert response.status_code == 201
+

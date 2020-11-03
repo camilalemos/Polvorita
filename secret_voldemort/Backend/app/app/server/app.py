@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import db
 from .authentication import *
-from .models.user import User
+from .user import User
 
 
 # FastAPI instance 
@@ -27,8 +27,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.post("/user/", status_code=200)
+async def register_user(username: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
+                        email: EmailStr = Form(...),
+                        password: str = Form(..., min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),
+                        full_name: Optional[str] = Form("", min_length=8, max_length=30, regex="^[A-Z a-z]*$")):
+    with db_session:
+        hashed_password = get_password_hash(password)
+        user = User(username=username, email=email, password=hashed_password, full_name=full_name)
+
+        try:
+            user_id = db.User(**user.dict()).to_dict()['id']
+        except Exception:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username or E-mail already exist")
+
+        return user_id
+
 # Endpoint to user login 
-@app.post("/login/", response_model=Token)
+@app.post("/token/", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(db.User, form_data.username, form_data.password)
     if not user:

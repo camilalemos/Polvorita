@@ -6,7 +6,6 @@ from typing import Optional
 class User(BaseModel):
     username: str
     email: EmailStr
-    hashed_password: str
+    password: str
     full_name: Optional[str] = ""
-    player_name: str = ""
     disabled: bool = False 

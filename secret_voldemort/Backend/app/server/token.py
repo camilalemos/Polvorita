@@ -11,3 +11,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
 	login_id: Optional[str] = None
+

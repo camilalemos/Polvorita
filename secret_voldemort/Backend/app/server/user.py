@@ -7,5 +7,5 @@ class User(BaseModel):
     username: str
     email: EmailStr
     password: str
-    full_name: Optional[str] = ""
-    disabled: bool = False 
+    full_name: Optional[str] = None
+    disabled: bool = False

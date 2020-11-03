@@ -22,7 +22,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
         if (status === 'failed') enqueueSnackbar('Sign In Failed, Username/email or password do not match', { variant: 'error'});
         if (status === 'success') {
             enqueueSnackbar('Sign In successfully', { variant: 'success'});
-            history.push('/NewGame')
+            history.push('/lobby')
         }
     },[status])
     

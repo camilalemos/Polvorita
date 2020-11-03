@@ -24,6 +24,7 @@ const theme = createMuiTheme({
 
 
 
+
 class App extends Component {
 
     componentDidMount() {
@@ -36,11 +37,15 @@ class App extends Component {
                 <SnackbarProvider maxSnack={3}>
                     <Router>
                         <Route exact path="/">
-                            <Redirect to="/login" />
+                            {this.props.statusLogin === 'success' ?
+                                <Redirect to="/lobby" />
+                            :
+                                <Redirect to='/login' />
+                            }
                         </Route>
                         <Route exact path='/login' component={LoginContainer} />
                         <Route exact path='/register' component={RegisterContainer} />
-                        <Route exact path='/lobby' component={JoinGameContainer} />
+                        <Route exact path='/lobby' component={JoinGameContainer} /> 
                     </Router>
                 </SnackbarProvider>
             </MuiThemeProvider>

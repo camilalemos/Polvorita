@@ -1,16 +1,14 @@
 import React,{useEffect,useState} from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import { withSnackbar } from 'notistack';
 
 import CreateGameContainer from '../../createGameForm/containers/CreateGameContainers';
 import PopUp from './PopUp';
 
-const GameList = ({joingame, status }) => {
+const GameList = ({joingame, status, enqueueSnackbar }) => {
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playerName, setPlayerName] = useState('');
 	const [gamePassword, setPassword] = useState('');
@@ -40,6 +38,7 @@ const GameList = ({joingame, status }) => {
 	});
 
 	useEffect(() => {
+		if (status === 'failed') enqueueSnackbar('Cannot join the game, you are already the owner', { variant: 'error'});
 		if (status === 'success') console.log("ESTOY ADRENTRO DE UNA PERTIDA");
 	},[status]);
 
@@ -79,4 +78,4 @@ const GameList = ({joingame, status }) => {
   );
 };
 
-export default GameList;
+export default withSnackbar(GameList);

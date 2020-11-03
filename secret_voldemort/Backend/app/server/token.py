@@ -1,9 +1,7 @@
-from typing import Optional, List, Dict, Tuple
-import random
-from fastapi import HTTPException, status
-from pydantic import BaseModel, EmailStr
+from datetime import date
+from typing import Set, Optional, List, Tuple
 
-from .enums import *
+from pydantic import BaseModel, EmailStr
 
 
 
@@ -12,5 +10,5 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    login_id: Optional[str] = None
+	login_id: Optional[str] = None
 

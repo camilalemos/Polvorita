@@ -1,9 +1,6 @@
-from typing import Optional, List, Dict, Tuple
-import random
-from fastapi import HTTPException, status
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
-from .enums import *
 
 #User Model
 class User(BaseModel):
@@ -12,4 +9,3 @@ class User(BaseModel):
     password: str
     full_name: Optional[str] = None
     disabled: bool = False
-

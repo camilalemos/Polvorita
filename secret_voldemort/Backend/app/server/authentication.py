@@ -7,14 +7,13 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pony.orm import db_session, get
 
-from .user import User
+from .user import *
 from .token import *
 from .db import db
 
 # openssl rand -hex 32
 SECRET_KEY = "897bc7f136ffb9bd47c50369ec1f29da97d085429027b6c0fa1ad8d642e3cfa0"
 ALGORITHM = "HS256"
-
 ACCESS_TOKEN_EXPIRE_MINUTES = 300
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -74,4 +73,5 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
     if current_user.disabled:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user")
-    return current_user  
+    return current_user
+

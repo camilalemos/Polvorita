@@ -95,8 +95,7 @@ class Game(BaseModel):
         if self.game_status == 'STARTED' and self.board.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
             self.game_status = 'FINISHED'
-            #manager.delete_game(self.name)
         elif self.game_status == 'STARTED' and self.board.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
             self.game_status = 'FINISHED'
-            #manager.delete_game(self.name)
+

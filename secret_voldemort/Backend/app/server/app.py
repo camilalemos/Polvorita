@@ -33,48 +33,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-
-#JOIN GAME
-@app.put("/game/", response_model=Game)
-async def join_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$")),
-                    player_name: str = Form(..., min_length=3, max_length=10, regex="^[A-Z_a-z0-9]*$")),
-                    password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$")),
-                    user: User = Depends(get_current_active_user)):
-    game = manager.games.get(game_name)
-    if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
-    elif game.password != password:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong password")
-    elif player_name in game.players:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Player name already exist in this game")
-    elif len(game.players) == game.num_players:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game full")
-    else:
-        player = Player(name=player_name, game_name=game_name)
-        game.players[player_name] = player
-        manager.players[player_name] = player
-
-    return game
-
-#START GAME
-@app.put("/game/start/{player_name}", response_model=Game)
-async def start_game(player_name: str, user: User = Depends(get_current_active_user)):
-    game_name = manager.players.get(player_name).game_name
-    game = manager.games.get(game_name)
-    if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
-    elif game.game_status != 'CREATED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
-    elif game.owner_name != player_name:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
-    elif len(game.players) != game.num_players:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough players")
-    else:
-        game.start()
-
-    return game
-
 #ENACT PROCLAMATION
 @app.put("/game/proclamation/{player_name}", response_model=Game)
 async def enact_proclamation(player_name: str, loyalty: Loyalty, user: User = Depends(get_current_active_user)):
@@ -94,6 +52,7 @@ async def enact_proclamation(player_name: str, loyalty: Loyalty, user: User = De
         game.finish()
 
     return game
+
 
 @app.websocket("/lobby/")
 async def websocket_lobby(websocket: WebSocket):

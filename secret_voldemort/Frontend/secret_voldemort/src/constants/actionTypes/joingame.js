@@ -1,3 +1,3 @@
-export const JOIN_GAME_REQUEST = "JOIN_GAME_REQUEST"
+export const JOIN_GAME = "JOIN_GAME"
 export const JOIN_GAME_SUCCESS = "JOIN_GAME_SUCCESS"
-export const JOIN_GAME_ERROR = "JOIN_GAME_ERROR"
+export const JOIN_GAME_FAIL = "JOIN_GAME_FAIL"

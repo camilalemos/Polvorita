@@ -1,42 +1,41 @@
 import {
-     JOIN_GAME_REQUEST,
+     JOIN_GAME,
      JOIN_GAME_SUCCESS,
-     JOIN_GAME_ERROR
+     JOIN_GAME_FAIL
  } from '../../../constants/actionTypes/joingame';
 
-//import axios from 'axios';
-//import { API_BASE } from './config';
+import axios from 'axios';
+import api from '../../../configs/api';
 
-export function joinGameRequest(){
-    return {
-        type: JOIN_GAME_REQUEST
-    }
-}
-
-export function joinGameSuccess(payload){
-    return {
-        type: JOIN_GAME_SUCCESS,
-        payload
-    }
-}
-
-export function joinGameError(error){
-    return {
-        type: JOIN_GAME_ERROR,
-        error
-    }
-}
-
-export const joingame = () => (dispatch) => _joingame(dispatch);
-const _joingame = async (dispatch) => {
+export const joingame = (data) => (dispatch, getState) => _joingame(dispatch, getState, data);
+const _joingame = async (dispatch, getState, data) => {
 
     try {
- //       const res = await axios.get(`${API_BASE}/game/${gameId}`)
-  //      dispatch({type: joinGameSuccess(response.data)
+        dispatch({type: JOIN_GAME});
+
+        let {access_token} = {...getState().login}
+        
+        let bodyFormData = new FormData()
+
+        bodyFormData.append('game_name', data.gameName);
+        bodyFormData.append('player_name', data.playerName);
+        bodyFormData.append('password', data.gamePassword);
+
+        const response = await axios({
+            method: 'put',
+            url: `${api.url}/game/`,
+            data: bodyFormData,
+            headers: { 
+            'Content-Type':'multipart/form-data',
+            "Authorization" : `Bearer ${access_token}`
+            }
+        });
+		console.log(response, "RESPONSE");
+
+        dispatch({type: JOIN_GAME_SUCCESS})
         
     } catch (error){
-        dispatch({
-            type: joinGameError(error)
-        });
+        console.log(error, "ERROR")
+        dispatch({type: JOIN_GAME_FAIL});
     }
 };

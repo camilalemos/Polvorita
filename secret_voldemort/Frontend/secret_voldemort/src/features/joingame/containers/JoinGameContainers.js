@@ -7,7 +7,7 @@ import { joingame } from '../actions/joingameAction'
 
 function mapStateToProps(state) {
     return {
-
+        status: state.joingame.status
     };
 }
 

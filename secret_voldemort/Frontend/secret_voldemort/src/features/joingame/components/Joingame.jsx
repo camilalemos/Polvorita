@@ -6,10 +6,16 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
-//import axios from 'axios';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import TextField from '@material-ui/core/TextField';
 
-const GameList = () => {
+
+const GameList = ({joinGame, status }) => {
   const [gameInfo, setGameInfo] = useState([]);
+  const [playerName, setPlayerName] = useState('');
+  const [gamePassword, setPassword] = useState('');
+  const [playerNameError, setPlayerNameError] = useState(false);
+  const [displayForm, setDisplayForm] = useState(false);
 
   useEffect(() => {
 
@@ -33,30 +39,50 @@ const GameList = () => {
     };
   });
 
-  const orderGames = (arr) =>
-    arr &&
-    arr.map((item, index) => (
-    <List component="nav" className='asd' aria-label="contacts">
-    <ListItem disableGutters>
-    <ListItemText primary="Chelsea Otakan"/>
-        <tr key={index}>
-            <td> {item[1]} </td>
-            <td> {item[0]} </td>
-        </tr>
-        <ListItemIcon>
-            <LockIcon/>
-        </ListItemIcon>
-        <Button variant="contained" >Join Game</Button>
-        </ListItem>
-    </List>
-    ));        
+  const handleJoinGame = () => {
+
+    return (
+    <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
+      <TextField
+        value={playerName}
+        required
+        error={playerNameError}
+        style={{ marginBottom: 40, minWidth:300 }}
+        onChange={(value) => setPlayerName(value.target.value)}
+        id="playerName"
+        size='small'
+        label="Player Name"
+        variant="outlined"
+      />
+      <TextField
+        value={gamePassword}
+        style={{ marginBottom: 40, minWidth:300 }}
+        onChange={(value) => setPlayerName(value.target.value)}
+        id="gamePassword"
+        size='small'
+        label="Game Password"
+        variant="outlined"
+      />
+    </div>
+  )};
 
   return (
     <div className="order-container">
-      <table>
-        <h2>Partidas</h2>
-        <tbody>{orderGames(gameInfo)}</tbody>
-      </table>
+        <h1>Partidas</h1>
+        {gameInfo.map(currentGame => (
+        <List component="nav" className='asd' aria-label="contacts">
+        <ListItem disableGutters>
+        <ListItemText primary={currentGame.game_name}/>
+        <ListItemText primary= {currentGame.owner_name}/>
+            <ListItemIcon>
+              {currentGame.password === null ?
+              <LockOpenIcon/> : <LockIcon/>} 
+            </ListItemIcon>
+            <Button onClick={handleJoinGame} variant="contained" >Join Game</Button>
+            </ListItem>
+        </List>
+        ))
+        }
     </div>
   );
 };

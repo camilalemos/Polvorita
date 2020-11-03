@@ -7,7 +7,8 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pony.orm import db_session, get
 
-from .models import User, TokenData
+from .user import User
+from .token import *
 from .db import db
 
 # openssl rand -hex 32

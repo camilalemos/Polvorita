@@ -1,4 +1,4 @@
-from pony.orm import db_session, get, select, delete
+from pony.orm import db_session, get, select, delete, exists
 from fastapi import FastAPI, HTTPException, status, Form
 from jose import JWTError, jwt
 from pydantic import EmailStr
@@ -39,6 +39,7 @@ async def register_user(username: str = Form(..., min_length=5, max_length=20, r
         try:
             user_id = db.User(**user.dict()).to_dict()['id']
         except Exception:
+
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username or E-mail already exist")
 
         return user_id

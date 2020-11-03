@@ -1,23 +1,24 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import App from '../components/App';
+import Register from '../components/Register';
 
-import { getUserData } from '../../login/actions/LoginAction';
+import { registerUser } from '../actions/RegisterActions';
 
 function mapStateToProps(state) {
     return {
-        statusLogin: state.login.statusLogin
+        status: state.register.status,
+        statusCode: state.register.statusCode
     };
 }
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        getUserData
+        registerUser
     }, dispatch);
 };
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(App);
+)(Register);

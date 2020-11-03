@@ -17,7 +17,7 @@ class Vote(str, Enum):
 
 class Role(str, Enum):
     voldemort = 'VOLDEMORT'
-    harry = 'SNAPE'
+    snape = 'SNAPE'
 
 class Loyalty(str, Enum):
     phoenix_order = 'PHOENIX_ORDER'

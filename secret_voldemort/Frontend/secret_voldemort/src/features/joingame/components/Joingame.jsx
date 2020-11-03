@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 
+import CreateGameContainer from '../../createGameForm/containers/CreateGameContainers';
 import PopUp from './PopUp';
 
 const GameList = ({joingame, status }) => {
@@ -14,6 +15,7 @@ const GameList = ({joingame, status }) => {
 	const [playerName, setPlayerName] = useState('');
 	const [gamePassword, setPassword] = useState('');
 	const [openModal, setOpenModal] = useState(false);
+	const [openModalCreateGame, setOpenModalCreateGame] = useState(false);
 
 	useEffect(() => {
 
@@ -45,7 +47,7 @@ const GameList = ({joingame, status }) => {
     <div style={{display: 'flex', flexDirection:'column', padding:40}}>
 		<div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
         	<h1>Partidas</h1>
-			<Button color='secondary' size='small' onClick={null} variant="contained" >Create Game</Button>
+			<Button color='secondary' size='small' onClick={() => setOpenModalCreateGame(true)} variant="contained" >Create Game</Button>
 		</div>
 		<div style={{padding:40}}>
         {gameInfo.map(currentGame => (
@@ -60,6 +62,7 @@ const GameList = ({joingame, status }) => {
 				<Button onClick={() => setOpenModal(true)} variant="contained" >Join Game</Button>
 				</ListItem>
 				<PopUp join={() => joingame(currentGame.game_name ,playerName, gamePassword)} open={openModal} playerName={playerName} gamePassword={gamePassword} setPlayerName={(value) => setPlayerName(value)} setPassword={(value) => setPassword(value)} onClose={() => setOpenModal(false)}/>
+				<CreateGameContainer open={openModalCreateGame} onClose={() => setOpenModalCreateGame(false)}/>
 			</List>))
         }
 		</div>

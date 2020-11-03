@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
 	register,
 	login,
 	createGame,
-  joingame
+    joingame
 });
 
 export default rootReducer;

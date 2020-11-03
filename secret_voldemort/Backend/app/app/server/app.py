@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import db
 from .authentication import *
-from .models.user import User
+from .user import User
 
 
 # FastAPI instance 
@@ -34,7 +34,7 @@ async def register_user(username: str = Form(..., min_length=5, max_length=20, r
                         full_name: Optional[str] = Form("", min_length=8, max_length=30, regex="^[A-Z a-z]*$")):
     with db_session:
         hashed_password = get_password_hash(password)
-        user = User(username=username, email=email, hashed_password=hashed_password, full_name=full_name)
+        user = User(username=username, email=email, password=hashed_password, full_name=full_name)
 
         try:
             user_id = db.User(**user.dict()).to_dict()['id']

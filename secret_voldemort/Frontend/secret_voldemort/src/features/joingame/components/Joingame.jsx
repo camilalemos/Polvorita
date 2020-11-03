@@ -46,26 +46,35 @@ const GameList = ({joingame, status }) => {
   return (
     <div style={{display: 'flex', flexDirection:'column', padding:40}}>
 		<div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-        	<h1>Partidas</h1>
-			<Button color='secondary' size='small' onClick={() => setOpenModalCreateGame(true)} variant="contained" >Create Game</Button>
+        	<b style={{ fontSize:70 }}>GAMES</b>
+			<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => setOpenModalCreateGame(true)} variant="contained" >Create Game</Button>
 		</div>
 		<div style={{padding:40}}>
+		<div style={{display:'flex', marginBottom: 40}}>
+			<a style={{flex: 1, fontSize:30}}>Game name</a>
+			<a style={{flex: 1, textAlign: 'center', fontSize:30}}>Owner game</a>
+			<a style={{flex: 1, textAlign: 'center', fontSize:30}}></a>
+		</div>
         {gameInfo.map(currentGame => (
-			<List component="nav" className='asd' aria-label="contacts">
-			<ListItem disableGutters>
-			<ListItemText primary={currentGame.game_name}/>
-			<ListItemText primary= {currentGame.owner_name}/>
-				<ListItemIcon>
-				{currentGame.password === null ?
-				<LockOpenIcon/> : <LockIcon/>} 
-				</ListItemIcon>
-				<Button onClick={() => setOpenModal(true)} variant="contained" >Join Game</Button>
-				</ListItem>
+			<div >
+				<div style={{display:'flex',alignItems:'center'}}>
+					<a style={{flex: 1, fontSize: 20}}>{currentGame.game_name}</a>
+					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{currentGame.owner_name}</a>
+					<div style={{flex: 1, textAlign: 'right', display:'flex', alignItems:'center', justifyContent:'flex-end'}}>
+					<ListItemIcon >
+						{currentGame.password === null ?
+						<LockOpenIcon/> : <LockIcon/>} 
+					</ListItemIcon>
+					<Button onClick={() => setOpenModal(true)} variant="contained" >Join Game</Button>
+					</div>
+				</div>
+				<div style={{  height:.5 , backgroundColor:'lightgrey', display:'flex', marginBottom:20, marginTop:10}} />
 				<PopUp join={() => joingame(currentGame.game_name ,playerName, gamePassword)} open={openModal} playerName={playerName} gamePassword={gamePassword} setPlayerName={(value) => setPlayerName(value)} setPassword={(value) => setPassword(value)} onClose={() => setOpenModal(false)}/>
-				<CreateGameContainer open={openModalCreateGame} onClose={() => setOpenModalCreateGame(false)}/>
-			</List>))
+			</div>	
+			))
         }
 		</div>
+		<CreateGameContainer open={openModalCreateGame} onClose={() => setOpenModalCreateGame(false)}/>
     </div>
   );
 };

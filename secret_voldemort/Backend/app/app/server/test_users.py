@@ -14,7 +14,7 @@ def test_post_create_user():
         }
     response = client.post("/user/", 
         data=register_data)
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 def test_post_create_user_with_existing_username():
     register_data = {
@@ -63,4 +63,4 @@ def test_post_login():
         }
     response = client.post("/token/", 
         data=loguin_data)
-    assert response.status_code == 200
+    assert response.status_code == 201

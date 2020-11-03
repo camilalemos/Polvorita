@@ -1,23 +1,21 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
-import App from '../components/App';
-
-import { getUserData } from '../../login/actions/LoginAction';
+import { createGame } from '../actions/CreateGameActions';
+import CreateGameForm from "../components/CreateGameForm";
 
 function mapStateToProps(state) {
     return {
-        statusLogin: state.login.statusLogin
+        status: state.createGame.status
     };
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({
-        getUserData
+    return bindActionCreators({ 
+        createGame
     }, dispatch);
 };
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(App);
+)(CreateGameForm);

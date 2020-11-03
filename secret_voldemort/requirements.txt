@@ -1,7 +1,0 @@
-fastapi==0.61.1
-uvicorn==0.11.8
-pony==0.7.13
-email-validator
-python-jose[cryptography]
-passlib[bcrypt]
-python-multipart

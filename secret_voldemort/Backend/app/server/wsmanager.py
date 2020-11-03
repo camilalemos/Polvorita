@@ -48,4 +48,3 @@ class ConnectionManager:
             await connection.send_json(message)
 
 manager = ConnectionManager()
-

@@ -6,9 +6,11 @@ from pydantic import BaseModel, EmailStr
 from .enums import *
 
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
 
 class TokenData(BaseModel):
     login_id: Optional[str] = None
+

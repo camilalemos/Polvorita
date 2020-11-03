@@ -5,3 +5,7 @@ email-validator
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
+pytest==5.3.5
+requests
+pydantic[email]
+

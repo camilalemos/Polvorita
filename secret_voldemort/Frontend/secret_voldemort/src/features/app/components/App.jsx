@@ -3,6 +3,7 @@ import { HashRouter as Router, Redirect, Route } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import RegisterContainer from '../../register/containers/RegisterContainers'
+import CreateGameContainer from '../../createGameForm/containers/container'
 import LoginContainer from '../../login/containers/LoginContainers';
 import { SnackbarProvider } from 'notistack';
 
@@ -21,6 +22,8 @@ const theme = createMuiTheme({
     },
 });
 
+
+
 class App extends Component {
 
     componentDidMount() {
@@ -37,6 +40,7 @@ class App extends Component {
                         </Route>
                         <Route exact path='/login' component={LoginContainer} />
                         <Route exact path='/register' component={RegisterContainer} />
+                        <Route exact path='/NewGame' component={CreateGameContainer} />
                     </Router>
                 </SnackbarProvider>
             </MuiThemeProvider>

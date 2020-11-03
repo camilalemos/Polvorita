@@ -5,6 +5,7 @@ import AppContainer from '../src/features/app/containers/AppContainer';
 import configureStore from './store/index';
 import RegisterContainer from '../src/features/register/containers/RegisterContainers';
 
+
 const store = configureStore()
 
 render(

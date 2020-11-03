@@ -5,10 +5,11 @@ from pydantic import BaseModel, EmailStr
 
 from .enums import *
 
-
+#User Model
 class User(BaseModel):
     username: str
     email: EmailStr
     password: str
     full_name: Optional[str] = None
     disabled: bool = False
+

@@ -51,7 +51,7 @@ def select_minister(game_Name: str):
             # return list of player
             select_player = select(p for p in db.Player)
             array_player = [p.to_dict() for p in select_player if p.associated_game == id_game]
-            return_minister = array_player[0]["player_name"]
+            return_minister = array_player[4]["player_name"]
             return return_minister
         else:
             raise HTTPException(status_code=403, detail="game name not exist")

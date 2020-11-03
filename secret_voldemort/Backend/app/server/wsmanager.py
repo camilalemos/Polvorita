@@ -3,83 +3,23 @@ from typing import List
 from fastapi import WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 
-from .models import Game
+from .game import Game, Player
 
-
-game = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Game</title>
-    </head>
-    <body>
-        <h1>WebSocket Game</h1>
-        <h2>Game: <span id="ws-id"></span></h2>
-        <form action="" onsubmit="sendMessage(event)">
-            <button>View game</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var game_name = "juego"
-            document.querySelector("#ws-id").textContent = game_name;
-            var ws = new WebSocket(`ws://localhost:8000/game/${game_name}`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                ws.send(event)
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
-lobby = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Lobby</title>
-    </head>
-    <body>
-        <h1>WebSocket Lobby</h1>
-        <h2>Player: <span id="ws-id"></span></h2>
-        <form action="" onsubmit="sendMessage(event)">
-            <button>View lobby</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var player_name = "pepe"
-            document.querySelector("#ws-id").textContent = player_name;
-            var ws = new WebSocket(`ws://localhost:8000/lobby/`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                ws.send(event)
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
 
 class ConnectionManager:
     def __init__(self):
         self.lobby_connections: List[WebSocket] = []
-        self.players: Dict[str, WebSocket] = {}
+        self.players: Dict[str, Player] = {}
         self.games: Dict[str, Game] = {}
         self.game_connections: Dict[str, List[WebSocket]] = {}
+
+    def create_game(self, game: Game, player: Player):
+        self.players[player.name] = player
+        self.games[game.name] = game
+        self.game_connections[game.name] = []
+
+    def delete_game(self, game_name: str):
+        self.games.pop(game_name)
 
     async def connect_lobby(self, websocket: WebSocket):
         await websocket.accept()
@@ -108,3 +48,4 @@ class ConnectionManager:
             await connection.send_json(message)
 
 manager = ConnectionManager()
+

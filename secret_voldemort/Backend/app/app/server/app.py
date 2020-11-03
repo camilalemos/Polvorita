@@ -27,7 +27,7 @@ app.add_middleware(
 )
 
 # Endpoint to create user
-@app.post("/user/", status_code=200)
+@app.post("/user/", status_code=201)
 async def register_user(username: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
                         email: EmailStr = Form(...),
                         password: str = Form(..., min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),

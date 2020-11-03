@@ -29,7 +29,6 @@ const _createGame = async (dispatch, getState, data) => {
             "Authorization" : `Bearer ${access_token}`
             }
         });
-		console.log(response, "RESPONSE");
 
         dispatch({type: CREATE_GAME_SUCCESS})
         

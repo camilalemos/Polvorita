@@ -27,4 +27,4 @@ class Spell(str, Enum):
     crucio = 'CRUCIO'
     avadakedavra = 'AVADAKEDAVRA'
     imperius = 'IMPERIUS'
-    guessing = 'GUESSING'
+    adivination = 'ADIVINATION'

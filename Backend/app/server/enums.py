@@ -16,8 +16,20 @@ class Vote(str, Enum):
     nox = 'NOX'
 
 class Role(str, Enum):
-    voldemort = 'VOLDEMORT'
+    bellatrix = 'BELLATRIX'
+    dolores = 'DOLORES'
+    draco = 'DRACO'
+    dumbledore = 'DUMBLEDORE'
+    fred = 'FRED'
+    george = 'GEORGE'
+    harry = 'HARRY'
+    hermione = 'HERMIONE'
+    lucius = 'LUCIUS'
+    neville = 'NEVILLE'
+    ron = 'RON'
+    sirius = 'SIRIUS'
     snape = 'SNAPE'
+    voldemort = 'VOLDEMORT'
 
 class Loyalty(str, Enum):
     phoenix_order = 'PHOENIX_ORDER'

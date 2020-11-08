@@ -79,16 +79,20 @@ async def create_game(game_name: str = Form(..., min_length=5, max_length=20, re
 
     return game
 
-#JOIN GAME
-@app.put("/game/", response_model=Game)
-async def join_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
-                    player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
-                    password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
-                    user: User = Depends(get_current_active_user)):
+def get_game(game_name: str, user: User = Depends(get_current_active_user)):
     game = manager.games.get(game_name)
     if not game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
-    elif user.username in game.users:
+    return {"game": game, "user": user}
+
+#JOIN GAME
+@app.put("/game/", response_model=Game)
+async def join_game(player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
+                    password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
+                    params = Depends(get_game)):
+    game = params["game"]
+    username = params["user"].username
+    if game.exist(username):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="A user cannot enter a game twice")
     elif password != game.password:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong password")
@@ -97,19 +101,17 @@ async def join_game(game_name: str = Form(..., min_length=5, max_length=20, rege
     elif game.is_full():
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game full")
     else:
-        game.create_player(player_name, user.username)
+        game.create_player(player_name, username)
 
     return game
 
 #START GAME
 @app.put("/game/start/", response_model=Game)
-async def start_game(game_name: str, user: User = Depends(get_current_active_user)):
-    game = game = manager.games.get(game_name)
-    if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
-    elif game.status != 'CREATED':
+async def start_game(params = Depends(get_game)):
+    game = params["game"]
+    if game.status != 'CREATED':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
-    elif user.username != game.owner():
+    elif params["user"].username != game.owner():
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
     elif not game.is_full():
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough players")
@@ -118,10 +120,10 @@ async def start_game(game_name: str, user: User = Depends(get_current_active_use
 
     return game
 
-def check_params(game_name: str, player_name: str, user: User = Depends(get_current_active_user)):
-    game = manager.games.get(game_name)
-    if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+def check_params(player_name: str, params = Depends(get_game)):
+    game = params["game"]
+    if game.status != 'STARTED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
     player = game.players.get(player_name)
     if not player:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found")
@@ -134,9 +136,7 @@ def check_params(game_name: str, player_name: str, user: User = Depends(get_curr
 @app.put("/game/proclamation/enact/", response_model=Game)
 async def enact_proclamation(loyalty: Loyalty, params = Depends(check_params)):
     game = params["game"]
-    if game.status != 'STARTED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
-    elif params["player"].status != 'HEADMASTER':
+    if params["player"].status != 'HEADMASTER':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
     else:
         game.board.enact_proclamation(loyalty)
@@ -148,9 +148,7 @@ async def enact_proclamation(loyalty: Loyalty, params = Depends(check_params)):
 @app.put("/game/proclamation/discard/", response_model=Game)
 async def discard_proclamation(loyalty: Loyalty, params = Depends(check_params)):
     game = params["game"]
-    if game.status != 'STARTED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
-    elif params["player"].status not in ['MINISTER', 'HEADMASTER']:
+    if params["player"].status not in ['MINISTER', 'HEADMASTER']:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
     else:
         game.board.discard_proclamation(loyalty)

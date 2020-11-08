@@ -84,7 +84,6 @@ class Game(BaseModel):
     status: GameStatus = 'CREATED'
     winner: Loyalty = None
     max_players: int = 5
-    users: Set[str] = set()
     players: Dict[str, Player] = {}
     board: Board = None
     elections: Elections = None
@@ -93,6 +92,10 @@ class Game(BaseModel):
 
     def is_full(self):
         return len(self.players) == self.max_players
+
+    def exist(self, username: str):
+        users = [player.user_name for player in self.players.values()]
+        return username in users
 
     def create_player(self, player_name: str, username: str):
         self.users.add(username)

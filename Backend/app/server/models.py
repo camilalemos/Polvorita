@@ -50,7 +50,6 @@ class Board(BaseModel):
     discarded_proclamations: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
-    spells: List[Spell] = []
 
     def init_board(self):
         for i in range(0, 6):
@@ -82,13 +81,14 @@ class Board(BaseModel):
 class Game(BaseModel):
     name: str
     password: Optional[str] = None
-    max_players: int = 5
     status: GameStatus = 'CREATED'
+    winner: Loyalty = None
+    max_players: int = 5
     users: Set[str] = set()
     players: Dict[str, Player] = {}
-    winner: Loyalty = None
     board: Board = None
     elections: Elections = None
+    spells: List[Spell] = []
     chat: List[str] = []
 
     def is_full(self):

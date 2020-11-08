@@ -100,7 +100,7 @@ async def join_game(player_name: str = Form(..., min_length=3, max_length=15, re
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong password")
     elif player_name in game.players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Player name already exist in this game")
-    elif game.is_full():
+    elif game.num_players == game.max_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game full")
     else:
         game.create_player(player_name, username)
@@ -115,7 +115,7 @@ async def start_game(params = Depends(get_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
     elif params["user"].username != game.owner():
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
-    elif not game.is_full():
+    elif game.num_players < game.min_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough players")
     else:
         game.start()

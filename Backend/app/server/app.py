@@ -62,6 +62,7 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    
     return {"access_token": access_token, "token_type": "bearer"}
 
 #CREATE GAME
@@ -83,6 +84,7 @@ def get_game(game_name: str, user: User = Depends(get_current_active_user)):
     game = manager.games.get(game_name)
     if not game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+
     return {"game": game, "user": user}
 
 #JOIN GAME

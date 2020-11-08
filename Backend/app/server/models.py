@@ -98,9 +98,7 @@ class Game(BaseModel):
         return username in users
 
     def create_player(self, player_name: str, username: str):
-        self.users.add(username)
-        player = Player(name=player_name, user_name=username)
-        self.players[player_name] = player
+        self.players[player_name] = Player(name=player_name, user_name=username)
 
     def owner(self):
         return list(self.players.values())[0].user_name

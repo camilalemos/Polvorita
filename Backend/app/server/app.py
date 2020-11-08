@@ -67,7 +67,7 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
 #CREATE GAME
 @app.post("/game/", status_code=201, response_model=Game)
 async def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
-                      player_name: str = Form(..., min_length=3, max_length=10, regex="^[A-Z_a-z0-9]*$"),
+                      player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
                       password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
                       user: User = Depends(get_current_active_user)):
     if game_name in manager.games:
@@ -82,7 +82,7 @@ async def create_game(game_name: str = Form(..., min_length=5, max_length=20, re
 #JOIN GAME
 @app.put("/game/", response_model=Game)
 async def join_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
-                    player_name: str = Form(..., min_length=3, max_length=10, regex="^[A-Z_a-z0-9]*$"),
+                    player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
                     password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
                     user: User = Depends(get_current_active_user)):
     game = manager.games.get(game_name)
@@ -101,6 +101,23 @@ async def join_game(game_name: str = Form(..., min_length=5, max_length=20, rege
 
     return game
 
+#START GAME
+@app.put("/game/start/", response_model=Game)
+async def start_game(game_name: str, user: User = Depends(get_current_active_user)):
+    game = game = manager.games.get(game_name)
+    if not game:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+    elif game.status != 'CREATED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
+    elif game.owner() != user.username:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
+    elif not game.is_full():
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough players")
+    else:
+        game.start()
+
+    return game
+
 def get_params(game_name: str, player_name: str, user: User = Depends(get_current_active_user)):
     game = manager.games.get(game_name)
     if not game:
@@ -112,21 +129,6 @@ def get_params(game_name: str, player_name: str, user: User = Depends(get_curren
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Player is not alive")
 
     return {"game": game, "player": player, "user": user}
-
-#START GAME
-@app.put("/game/start/", response_model=Game)
-async def start_game(params = Depends(get_params)):
-    game = params["game"]
-    if game.status != 'CREATED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
-    elif game.owner() != params["user"].username:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
-    elif not game.is_full():
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough players")
-    else:
-        game.start()
-
-    return game
 
 #ENACT PROCLAMATION
 @app.put("/game/proclamation/enact/", response_model=Game)

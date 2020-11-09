@@ -25,6 +25,6 @@ class Loyalty(str, Enum):
 
 class Spell(str, Enum):
     crucio = 'CRUCIO'
-    avadakedavra = 'AVADAKEDAVRA'
+    avada_kedavra = 'AVADA_KEDAVRA'
     imperius = 'IMPERIUS'
     adivination = 'ADIVINATION'

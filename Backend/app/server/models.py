@@ -47,33 +47,24 @@ class Elections(BaseModel):
 
 class Board(BaseModel):
     proclamations: List[Loyalty] = []
+    discarded_proclamations: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
-    PO_discarded_proclamations: int = 0
     DE_enacted_proclamations: int = 0
-    DE_discarded_proclamations: int = 0
-    spells: List[Spell] = []
 
     def init_board(self):
-        self.shuffle_proclamations(6, 11)
+        for i in range(0, 6):
+            self.proclamations.append('PHOENIX_ORDER')
+        for i in range(0, 11):
+            self.proclamations.append('DEATH_EATERS')
+        random.shuffle(self.proclamations)
 
-    def shuffle_proclamations(self, a: int, b: int):
-        PO, DE = a, b
-        while PO != 0 or DE != 0:
-            proclamation = random.choice(list(Loyalty))
-            if proclamation == 'PHOENIX_ORDER' and PO != 0:
-                self.proclamations.append(proclamation)
-                PO -= 1
-            if proclamation == 'DEATH_EATERS' and DE != 0:
-                self.proclamations.append(proclamation)
-                DE -= 1
-
-    def get_proclamation(self):
-        try:
-            return self.proclamations.pop()
-        except Exception:
-            PO = self.PO_discarded_proclamations
-            DE = self.DE_discarded_proclamations
-            self.shuffle_proclamations(PO, DE)
+    def get_3proclamations(self):
+        if len(self.proclamations) >= 3:
+            return [self.proclamations.pop(), self.proclamations.pop(), self.proclamations.pop()]
+        else:
+            self.proclamations.extend(self.discarded_proclamations)
+            random.shuffle(self.proclamations)
+            self.get_3proclamations()
 
     def enact_proclamation(self, loyalty: Loyalty):
         if loyalty == 'PHOENIX_ORDER':
@@ -90,22 +81,24 @@ class Board(BaseModel):
 class Game(BaseModel):
     name: str
     password: Optional[str] = None
-    max_players: int = 5
     status: GameStatus = 'CREATED'
-    users: Set[str] = set()
-    players: Dict[str, Player] = {}
     winner: Loyalty = None
+    max_players: int = 5
+    players: Dict[str, Player] = {}
     board: Board = None
     elections: Elections = None
+    spells: List[Spell] = []
     chat: List[str] = []
 
     def is_full(self):
         return len(self.players) == self.max_players
 
+    def exist(self, username: str):
+        users = [player.user_name for player in self.players.values()]
+        return username in users
+
     def create_player(self, player_name: str, username: str):
-        self.users.add(username)
-        player = Player(name=player_name, user_name=username)
-        self.players[player_name] = player
+        self.players[player_name] = Player(name=player_name, user_name=username)
 
     def owner(self):
         return list(self.players.values())[0].user_name

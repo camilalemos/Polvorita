@@ -107,22 +107,32 @@ class Game(BaseModel):
         self.players.pop(player_name)
         self.num_players -= 1
 
+    def assign_roles(self):
+        to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']
+        to_assign_death_eaters = [player for player in self.players.values() if player.loyalty == 'DEATH_EATERS']
+        PO_roles = random.sample(phoenix_order_roles, len(PHOENIX_ORDER_ROLES))
+        DE_roles = random.sample(death_eaters_roles, len(DEATH_EATERS_ROLES))
+        to_assign_death_eaters.pop().role = 'VOLDEMORT'
+        while to_assign_phoenix_order:
+            to_assign_phoenix_order.pop().role = PO_roles.pop()
+        while to_assign_death_eaters:
+            to_assign_death_eaters.pop().role = DE_roles.pop()
+
     def assign_loyalties(self):
         num_death_eaters = math.ceil(self.num_players / 2)-1
         num_phoenix_order = self.num_players - num_death_eaters
-        to_assign = random.sample(list(self.players.keys()), self.num_players)
-        for i in range(num_death_eaters):
-            player = to_assign.pop()
-            self.players[player].loyalty = 'DEATH_EATERS'
+        to_assign = random.sample(list(self.players.values()), self.num_players)
         for i in range(num_phoenix_order):
-            player = to_assign.pop()
-            self.players[player].loyalty = 'PHOENIX_ORDER'
+            to_assign.pop().loyalty = 'PHOENIX_ORDER'
+        for i in range(num_death_eaters):
+            to_assign.pop().loyalty = 'DEATH_EATERS'
 
     def start(self):
         self.status = 'STARTED'
         self.board = Board()
         self.board.init_board()
         self.assign_loyalties()
+        self.assign_roles()
         self.elections = Elections()
         first_candidate = random.choice(list(self.players.keys()))
         self.elections.nominate('MINISTER', first_candidate)

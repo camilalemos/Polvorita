@@ -31,6 +31,9 @@ class Role(str, Enum):
     snape = 'SNAPE'
     voldemort = 'VOLDEMORT'
 
+PHOENIX_ORDER_ROLES = ['DUMBLEDORE', 'FRED', 'GEORGE', 'HARRY', 'HERMIONE', 'NEVILLE', 'RON', 'SIRIUS', 'SNAPE']
+DEATH_EATERS_ROLES = ['BELLATRIX', 'DOLORES', 'DRACO', 'LUCIUS', 'SNAPE']
+
 class Loyalty(str, Enum):
     phoenix_order = 'PHOENIX_ORDER'
     death_eaters = 'DEATH_EATERS'

@@ -52,8 +52,19 @@ class Elections(BaseModel):
         self.last_headmaster = headmaster
     def votation(self,player_name,vote):#
         self.votes[player_name] = vote
-    def rejected(self):
+    def vote_lumos(self):#
+        return  sum(map(("LUMOS").__eq__, self.votes.values()))
+    def vote_nox(self):#
+        return  sum(map(("NOX").__eq__, self.votes.values()))
+    def check_votes(self,total_votes):#
+        return (sum(map(len, self.votes.values())) < total_votes)
+    def rejected(self):#
         self.governments_rejected += 1
+    def new_shift(self,new_candidate):#      
+        self.nominate('MINISTER', new_candidate)
+        self.nominate('HEADMASTER', None)
+        self.votes = {}
+        return new_candidate
 
 class Board(BaseModel):
     proclamations: List[Loyalty] = []
@@ -141,3 +152,8 @@ class Game(BaseModel):
     def new_minister_director(self,minister,headmaster):#
         self.players.get(minister).status = 'MINISTER'
         self.players.get(headmaster).status = 'HEADMASTER'
+    def status_game(self,state):#
+        return self.status != state
+    def reset_state_common(self):
+        for player in self.players.values():
+             player.status = 'COMMON'

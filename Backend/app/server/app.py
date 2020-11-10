@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from fastapi import FastAPI, Depends, Form, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from pony.orm import db_session, exists
+from pony.orm import db_session, exists, select
 from pydantic import EmailStr
 
 from .authentication import *
@@ -64,6 +64,32 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+#CHANGE PROFILE AND PASSWORD
+@app.put("/user/", response_model=User)
+async def change_profile(email: Optional[EmailStr] = Form(None),
+                         username: Optional[str] = Form(None, min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
+                         full_name: Optional[str] = Form(None, min_length=5, max_length=30, regex="^[A-Z a-z0-9]*$"),
+                         new_password: Optional[str] = Form(None, min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),
+                         password: str = Form(..., min_length=8, max_length=20),
+                         user: User = Depends(get_current_active_user)):
+    with db_session:
+        if username and db.User.exists(username=username):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username already exist")    
+        elif email and db.User.exists(email=email):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="E-mail already exist")
+
+        if not verify_password(password, user.password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect credentials")
+
+        if new_password:
+            new_password = get_password_hash(new_password)
+
+        updated_user = get(p for p in db.User if p.id == user.id)
+        updated_user = updated_user.update(email, username, full_name, new_password)
+
+    return updated_user.to_dict()
 
 #CREATE GAME
 @app.post("/game/", status_code=201, response_model=Game)

@@ -113,12 +113,15 @@ class Game(BaseModel):
     owner_username: str
     owner_name: str
     password: Optional[str] = None
-    max_players: int = 5
     status: GameStatus = 'CREATED'
-    players: Dict[str, Player] = {}
     winner: Loyalty = None
+    min_players: int = 5
+    max_players: int = 5
+    num_players: int = 0   
+    players: Dict[str, Player] = {}   
     board: Board = None
     elections: Elections = None
+    spells: List[Spell] = []
     chat: List[str] = []
 
     def is_full(self):

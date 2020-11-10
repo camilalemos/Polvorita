@@ -41,6 +41,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
                         onChange={value => setUserNameOrEmail(value.target.value)}
                         id="userNameOrEmail"
                         size='small'
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleLogin()}}
                         required
                         label="Username or email"
                         variant="outlined"
@@ -53,6 +54,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
                         onChange={value => setPassword(value.target.value)}
                         id="password"
                         type='password'
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleLogin()}}
                         size='small'
                         style={{  marginBottom: 40, minWidth:300 }}
                         label="Password"
@@ -61,7 +63,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent:'center', marginBottom: 20, marginTop: 20 }}>
-                    {false ? 
+                    {status === 'loading' ? 
                         <CircularProgress />
                     :
                         <Button onClick={handleLogin} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>

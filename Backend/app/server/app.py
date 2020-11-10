@@ -156,7 +156,7 @@ async def discard_proclamation(player_name:str, loyalty: Loyalty, game: Game = D
 
 @app.put("/game/director/election/{player_name}", response_model=Game)
 async def choose_director(player_name:str ,director_candidate:str ,game: Game = Depends(get_game)):
-    if game.status != 'STARTED':
+    if game.status_game('STARTED'):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
     elif player_name != game.elections.minister_candidate:
        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the minister can select a candidate for director")
@@ -170,7 +170,7 @@ async def choose_director(player_name:str ,director_candidate:str ,game: Game = 
 
 @app.put("/game/vote/{player_name}", response_model=Game)
 async def player_vote(player_name:str, vote:Vote, game: Game = Depends(get_game)):
-    if game.status != 'STARTED':
+    if game.status_game('STARTED'):
        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
     elif player_name in game.elections.votes.keys():
        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="the player has already voted")
@@ -183,42 +183,29 @@ async def player_vote(player_name:str, vote:Vote, game: Game = Depends(get_game)
 
 @app.put("/game/vote/results/")
 async def show_election_results(game: Game = Depends(get_game)):
-    if game.status != 'STARTED':
+    if game.status_game('STARTED'):
        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
-    elif sum(map(len, game.elections.votes.values())) < 5:
+    elif game.elections.check_votes(5):
        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="one or more players have not decided their vote")
     else:
-       vote_lumus = sum(map(("LUMUS").__eq__, game.elections.votes.values())) 
-       voto_nox   = sum(map(("NOX").__eq__, game.elections.votes.values()))
-       if vote_lumus < voto_nox:
+       if game.elections.vote_lumos() < game.elections.vote_nox():
           game.elections.rejected()
           return 'NOX'
        else:
-          for player in game.players.values():
-              player.status = 'COMMON'
-
-          game.elections.last_minister_headmaster(game.elections.minister_candidate,
-                                        game.elections.headmaster_candidate)
-          game.players.new_minister_director(game.elections.minister_candidate,
-                                             game.elections.headmaster_candidate)      
+          game.elections.last_minister_headmaster(game.elections.minister_candidate,game.elections.headmaster_candidate)
+          game.new_minister_director(game.elections.minister_candidate,game.elections.headmaster_candidate) 
+               
           return 'LUMUS'
-
-
 
 # shift change logic
 
 @app.put("/game/change/turn/")
 async def shift_change_logic(game: Game = Depends(get_game)):
-      if game.status != 'STARTED':
+      if  game.status_game('STARTED'):
          raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
       else:
-          for player in game.players.values():
-               player.status = 'COMMON'
-          new_candidate = random.choice(list(game.players.values())).name
-          game.elections.nominate('MINISTER', new_candidate)
-          game.elections.nominate('HEADMASTER', None)
-          game.elections.votes = {}
-          return new_candidate
+         game.reset_state_common()
+         return game.elections.new_shift(random.choice(list(game.players.values())).name)
 
 
 

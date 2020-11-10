@@ -24,7 +24,7 @@ const _loginUser = async (data, dispatch) => {
 
         const response = await axios({
             method: 'POST',
-            url: `${api.url}/token/`,
+            url: `${api.url}/login/`,
             data: bodyFormData,
             headers: { 'Content-Type':'multipart/form-data' }
 

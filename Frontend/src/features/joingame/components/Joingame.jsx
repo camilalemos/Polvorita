@@ -59,8 +59,8 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 			<div key={currentGame.name}>
 				<div style={{display:'flex',alignItems:'center'}}>
 					<a style={{flex: 1, fontSize: 20}}>{currentGame.name}</a>
-					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{currentGame.owner_name}</a>
-		<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{Object.keys(currentGame.players).length}/{currentGame.num_players}</a>
+					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{Object.keys(currentGame.players)}</a>
+		<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{currentGame.num_players}/{currentGame.max_players}</a>
 					<div style={{flex: 1, textAlign: 'right', display:'flex', alignItems:'center', justifyContent:'flex-end'}}>
 					<ListItemIcon >
 						{currentGame.password === null ?

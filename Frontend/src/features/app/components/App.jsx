@@ -1,5 +1,5 @@
-import React, { Component, Suspense } from 'react';
-import { HashRouter as Router, Redirect, Route } from "react-router-dom";
+import React, { Component, Suspense, useEffect } from 'react';
+import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import RegisterContainer from '../../register/containers/RegisterContainers'
@@ -22,32 +22,54 @@ const theme = createMuiTheme({
     },
 });
 
-class App extends Component {
+function PrivateRoute({ component, auth, ...rest }) {
 
-    componentDidMount() {
-        this.props.getUserData()
-    }
+    return (
+        <Route
+            {...rest}
+            render={({ location }) =>
+            auth ? (
+                component
+            ) : (
+                <Redirect
+                to={{
+                    pathname: "/login",
+                    state: { from: location }
+                }}
+                />
+            )
+            }
+        />
+        );
+}
 
-    render() {
-        return (
-            <MuiThemeProvider theme={theme}>
-                <SnackbarProvider maxSnack={3}>
-                    <Router>
+const App = function ({ getUserData, statusLogin, is_logged}) {
+
+    useEffect(() => {
+        getUserData()
+    },[getUserData]);
+
+    return (
+        <MuiThemeProvider theme={theme}>
+            <SnackbarProvider maxSnack={3}>
+                <Router>
+                    <Switch>
                         <Route exact path="/">
-                            {this.props.statusLogin === 'success' ?
+                            {statusLogin === 'success' ?
                                 <Redirect to="/lobby" />
                             :
                                 <Redirect to='/login' />
                             }
                         </Route>
                         <Route exact path='/login' component={LoginContainer} />
-                        <Route exact path='/register' component={RegisterContainer} />
-                        <Route exact path='/lobby' component={JoinGameContainer} /> 
-                    </Router>
-                </SnackbarProvider>
-            </MuiThemeProvider>
-        );
-    }
+                        <PrivateRoute auth={is_logged} path='/register' component={RegisterContainer} />
+                        <PrivateRoute auth={is_logged} path='/lobby' component={JoinGameContainer} /> 
+                    </Switch>
+                </Router>
+            </SnackbarProvider>
+        </MuiThemeProvider>
+    );
+    
 
 }
 

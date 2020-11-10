@@ -7,7 +7,8 @@ import { getUserData } from '../../login/actions/LoginAction';
 
 function mapStateToProps(state) {
     return {
-        statusLogin: state.login.statusLogin
+        statusLogin: state.login.statusLogin,
+        is_logged: state.login.is_logged
     };
 }
 

@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from fastapi import FastAPI, Depends, Form, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from pony.orm import db_session, exists, select
+from pony.orm import db_session, exists
 from pydantic import EmailStr
 
 from .authentication import *

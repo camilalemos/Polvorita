@@ -57,20 +57,19 @@ function Square(props) {
 }
 */
 
-
 const images = [
   {
-    url: '../../../constants/images/TableroM1.png',
+    url: require('../../../constants/images/TableroM1.png'),
     title: 'Mortifagos1',
     width: '60%',
   },
   {
-    url: '../../../constants/images/TableroOF.png',
+    url: require('../../../constants/images/TableroOF.png'),
     title: 'Mortifagos2',
     width: '60%',
   },
   {
-    url: '../../../constants/images/Descarte.jpg',
+    url: require('../../../constants/images/Descarte.jpg'),
     title: 'Descarte',
     width: '10%',
   }
@@ -155,36 +154,36 @@ export default function ButtonBases() {
     );
 }
 
-  return (
-    <div className={classes.root}>
-      {images.map((image) => (
-        <ButtonBase
-          focusRipple
-          key={image.title}
-          className={classes.image}
-          focusVisibleClassName={classes.focusVisible}
-          style={{
-            width: image.width,
-          }}
-        >
-          <span
-            className={classes.imageSrc}
-            style={{
-              backgroundImage: `url(${image.url})`,
-            }}
-          />
-          <span className={classes.imageBackdrop}>
-                {ShowSquare(0)}
-                {ShowSquare(1)}
-                {ShowSquare(2)}
-                {ShowSquare(3)}
-                {ShowSquare(4)}
-                {ShowSquare(5)}
-            </span> 
-        </ButtonBase>
-      ))}
-    </div>
-  );
+    return (
+        <div className={classes.root}>
+            {images.map((image) => (
+                <ButtonBase
+                    focusRipple
+                    key={image.title}
+                    className={classes.image}
+                    focusVisibleClassName={classes.focusVisible}
+                    style={{
+                    width: image.width,
+                    }}
+                >
+                    <span
+                    className={classes.imageSrc}
+                    style={{
+                        backgroundImage: `url(${image.url})`,
+                    }}
+                    />
+                    <span className={classes.imageBackdrop}>
+                        {ShowSquare(0)}
+                        {ShowSquare(1)}
+                        {ShowSquare(2)}
+                        {ShowSquare(3)}
+                        {ShowSquare(4)}
+                        {ShowSquare(5)}
+                    </span> 
+                </ButtonBase>
+            ))}
+        </div>
+    );
 }
 
 

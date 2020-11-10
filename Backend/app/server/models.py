@@ -45,13 +45,13 @@ class Elections(BaseModel):
         elif status == 'HEADMASTER':
             self.headmaster_candidate = player_name
 
-class Board(BaseModel):
+class Proclamations(BaseModel):
     proclamations: List[Loyalty] = []
     discarded_proclamations: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
-    def init_board(self):
+    def init_proclamations(self):
         for i in range(6):
             self.proclamations.append('PHOENIX_ORDER')
         for i in range(11):
@@ -87,7 +87,7 @@ class Game(BaseModel):
     max_players: int = 5
     num_players: int = 0
     players: Dict[str, Player] = {}
-    board: Board = None
+    proclamations: Proclamations = None
     elections: Elections = None
     spells: List[Spell] = []
     chat: List[str] = []
@@ -110,8 +110,8 @@ class Game(BaseModel):
     def assign_roles(self):
         to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']
         to_assign_death_eaters = [player for player in self.players.values() if player.loyalty == 'DEATH_EATERS']
-        PO_roles = random.sample(phoenix_order_roles, len(PHOENIX_ORDER_ROLES))
-        DE_roles = random.sample(death_eaters_roles, len(DEATH_EATERS_ROLES))
+        PO_roles = random.sample(PHOENIX_ORDER_ROLES, len(PHOENIX_ORDER_ROLES))
+        DE_roles = random.sample(DEATH_EATERS_ROLES, len(DEATH_EATERS_ROLES))
         to_assign_death_eaters.pop().role = 'VOLDEMORT'
         while to_assign_phoenix_order:
             to_assign_phoenix_order.pop().role = PO_roles.pop()
@@ -129,8 +129,8 @@ class Game(BaseModel):
 
     def start(self):
         self.status = 'STARTED'
-        self.board = Board()
-        self.board.init_board()
+        self.proclamations = Proclamations()
+        self.proclamations.init_proclamations()
         self.assign_loyalties()
         self.assign_roles()
         self.elections = Elections()
@@ -138,11 +138,11 @@ class Game(BaseModel):
         self.elections.nominate('MINISTER', first_candidate)
 
     def finish(self, manager):
-        if self.status == 'STARTED' and self.board.PO_enacted_proclamations == 5:
+        if self.status == 'STARTED' and self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
             self.status = 'FINISHED'
             manager.delete_game(self.name)
-        elif self.status == 'STARTED' and self.board.DE_enacted_proclamations == 6:
+        elif self.status == 'STARTED' and self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
             self.status = 'FINISHED'
             manager.delete_game(self.name)

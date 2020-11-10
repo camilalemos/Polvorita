@@ -164,11 +164,11 @@ def check_params(player_name: str, params = Depends(get_game)):
 @app.put("/game/proclamation/enact/", response_model=Game)
 async def enact_proclamation(loyalty: Loyalty, params = Depends(check_params)):
     game = params["game"]
-    if params["player"].status != 'HEADMASTER':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
-    else:
-        game.board.enact_proclamation(loyalty)
-        game.finish(manager)
+    #if params["player"].status != 'HEADMASTER':
+     #   raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
+    #else:
+    game.proclamations.enact_proclamation(loyalty)
+    game.finish(manager)
 
     return game
 
@@ -179,7 +179,7 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(check_params))
     if params["player"].status not in ['MINISTER', 'HEADMASTER']:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
     else:
-        game.board.discard_proclamation(loyalty)
+        game.proclamations.discard_proclamation(loyalty)
 
     return game
 

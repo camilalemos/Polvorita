@@ -12,30 +12,68 @@ import { withSnackbar } from 'notistack';
 
 
 
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-const CreateGameForm = function ({ createGame, status, open, onClose, enqueueSnackbar }) {
+const CreateGameForm = function ({ createGame, status, statusCode, open, onClose, enqueueSnackbar }) {
 
     const [gameName, setGameName] = useState('');
     const [playerName, setPlayerName] = useState('');
     const [gamePassword, setPassword] = useState('');
-    const [PlayerOrGameNameError, setPlayerOrGameNameError] = useState(false);
+    const [playerNameError, setPlayerNameError] = useState(false);
+    const [gameNameError, setGameNameError] = useState(false);
     const history = useHistory();
 
 
+    const checkInput = () => {
+        let result = true;
+        if (gameName.length === 0  || playerName.length === 0){
+            enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
+            result = false;
+        }
+        return result;
+    }
+
     const handleContinue = () => {
-        if (!gameName || !playerName) {
-            setPlayerOrGameNameError(true);
-        }else{
+        if (!gameName) {
+            setGameNameError(true);
+        }
+        if (!playerName) {
+            setPlayerNameError(true);
+        }
+        if (checkInput()) {
             createGame({ playerName, gameName, gamePassword })
         }
-	} 
+    }
+
+    const hasWhiteSpace = (input) => {
+        return input.indexOf(' ') >= 0;
+    }
+
+    const checkStatusCode = () => {
+        if (statusCode === '422' && (gameName.length > 20 || gameName.length < 5)){
+            enqueueSnackbar( 'Game Name must have 5 to 20 characters', { variant: 'error'});
+        }
+        if (statusCode === '422' && (playerName.length > 10 || playerName.length < 3)){
+            enqueueSnackbar( 'Player Name must have 3 to 10 characters', { variant: 'error'});
+        }
+        if (statusCode === '422' && (hasWhiteSpace(playerName) || hasWhiteSpace(gameName))){
+            enqueueSnackbar( 'White Space is not allowed', { variant: 'error'});
+        }
+        if (statusCode === '403'){
+            enqueueSnackbar('Game name already in use', { variant: 'error'});
+        } 
+    }
     
     useEffect(() => {
-        if (status === 'failed') enqueueSnackbar('Game name is already in use', { variant: 'error'});
-        if (status === 'success') history.push(gameName)
+        if (status === 'failed') {
+            checkStatusCode();
+        }
+        if (status === 'success') { 
+            history.push(gameName)
+        }
     },[status])
 
     return (      
@@ -52,9 +90,9 @@ const CreateGameForm = function ({ createGame, status, open, onClose, enqueueSna
                 <TextField
                     value={gameName}
                     required
-                    error={PlayerOrGameNameError}
+                    error={gameNameError}
                     style={{ marginBottom: 40, minWidth:300 }}
-                    onChange={(value) => setGameName(value.target.value)}
+                    onChange={(value) => (setGameName(value.target.value), setGameNameError(false))}
                     id="gameName"
                     size='small'
                     label="Game Name"
@@ -63,9 +101,9 @@ const CreateGameForm = function ({ createGame, status, open, onClose, enqueueSna
                 <TextField
                     value={playerName}
                     required
-                    error={PlayerOrGameNameError}
+                    error={playerNameError}
                     style={{ marginBottom: 40, minWidth:300 }}
-                    onChange={(value) => setPlayerName(value.target.value)}
+                    onChange={(value) => (setPlayerName(value.target.value), setPlayerNameError(false))}
                     id="playerName"
                     size='small'
                     label="Player Name"

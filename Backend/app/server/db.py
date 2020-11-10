@@ -1,5 +1,4 @@
-from pony.orm import Database, db_session, PrimaryKey, Optional, Required
-from pydantic import EmailStr
+from pony.orm import Database, PrimaryKey, Optional, Required
 
 
 

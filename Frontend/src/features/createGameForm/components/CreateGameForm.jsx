@@ -37,6 +37,28 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         return result;
     }
 
+    const validated = (gameName, playerName, gamePassword) => {
+        let isAllowed = true;
+        const expression = /^([A-Z_a-z0-9])*$/
+        const passwordexpression = /^[A-Za-z0-9]*$/
+        
+        if (!expression.test(String(gameName).toLowerCase())){
+            setGameNameError(true);
+            isAllowed = false;
+        }
+        if (!expression.test(String(playerName).toLowerCase())){
+            setPlayerNameError(true);
+            isAllowed = false;
+        }
+        if (!passwordexpression.test(String(gamePassword).toLowerCase())){
+            setGamePasswordError(true);
+            isAllowed = false;
+        }
+        if (!isAllowed){
+            enqueueSnackbar( 'Special characters are not allowed', { variant: 'error'});
+        }
+        return isAllowed
+    }
     const handleContinue = () => {
         if (!gameName) {
             setGameNameError(true);
@@ -44,7 +66,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         if (!playerName) {
             setPlayerNameError(true);
         }
-        if (notEmpty()) {
+        if (notEmpty() && validated(gameName, playerName, gamePassword)) {
             createGame({ playerName, gameName, gamePassword })
         }
     }
@@ -77,8 +99,6 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         }
         if (statusCode === '422' && ( hasWhiteSpace(gameName, playerName, gamePassword))){
             enqueueSnackbar( 'White Space is not allowed', { variant: 'error'});
-        }else{
-            enqueueSnackbar( 'Special characters are not allowed', { variant: 'error'});
         }
         if (statusCode === '403'){
             enqueueSnackbar('Game name already in use', { variant: 'error'});

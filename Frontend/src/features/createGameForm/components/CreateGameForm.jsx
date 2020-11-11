@@ -74,16 +74,16 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
     const hasWhiteSpace = (input) => {
         return input.indexOf(' ') >= 0;
     }
-    
+
     const feedback422 = () =>{
         if ((!validated(gameName, playerName, gamePassword))){
             enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
         }
-        else if (gameName.length > 20 || gameName.length < 5){
+        if (gameName.length > 20 || gameName.length < 5){
             enqueueSnackbar( 'Game Name must have 5 to 20 characters', { variant: 'error'});
             setGameNameError(true);
         }
-        else if (playerName.length > 10 || playerName.length < 3){
+        if (playerName.length > 10 || playerName.length < 3){
             enqueueSnackbar( 'Player Name must have 3 to 10 characters', { variant: 'error'});
             setPlayerNameError(true);
         }

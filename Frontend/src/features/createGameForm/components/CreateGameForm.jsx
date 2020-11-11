@@ -37,6 +37,20 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         return result;
     }
 
+    
+    const handleContinue = () => {
+        if (!gameName) {
+            setGameNameError(true);
+        }
+        if (!playerName) {
+            setPlayerNameError(true);
+        }
+        if (notEmpty()) {
+            createGame({ playerName, gameName, gamePassword })
+        }
+    }
+
+    
     const validated = (gameName, playerName, gamePassword) => {
         let isAllowed = true;
         const expression = /^([A-Z_a-z0-9])*$/
@@ -54,38 +68,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             setGamePasswordError(true);
             isAllowed = false;
         }
-        if (!isAllowed){
-            enqueueSnackbar( 'Special characters are not allowed', { variant: 'error'});
-        }
         return isAllowed
-    }
-    const handleContinue = () => {
-        if (!gameName) {
-            setGameNameError(true);
-        }
-        if (!playerName) {
-            setPlayerNameError(true);
-        }
-        if (notEmpty() && validated(gameName, playerName, gamePassword)) {
-            createGame({ playerName, gameName, gamePassword })
-        }
-    }
-
-    const hasWhiteSpace = (gameName, playerName, password) => {
-        let result = false;
-        if (gameName.indexOf(' ') >= 0){
-            setGameNameError(true);
-            result = true;
-        }
-        if (playerName.indexOf(' ') >= 0) {
-            setPlayerNameError(true);
-            result = true;
-        }
-        if(password.indexOf(' ') >= 0) {
-            setGamePasswordError(true);
-            result = true;
-        }
-        return result;
     }
 
     const checkStatusCode = () => {
@@ -97,8 +80,12 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             enqueueSnackbar( 'Player Name must have 3 to 10 characters', { variant: 'error'});
             setPlayerNameError(true);
         }
-        if (statusCode === '422' && ( hasWhiteSpace(gameName, playerName, gamePassword))){
-            enqueueSnackbar( 'White Space is not allowed', { variant: 'error'});
+        if (statusCode === '422' && (validated(gameName, playerName, gamePassword) && gamePassword.length > 0 && (gamePassword.length > 10 || gamePassword.length < 5))){
+            enqueueSnackbar( 'Password is optional, but if you want it, must have 5 to 10 characters', { variant: 'error'});
+            setGamePasswordError(true);
+        }
+        if (statusCode === '422' && (!validated(gameName, playerName, gamePassword))){
+            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
         }
         if (statusCode === '403'){
             enqueueSnackbar('Game name already in use', { variant: 'error'});

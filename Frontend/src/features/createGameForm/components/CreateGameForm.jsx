@@ -24,10 +24,11 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
     const [gamePassword, setPassword] = useState('');
     const [playerNameError, setPlayerNameError] = useState(false);
     const [gameNameError, setGameNameError] = useState(false);
+    const [gamePasswordError, setGamePasswordError] = useState(false);
     const history = useHistory();
 
 
-    const checkInput = () => {
+    const notEmpty = () => {
         let result = true;
         if (gameName.length === 0  || playerName.length === 0){
             enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
@@ -43,24 +44,41 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         if (!playerName) {
             setPlayerNameError(true);
         }
-        if (checkInput()) {
+        if (notEmpty()) {
             createGame({ playerName, gameName, gamePassword })
         }
     }
 
-    const hasWhiteSpace = (input) => {
-        return input.indexOf(' ') >= 0;
+    const hasWhiteSpace = (gameName, playerName, password) => {
+        let result = false;
+        if (gameName.indexOf(' ') >= 0){
+            setGameNameError(true);
+            result = true;
+        }
+        if (playerName.indexOf(' ') >= 0) {
+            setPlayerNameError(true);
+            result = true;
+        }
+        if(password.indexOf(' ') >= 0) {
+            setGamePasswordError(true);
+            result = true;
+        }
+        return result;
     }
 
     const checkStatusCode = () => {
         if (statusCode === '422' && (gameName.length > 20 || gameName.length < 5)){
             enqueueSnackbar( 'Game Name must have 5 to 20 characters', { variant: 'error'});
+            setGameNameError(true);
         }
         if (statusCode === '422' && (playerName.length > 10 || playerName.length < 3)){
             enqueueSnackbar( 'Player Name must have 3 to 10 characters', { variant: 'error'});
+            setPlayerNameError(true);
         }
-        if (statusCode === '422' && (hasWhiteSpace(playerName) || hasWhiteSpace(gameName))){
+        if (statusCode === '422' && ( hasWhiteSpace(gameName, playerName, gamePassword))){
             enqueueSnackbar( 'White Space is not allowed', { variant: 'error'});
+        }else{
+            enqueueSnackbar( 'Special characters are not allowed', { variant: 'error'});
         }
         if (statusCode === '403'){
             enqueueSnackbar('Game name already in use', { variant: 'error'});
@@ -93,6 +111,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                     error={gameNameError}
                     style={{ marginBottom: 40, minWidth:300 }}
                     onChange={(value) => (setGameName(value.target.value), setGameNameError(false))}
+                    onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     id="gameName"
                     size='small'
                     label="Game Name"
@@ -104,6 +123,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                     error={playerNameError}
                     style={{ marginBottom: 40, minWidth:300 }}
                     onChange={(value) => (setPlayerName(value.target.value), setPlayerNameError(false))}
+                    onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     id="playerName"
                     size='small'
                     label="Player Name"
@@ -115,9 +135,11 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                         id="outlined-adornment-password"
                         type='password'
                         value={gamePassword}
+                        error={gamePasswordError}
                         style={{ marginBottom: 40, minWidth:300 }}
                         label = 'password'
-                        onChange={(value) => setPassword(value.target.value)}
+                        onChange={(value) => setPassword(value.target.value, setGamePasswordError(false))}
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     />
                 </FormControl>
             

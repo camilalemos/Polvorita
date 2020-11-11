@@ -62,7 +62,7 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    
+
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -164,11 +164,11 @@ def check_params(player_name: str, params = Depends(get_game)):
 @app.put("/game/proclamation/enact/", response_model=Game)
 async def enact_proclamation(loyalty: Loyalty, params = Depends(check_params)):
     game = params["game"]
-    #if params["player"].status != 'HEADMASTER':
-     #   raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
-    #else:
-    game.proclamations.enact_proclamation(loyalty)
-    game.finish(manager)
+    if params["player"].status != 'HEADMASTER':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
+    else:
+        game.proclamations.enact_proclamation(loyalty)
+        game.finish(manager)
 
     return game
 

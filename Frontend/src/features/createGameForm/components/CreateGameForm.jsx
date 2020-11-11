@@ -70,26 +70,41 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         }
         return isAllowed
     }
-
-    const checkStatusCode = () => {
-        if (statusCode === '422' && (gameName.length > 20 || gameName.length < 5)){
+    
+    const hasWhiteSpace = (input) => {
+        return input.indexOf(' ') >= 0;
+    }
+    
+    const feedback422 = () =>{
+        if ((!validated(gameName, playerName, gamePassword))){
+            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
+        }
+        else if (gameName.length > 20 || gameName.length < 5){
             enqueueSnackbar( 'Game Name must have 5 to 20 characters', { variant: 'error'});
             setGameNameError(true);
         }
-        if (statusCode === '422' && (playerName.length > 10 || playerName.length < 3)){
+        else if (playerName.length > 10 || playerName.length < 3){
             enqueueSnackbar( 'Player Name must have 3 to 10 characters', { variant: 'error'});
             setPlayerNameError(true);
         }
-        if (statusCode === '422' && (validated(gameName, playerName, gamePassword) && gamePassword.length > 0 && (gamePassword.length > 10 || gamePassword.length < 5))){
+        if (!hasWhiteSpace(gamePassword) && gamePassword.length > 0 && (gamePassword.length > 10 || gamePassword.length < 5)){
             enqueueSnackbar( 'Password is optional, but if you want it, must have 5 to 10 characters', { variant: 'error'});
             setGamePasswordError(true);
         }
-        if (statusCode === '422' && (!validated(gameName, playerName, gamePassword))){
-            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
+    }
+
+    const checkStatusCode = () => {
+        switch (statusCode) {
+            case '422':
+                feedback422();
+                break;
+            case '403':
+                enqueueSnackbar('Game name already in use', { variant: 'error'});
+                break;
+            default:
+                enqueueSnackbar('Something is going wrong, check your conection or try again later', { variant: 'error'});
+                break;
         }
-        if (statusCode === '403'){
-            enqueueSnackbar('Game name already in use', { variant: 'error'});
-        } 
     }
     
     useEffect(() => {

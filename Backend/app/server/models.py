@@ -1,5 +1,5 @@
-from typing import Optional, List, Dict
-import random
+from typing import Optional, List, Dict, Set
+import random, math
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel, EmailStr
@@ -23,7 +23,7 @@ class User(BaseModel):
 
 class Player(BaseModel):
     name: str
-    game_name: str
+    user_name: str
     is_alive: bool = True
     role: Role = None
     loyalty: Loyalty = None
@@ -66,35 +66,26 @@ class Elections(BaseModel):
         self.votes = {}
         return new_candidate
 
-class Board(BaseModel):
+class Proclamations(BaseModel):
     proclamations: List[Loyalty] = []
+    discarded_proclamations: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
-    PO_discarded_proclamations: int = 0
     DE_enacted_proclamations: int = 0
-    DE_discarded_proclamations: int = 0
-    spells: List[Spell] = []
 
-    def init_board(self):
-        self.shuffle_proclamations(6, 11)
+    def init_proclamations(self):
+        for i in range(6):
+            self.proclamations.append('PHOENIX_ORDER')
+        for i in range(11):
+            self.proclamations.append('DEATH_EATERS')
+        random.shuffle(self.proclamations)
 
-    def shuffle_proclamations(self, a: int, b: int):
-        PO, DE = a, b
-        while PO != 0 or DE != 0:
-            proclamation = random.choice(list(Loyalty))
-            if proclamation == 'PHOENIX_ORDER' and PO != 0:
-                self.proclamations.append(proclamation)
-                PO -= 1
-            if proclamation == 'DEATH_EATERS' and DE != 0:
-                self.proclamations.append(proclamation)
-                DE -= 1
-
-    def get_proclamation(self):
-        try:
-            return self.proclamations.pop()
-        except Exception:
-            PO = self.PO_discarded_proclamations
-            DE = self.DE_discarded_proclamations
-            self.shuffle_proclamations(PO, DE)
+    def get_3proclamations(self):
+        if len(self.proclamations) >= 3:
+            return [self.proclamations.pop(), self.proclamations.pop(), self.proclamations.pop()]
+        else:
+            self.proclamations.extend(self.discarded_proclamations)
+            random.shuffle(self.proclamations)
+            self.get_3proclamations()
 
     def enact_proclamation(self, loyalty: Loyalty):
         if loyalty == 'PHOENIX_ORDER':
@@ -110,8 +101,6 @@ class Board(BaseModel):
 
 class Game(BaseModel):
     name: str
-    owner_username: str
-    owner_name: str
     password: Optional[str] = None
     status: GameStatus = 'CREATED'
     winner: Loyalty = None
@@ -119,36 +108,62 @@ class Game(BaseModel):
     max_players: int = 5
     num_players: int = 0   
     players: Dict[str, Player] = {}   
-    board: Board = None
+    proclamations: Proclamations = None
     elections: Elections = None
     spells: List[Spell] = []
     chat: List[str] = []
-
-    def is_full(self):
-        return len(self.players) == self.max_players
+    
+    def exist(self, username: str):
+        users = [player.user_name for player in self.players.values()]
+        return username in users
 
     def create_player(self, player_name: str, username: str):
-        self.users.add(username)
-        player = Player(name=player_name, user_name=username)
-        self.players[player_name] = player
+        self.players[player_name] = Player(name=player_name, user_name=username)
+        self.num_players += 1
 
+    def delete_player(self, player_name: str):
+        self.players.pop(player_name)
+        self.num_players -= 1
+    
+    def assign_roles(self):
+        to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']
+        to_assign_death_eaters = [player for player in self.players.values() if player.loyalty == 'DEATH_EATERS']
+        PO_roles = random.sample(PHOENIX_ORDER_ROLES, len(PHOENIX_ORDER_ROLES))
+        DE_roles = random.sample(DEATH_EATERS_ROLES, len(DEATH_EATERS_ROLES))
+        to_assign_death_eaters.pop().role = 'VOLDEMORT'
+        while to_assign_phoenix_order:
+            to_assign_phoenix_order.pop().role = PO_roles.pop()
+        while to_assign_death_eaters:
+            to_assign_death_eaters.pop().role = DE_roles.pop()
+
+    def assign_loyalties(self):
+        num_death_eaters = math.ceil(self.num_players / 2)-1
+        num_phoenix_order = self.num_players - num_death_eaters
+        to_assign = random.sample(list(self.players.values()), self.num_players)
+        for i in range(num_phoenix_order):
+            to_assign.pop().loyalty = 'PHOENIX_ORDER'
+        for i in range(num_death_eaters):
+            to_assign.pop().loyalty = 'DEATH_EATERS'
+   
     def owner(self):
         return list(self.players.values())[0].user_name
 
     def start(self):
         self.status = 'STARTED'
-        self.board = Board()
-        self.board.init_board()
+        self.proclamations = Proclamations()
+        self.proclamations.init_proclamations()
+        self.assign_loyalties()
+        self.assign_roles()
         self.elections = Elections()
-        first_candidate = random.choice(list(self.players.values())).name
+        first_candidate = random.choice(list(self.players.keys()))
         self.elections.nominate('MINISTER', first_candidate)
 
     def finish(self, manager):
-        if self.status == 'STARTED' and self.board.PO_enacted_proclamations == 5:
+        if self.status == 'STARTED' and self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
             self.status = 'FINISHED'
             manager.delete_game(self.name)
-        elif self.status == 'STARTED' and self.board.DE_enacted_proclamations == 6:
+        elif self.status == 'STARTED' and self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
             self.status = 'FINISHED'
             manager.delete_game(self.name)
@@ -160,3 +175,4 @@ class Game(BaseModel):
     def reset_state_common(self):
         for player in self.players.values():
              player.status = 'COMMON'
+

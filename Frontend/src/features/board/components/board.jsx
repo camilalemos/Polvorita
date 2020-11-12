@@ -1,48 +1,62 @@
 import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import ShowProclamation from './proclamation';
+import Slide from '@material-ui/core/Slide';
+import Snackbar from '@material-ui/core/Snackbar';
 
+//import ShowProclamation from './proclamation';
+//import Button from '@material-ui/core/Button';
 //import TableroMortifago1 from '../../../constants/images/TableroM1.png'
-
-function Square(proclamation, img, onClick) {
-
-    //const [value, setValue] = useState[]
+  
+function Square() {
 
     return (
-        <button className = "square" onClick={onClick}>
-            {proclamation.value}
+        <button className = "square" >
             Cartas
         </button>
     )
 }
 
-
 export default function  Board() {
   
   const classes = useStyles();
-  const [openModal, setOpenModal] = useState(false);
-  //const [square, setSquare] = useState({square})
-  
 
   function ShowSquare(i){
-
     return (
-      <Square
-        //value = {setSquare.squares[i]}
-
-      />
+      <Square/>
     );
   }
-  function ShowDeck(i){
+
+  function TransitionUp(props) {
+    return <Slide {...props} direction="up" />;
+  }
+
+  const ShowDeck = () => {
+
+    const [open, setOpen] = React.useState(false);
+    const [transition, setTransition] = React.useState(undefined);
+    const deckfake = ["OF","OF","Mortifago"]
+    
+    const handleClick = (Transition) => () => {
+      setTransition(() => Transition);
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
 
     return (
-    <div>
-      <Square
-        //value = {setSquare.squares[i]}
-        onClick = {() => {setOpenModal(true)}}
-      />
-        <ShowProclamation open={openModal} onClose={() => setOpenModal(false)}/>
+      <div>
+        <button onClick={handleClick(TransitionUp)}>Cartas del Deck</button>
+        <Snackbar open={open} onClose={handleClose} TransitionComponent={transition} key={transition ? transition.name : ''}>
+          <div>
+            {deckfake.map((proc) => (
+              <button>
+              {proc}
+              </button>
+            ))}
+          </div>
+        </Snackbar>
       </div>
     );
   }
@@ -66,7 +80,7 @@ export default function  Board() {
             style={{width: image.width,}} disable>
           <span className ={classes.imageSrc} style={{ backgroundImage: `url(${image.url})`,}} />
             <span className={classes.imageBackdrop}>
-              {ShowDeck(1)}
+              {ShowDeck()}
           </span>
         </div>
         ))}
@@ -198,10 +212,3 @@ const useStyles = makeStyles((theme) => ({
         </div>
     );
 }*/
-
-
-
-
-
-
-

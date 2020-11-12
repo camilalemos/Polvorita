@@ -1,64 +1,94 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import ButtonBase from '@material-ui/core/ButtonBase';
+import Button from '@material-ui/core/Button';
+import ShowProclamation from './proclamation';
 
 //import TableroMortifago1 from '../../../constants/images/TableroM1.png'
 
-function Square(props) {
+function Square(proclamation, img, onClick) {
 
-    //const [value, setValue] = useState(null)
+    //const [value, setValue] = useState[]
 
     return (
-        <button className = "square">
-            {props.value}
+        <button className = "square" onClick={onClick}>
+            {proclamation.value}
+            Cartas
         </button>
     )
 }
 
-/*export default function  Board() {
-    
-    //const [square, setSquare] = useState({square})
 
-    function ShowSquare(i){
+export default function  Board() {
+  
+  const classes = useStyles();
+  const [openModal, setOpenModal] = useState(false);
+  //const [square, setSquare] = useState({square})
+  
 
-        return (
-            <Square
-                //value = {setSquare.squares[i]}
-            />
-        );
-    }
+  function ShowSquare(i){
 
     return (
-        <div className="Board"> 
-            <div className = "Mortifagos" background= {TableroMortifago1} >
-                {ShowSquare(0)}
-                {ShowSquare(1)}
-                {ShowSquare(2)}
-                {ShowSquare(3)}
-                {ShowSquare(4)}
-                {ShowSquare(5)}
-            </div>
-            <p>
-                {ShowSquare(12)}
-                {ShowSquare(13)}
-            </p>
-            <div className = "FenixOrder">
-                {ShowSquare(6)}
-                {ShowSquare(7)}
-                {ShowSquare(8)}
-                {ShowSquare(9)}
-                {ShowSquare(10)}
-                {ShowSquare(11)}
-            </div>
+      <Square
+        //value = {setSquare.squares[i]}
 
+      />
+    );
+  }
+  function ShowDeck(i){
+
+    return (
+    <div>
+      <Square
+        //value = {setSquare.squares[i]}
+        onClick = {() => {setOpenModal(true)}}
+      />
+        <ShowProclamation open={openModal} onClose={() => setOpenModal(false)}/>
+      </div>
+    );
+  }
+
+  return (
+    <div className={classes.root}> 
+      <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible}
+        style={{width: '70%',}} disable>
+        <span className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroM1.png')})`,}} />
+        <span className={classes.imageBackdrop}>
+          {ShowSquare(0)}
+          {ShowSquare(1)}
+          {ShowSquare(2)}
+          {ShowSquare(3)}
+          {ShowSquare(4)}
+          {ShowSquare(5)}
+        </span>
+      </div>
+      <div className={classes.root} > {images.map((image) => (
+        <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible}
+            style={{width: image.width,}} disable>
+          <span className ={classes.imageSrc} style={{ backgroundImage: `url(${image.url})`,}} />
+            <span className={classes.imageBackdrop}>
+              {ShowDeck(1)}
+          </span>
         </div>
-
-    )
+        ))}
+      </div>
+        <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible}
+          style={{width: '70%',}} disable>
+        <span className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroOF.png')})`,}} />
+          <span className={classes.imageBackdrop}>
+            {ShowSquare(6)}
+            {ShowSquare(7)}
+            {ShowSquare(8)}
+            {ShowSquare(9)}
+            {ShowSquare(10)}
+        </span>
+      </div>
+    </div>
+  )
 }
-*/
+
 
 const images = [
-  {
+  /*{
     url: require('../../../constants/images/TableroM1.png'),
     title: 'Mortifagos1',
     width: '60%',
@@ -67,11 +97,16 @@ const images = [
     url: require('../../../constants/images/TableroOF.png'),
     title: 'Mortifagos2',
     width: '60%',
+  },*/
+  {
+    url: require('../../../constants/images/Proclamacion.jpg'),
+    title: 'Mortifagos1',
+    width: '20%',
   },
   {
     url: require('../../../constants/images/Descarte.jpg'),
     title: 'Descarte',
-    width: '10%',
+    width: '20%',
   }
 
 ];
@@ -82,6 +117,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     minWidth: 300,
     width: '100%',
+    placeContent: 'center',
   },
   image: {
     position: 'relative',
@@ -119,52 +155,29 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: theme.palette.common.black,
-    opacity: 0,
+    opacity: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: theme.palette.common.white,
     transition: theme.transitions.create('opacity'),
   },
-  imageTitle: {
-    position: 'relative',
-    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(1) + 6}px`,
-  },
-  imageMarked: {
-    height: 3,
-    width: 18,
-    backgroundColor: theme.palette.common.white,
-    position: 'absolute',
-    bottom: -2,
-    left: 'calc(50% - 9px)',
-    transition: theme.transitions.create('opacity'),
-  },
 }));
 
-export default function ButtonBases() {
+/*export default function ButtonBases() {
   const classes = useStyles();
-
-  function ShowSquare(i){
-
-    return (
-        <Square
-            //value = {setSquare.squares[i]}
-        />
-    );
-}
 
     return (
         <div className={classes.root}>
             {images.map((image) => (
-                <ButtonBase
+                <div
                     focusRipple
                     key={image.title}
                     className={classes.image}
                     focusVisibleClassName={classes.focusVisible}
                     style={{
                     width: image.width,
-                    }}
+                    }} disable
                 >
                     <span
                     className={classes.imageSrc}
@@ -180,11 +193,11 @@ export default function ButtonBases() {
                         {ShowSquare(4)}
                         {ShowSquare(5)}
                     </span> 
-                </ButtonBase>
+                </div>
             ))}
         </div>
     );
-}
+}*/
 
 
 

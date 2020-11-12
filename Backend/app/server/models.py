@@ -60,11 +60,7 @@ class Elections(BaseModel):
         return (sum(map(len, self.votes.values())) < total_votes)
     def rejected(self):#
         self.governments_rejected += 1
-    def new_shift(self,new_candidate):#      
-        self.nominate('MINISTER', new_candidate)
-        self.nominate('HEADMASTER', None)
-        self.votes = {}
-        return new_candidate
+    
 
 class Proclamations(BaseModel):
     proclamations: List[Loyalty] = []

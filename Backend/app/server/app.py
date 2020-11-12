@@ -183,6 +183,15 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(check_params))
 
     return game
 
+#CAST SPELL
+@app.put("/game/spells")
+async def cast_spell(spell: Spell, victim: Optional[str] = None, params = Depends(check_params)):
+    game = params ["game"]
+    if params["player"].status != 'HEADMASTER':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can cast a spell")
+    else:
+        return game.cast_spell(spell, victim, manager)
+
 @app.websocket("/lobby/")
 async def websocket_lobby(websocket: WebSocket):
     await manager.connect_lobby(websocket)

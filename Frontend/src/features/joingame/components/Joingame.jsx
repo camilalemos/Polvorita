@@ -8,7 +8,7 @@ import { withSnackbar } from 'notistack';
 import CreateGameContainer from '../../createGameForm/containers/CreateGameContainers';
 import PopUp from './PopUp';
 
-const GameList = ({joingame, status, enqueueSnackbar }) => {
+const Joingame = ({joingame, status, enqueueSnackbar }) => {
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playerName, setPlayerName] = useState('');
 	const [gamePassword, setPassword] = useState('');
@@ -80,4 +80,4 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
   );
 };
 
-export default withSnackbar(GameList);
+export default Joingame;

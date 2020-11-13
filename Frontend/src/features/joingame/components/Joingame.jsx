@@ -6,7 +6,9 @@ import LockOpenIcon from '@material-ui/icons/LockOpen';
 import { withSnackbar } from 'notistack';
 
 import CreateGameContainer from '../../createGameForm/containers/CreateGameContainers';
+import ChangeProfileContainer from '../../changeProfile/containers/ChangeProfileContainer';
 import PopUp from './PopUp';
+
 
 const GameList = ({joingame, status, enqueueSnackbar }) => {
 	const [gameInfo, setGameInfo] = useState([]);
@@ -14,10 +16,11 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 	const [gamePassword, setPassword] = useState('');
 	const [openModal, setOpenModal] = useState(false);
 	const [openModalCreateGame, setOpenModalCreateGame] = useState(false);
+	const [openModalChangeProfile, setOpenModalChangeProfile] = useState(false);
 
 	useEffect(() => {
 
-		const ws = new WebSocket('ws://localhost:8000/lobby/');
+		/*const ws = new WebSocket('ws://localhost:8000/lobby/');
 
 		ws.onopen = () => {
 		ws.send(JSON.stringify({event: 'lobby:subscribe'}));
@@ -34,7 +37,7 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 
 		return () => {
 		ws.close();
-		};
+		};*/
 	});
 
 	useEffect(() => {
@@ -46,6 +49,7 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
     <div style={{display: 'flex', flexDirection:'column', padding:40}}>
 		<div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
         	<b style={{ fontSize:70 }}>GAMES</b>
+			<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => setOpenModalChangeProfile(true)} variant="contained" >Profile</Button>
 			<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => setOpenModalCreateGame(true)} variant="contained" >Create Game</Button>
 		</div>
 		<div style={{padding:40}}>
@@ -75,6 +79,7 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 			))
         }
 		</div>
+		<ChangeProfileContainer open={openModalChangeProfile} onClose={() => setOpenModalChangeProfile(false)}/>
 		<CreateGameContainer open={openModalCreateGame} onClose={() => setOpenModalCreateGame(false)}/>
     </div>
   );

@@ -13,6 +13,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   
   export default function PopUp({ open, onClose }) {
   
+    const handleConfirm = () => {
+        onClose()
+    }
     return (
       <div>
           <Dialog
@@ -29,27 +32,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
         
                       style={{ marginBottom: 40, minWidth:300 }}
 
-                      id="gamePassword"
+                      id="Password"
                       size='small'
                       type='password'
                       label="Password"
                       variant="outlined"
                   />
-                   <TextField
-                        style={{ marginBottom: 40, minWidth:300 }}
-
-                        id="gamePassword"
-                        size='small'
-                        type='password'
-                        label="Password"
-                        variant="outlined"
-                    />
               </div>
               <DialogActions>
                   <Button onClick={onClose} color="primary">
                       Cancel
                   </Button>
-                  <Button  color="primary">
+                  <Button onClick={handleConfirm} color="primary">
                       Confirm
                   </Button>
               </DialogActions>

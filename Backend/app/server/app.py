@@ -218,14 +218,7 @@ async def show_election_results(params = Depends(check_params)):
     if game.elections.check_votes(5):
        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="one or more players have not decided their vote")
     else:
-       if game.elections.vote_lumos() < game.elections.vote_nox():
-          game.elections.rejected()
-          return 'NOX'
-       else:
-          game.elections.last_minister_headmaster(game.elections.minister_candidate,game.elections.headmaster_candidate)
-          game.new_minister_director(game.elections.minister_candidate,game.elections.headmaster_candidate) 
-               
-          return 'LUMUS'
+       return game.election_results()
 
 
 

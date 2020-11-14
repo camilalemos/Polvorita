@@ -62,8 +62,34 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    
+
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+#CHANGE PROFILE AND PASSWORD
+@app.put("/user/", response_model=User)
+async def change_profile(email: Optional[EmailStr] = Form(None),
+                         username: Optional[str] = Form(None, min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
+                         full_name: Optional[str] = Form(None, min_length=5, max_length=30, regex="^[A-Z a-z0-9]*$"),
+                         new_password: Optional[str] = Form(None, min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),
+                         password: str = Form(..., min_length=8, max_length=20),
+                         user: User = Depends(get_current_active_user)):
+    with db_session:
+        if username and db.User.exists(username=username):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username already exist")    
+        elif email and db.User.exists(email=email):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="E-mail already exist")
+
+        if not verify_password(password, user.password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect credentials")
+
+        if new_password:
+            new_password = get_password_hash(new_password)
+
+        updated_user = get(p for p in db.User if p.id == user.id)
+        updated_user = updated_user.update(email, username, full_name, new_password)
+
+    return updated_user.to_dict()
 
 #CREATE GAME
 @app.post("/game/", status_code=201, response_model=Game)
@@ -141,7 +167,7 @@ async def enact_proclamation(loyalty: Loyalty, params = Depends(check_params)):
     if params["player"].status != 'HEADMASTER':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
     else:
-        game.board.enact_proclamation(loyalty)
+        game.proclamations.enact_proclamation(loyalty)
         game.finish(manager)
 
     return game
@@ -153,7 +179,7 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(check_params))
     if params["player"].status not in ['MINISTER', 'HEADMASTER']:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
     else:
-        game.board.discard_proclamation(loyalty)
+        game.proclamations.discard_proclamation(loyalty)
 
     return game
 

@@ -113,6 +113,7 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
                         size='small'
                         label="Full Name"
                         variant="outlined"
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleRegister()}}
                     />
                     <TextField
                         value={userName}
@@ -121,6 +122,7 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
                         onChange={handleinput('userName')}
                         id="userName"
                         size='small'
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleRegister()}}
                         style={{ marginBottom: 40, minWidth:300 }}
                         label="Username"
                         variant="outlined"
@@ -133,6 +135,7 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
                         id="email"
                         type='email'
                         size='small'
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleRegister()}}
                         style={{  marginBottom: 40, minWidth:300 }}
                         label="Email"
                         variant="outlined"
@@ -144,6 +147,7 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
                         onChange={handleinput('password')}
                         id="password"
                         type='password'
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleRegister()}}
                         size='small'
                         style={{  marginBottom: 40, minWidth:300 }}
                         label="Password"
@@ -157,6 +161,7 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
                         id="confirm-password"
                         type='password'
                         size='small'
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleRegister()}}
                         style={{  marginBottom: 40, minWidth:300 }}
                         label="Confirm Password"
                         variant="outlined"

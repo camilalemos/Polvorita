@@ -25,7 +25,7 @@ def verify_password(plain_password, hashed_password):
 
 
 def get_password_hash(password):
-    return pwd_context.hash(password)
+    return pwd_context.hash(password) if password else None
 
 def get_user(db, login_id: str):
     with db_session:

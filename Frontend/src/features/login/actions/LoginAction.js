@@ -2,6 +2,7 @@ import {
     LOGIN_USER,
     LOGIN_USER_SUCCESS,
     LOGIN_USER_FAIL,
+    GET_USER,
     GET_USER_SUCCESS,
     GET_USER_FAIL
 } from '../../../constants/actionTypes/login';
@@ -24,7 +25,7 @@ const _loginUser = async (data, dispatch) => {
 
         const response = await axios({
             method: 'POST',
-            url: `${api.url}/token/`,
+            url: `${api.url}/login/`,
             data: bodyFormData,
             headers: { 'Content-Type':'multipart/form-data' }
 
@@ -48,6 +49,8 @@ const _getUserData = async (dispatch, getState) => {
 
     try {
 
+        dispatch({ type: GET_USER })
+
         let profile = await localStorage.getItem(PROFILE_KEY);
 
         if (!profile) throw new Error('User does not exist');
@@ -58,7 +61,7 @@ const _getUserData = async (dispatch, getState) => {
 
         localStorage.setItem(PROFILE_KEY, JSON.stringify(payload));
 
-        {dispatch({type: GET_USER_SUCCESS, payload })};
+        dispatch({type: GET_USER_SUCCESS, payload })
 
 
     } catch (error) {

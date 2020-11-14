@@ -27,7 +27,6 @@ class Player(BaseModel):
     is_alive: bool = True
     role: Role = None
     loyalty: Loyalty = None
-    status: PlayerStatus = 'COMMON'
 
     def kill(self):
         self.is_alive = False
@@ -35,15 +34,33 @@ class Player(BaseModel):
 class Elections(BaseModel):
     minister_candidate: str = None
     headmaster_candidate: str = None
+    minister: str = None
+    headmaster: str = None
+    rejected: int = 0
     votes: Dict[str, Vote] = {}
 
-    def nominate(self, status: PlayerStatus, player_name: str):
-        if status not in ['MINISTER', 'HEADMASTER']:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not a valid nomination")
-        elif status == 'MINISTER':
-            self.minister_candidate = player_name
-        elif status == 'HEADMASTER':
-            self.headmaster_candidate = player_name
+    def nominate(self, nomination: Nomination, candidate: str):
+        if nomination == 'MINISTER':
+            self.minister_candidate = candidate
+        elif nomination == 'HEADMASTER':
+            self.headmaster_candidate = candidate
+
+    def vote(self, player_name, vote):
+        self.votes[player_name] = vote
+
+    def results(self):
+        lumos_votes = sum(map(('LUMOS').__eq__, self.votes.values()))
+        nox_votes = sum(map(('NOX').__eq__, self.votes.values()))
+        if lumos_votes < nox_votes:
+            self.rejected += 1
+            result = 'NOX'
+        else:
+            self.minister = self.minister_candidate
+            self.headmaster = self.headmaster_candidate
+            result = 'LUMOS'
+
+        self.votes.clear()
+        return result
 
 class Proclamations(BaseModel):
     proclamations: List[Loyalty] = []
@@ -51,7 +68,7 @@ class Proclamations(BaseModel):
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
-    def init_proclamations(self):
+    def init(self):
         for i in range(6):
             self.proclamations.append('PHOENIX_ORDER')
         for i in range(11):
@@ -132,30 +149,30 @@ class Game(BaseModel):
     def start(self):
         self.status = 'STARTED'
         self.proclamations = Proclamations()
-        self.proclamations.init_proclamations()
+        self.proclamations.init()
         self.assign_loyalties()
         self.assign_roles()
         self.elections = Elections()
         first_candidate = random.choice(list(self.players.keys()))
         self.elections.nominate('MINISTER', first_candidate)
 
-    def cast_spell(self, spell: Spell, victim: str):
+    def cast_spell(self, spell: Spell, target: str):
         if spell == 'ADIVINATION':
             return self.proclamations.get_3proclamations(False)
         elif spell == 'AVADA_KEDAVRA':
-            self.players[victim].kill()
+            self.players[target].kill()
             return self
 
-    def get_winner(self,victim: Optional[str]):
+    def get_winner(self, target: Optional[str]):
         if self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
         elif self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
-        elif victim and self.players[victim].role == 'VOLDEMORT':
+        elif target and self.players[target].role == 'VOLDEMORT':
             self.winner = 'PHOENIX_ORDER'
 
         return self.winner
 
     def finish(self, manager):
-            self.status = 'FINISHED'
-            manager.delete_game(self.name)
+        self.status = 'FINISHED'
+        manager.delete_game(self.name)

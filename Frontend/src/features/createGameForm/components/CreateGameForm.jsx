@@ -19,6 +19,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const CreateGameForm = function ({ createGame, status, statusCode, open, onClose, enqueueSnackbar }) {
 
+
     const [gameName, setGameName] = useState('');
     const [playerName, setPlayerName] = useState('');
     const [gamePassword, setPassword] = useState('');
@@ -114,6 +115,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         if (status === 'success') { 
             history.push(gameName)
         }
+
     },[status])
 
     return (      

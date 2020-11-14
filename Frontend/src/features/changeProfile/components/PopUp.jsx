@@ -46,7 +46,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                   <Button onClick={onClose} color="primary">
                       Cancel
                   </Button>
-                  <Button onClick={sendNewInfo} color="primary">
+                  <Button onClick={handleConfirm} color="primary">
                       Confirm
                   </Button>
               </DialogActions>

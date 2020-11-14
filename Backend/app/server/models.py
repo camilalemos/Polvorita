@@ -68,13 +68,13 @@ class Proclamations(BaseModel):
             random.shuffle(self.proclamations)
             self.get_3proclamations()
 
-    def enact_proclamation(self, loyalty: Loyalty):
+    def enact(self, loyalty: Loyalty):
         if loyalty == 'PHOENIX_ORDER':
             self.PO_enacted_proclamations += 1
         elif loyalty == 'DEATH_EATERS':
             self.DE_enacted_proclamations += 1
 
-    def discard_proclamation(self, loyalty: Loyalty):
+    def discard(self, loyalty: Loyalty):
         if loyalty == 'DEATH_EATERS':
             self.PO_discarded_proclamations += 1
         elif loyalty == 'DEATH_EATERS':
@@ -139,24 +139,23 @@ class Game(BaseModel):
         first_candidate = random.choice(list(self.players.keys()))
         self.elections.nominate('MINISTER', first_candidate)
 
-    def cast_spell(self, spell: Spell, victim: str, manager):
+    def cast_spell(self, spell: Spell, victim: str):
         if spell == 'ADIVINATION':
             return self.proclamations.get_3proclamations(False)
         elif spell == 'AVADA_KEDAVRA':
             self.players[victim].kill()
-            self.finish(manager, victim)
             return self
 
-    def finish(self, manager, victim: Optional[str]):
-        if self.status == 'STARTED' and self.proclamations.PO_enacted_proclamations == 5:
+    def get_winner(self,victim: Optional[str]):
+        if self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
-            self.status = 'FINISHED'
-            manager.delete_game(self.name)
-        elif self.status == 'STARTED' and self.proclamations.DE_enacted_proclamations == 6:
+        elif self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
-            self.status = 'FINISHED'
-            manager.delete_game(self.name)
-        elif self.status == 'STARTED' and self.players[victim].role == 'VOLDEMORT':
+        elif victim and self.players[victim].role == 'VOLDEMORT':
             self.winner = 'PHOENIX_ORDER'
+
+        return self.winner
+
+    def finish(self, manager):
             self.status = 'FINISHED'
             manager.delete_game(self.name)

@@ -167,8 +167,9 @@ async def enact_proclamation(loyalty: Loyalty, params = Depends(check_params)):
     if params["player"].status != 'HEADMASTER':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
     else:
-        game.proclamations.enact_proclamation(loyalty)
-        game.finish(manager)
+        game.proclamations.enact(loyalty)
+        if game.get_winner():
+            game.finish(manager)
 
     return game
 
@@ -179,7 +180,7 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(check_params))
     if params["player"].status not in ['MINISTER', 'HEADMASTER']:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
     else:
-        game.proclamations.discard_proclamation(loyalty)
+        game.proclamations.discard(loyalty)
 
     return game
 
@@ -190,7 +191,11 @@ async def cast_spell(spell: Spell, victim: Optional[str] = None, params = Depend
     if params["player"].status != 'HEADMASTER':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can cast a spell")
     else:
-        return game.cast_spell(spell, victim, manager)
+        result = game.cast_spell(spell, victim)
+        if game.get_winner(victim):
+            game.finish(manager)
+    
+    return result
 
 @app.websocket("/lobby/")
 async def websocket_lobby(websocket: WebSocket):

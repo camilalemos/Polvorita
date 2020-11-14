@@ -121,6 +121,7 @@ def test_post_create_game():
         assert response.json() == {
             "name": f"Juego_{i}",
             "owner_name": f"Player_{i}",
+            "owner_username": response.json()["owner_username"],
             "password": "Player123",
             "max_players": 5,
             "status": "CREATED",
@@ -216,6 +217,7 @@ def test_put_join_game():
         assert response.json() == {
             "name": f"Juego_0",
             "owner_name": f"Player_0",
+            "owner_username": response.json()["owner_username"],
             "password": "Player123",
             "max_players": 5,
             "status": "CREATED",
@@ -259,6 +261,7 @@ def test_put_start_game():
     assert response.json() == {
         "name": "Juego_0",
         "owner_name": "Player_0",
+        "owner_username": response.json()["owner_username"],
         "password": "Player123",
         "max_players": 5,
         "status": "STARTED",

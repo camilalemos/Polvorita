@@ -24,8 +24,8 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
     const [userName, setUserName] = useState('');
     const [errorUserName, setErrorUserName] = useState(false);
     const [fullName, setFullName] = useState('');
-    const [password, setPassword] = useState('sarasa');
-    const [newPassword, setnewPassword] = useState('');
+    const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [email, setEmail] = useState('');
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
@@ -34,19 +34,24 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
     
     const handleSave = () => {
         setOpenModal(true)
-        getUserInfo(userName, email, newPassword, password, fullName)
+       //getUserInfo(userName, email, newPassword, password, fullName)
     }
    
-    
     useEffect(() => {
         getUserInfo(password)
+    },[password])
+
+    
+    useEffect(() => {
+       
         if (status === 'success'){ 
-           console.log("INFO: " + JSON.parse(userInfo));
-           setFullName(JSON.parse(userInfo).full_name)
-           setUserName(JSON.parse(userInfo).username)
-           setEmail(JSON.parse(userInfo).email)
-    }
+           console.log("INFO: " + userInfo);
+           setFullName(userInfo.full_name)
+           setUserName(userInfo.username)
+           setEmail(userInfo.email)
+        }
     },[status])
+
 
     return (    
         
@@ -62,22 +67,56 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
             <List component="nav"  aria-label="contacts">
                 <ListItem >
                     <ListItemText primary="Fullname" />
-                    <TextField id="filled-basic" label={fullName} variant="filled" />
+                    <TextField 
+                        id="Full Name" 
+                        label={fullName} 
+                        variant="filled"
+                       // style={{ marginBottom: 40, minWidth:300 }}
+                        onChange={(value) => (setFullName(value.target.value))}
+                      
+                    />
                 </ListItem>
                 <ListItem button>
                     <ListItemText primary="Username" />
-                    <TextField id="filled-basic" label={userName} variant="filled" />
+                    <TextField 
+                        id="Username" 
+                        label={userName} 
+                        variant="filled" 
+                        //style={{ marginBottom: 40, minWidth:300 }}
+                        onChange={(value) => (setUserName(value.target.value))}
+                        id="gameName"
+                    />
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary="Mail" />
-                    <TextField id="filled-basic" label={email} variant="filled" />
+                    <ListItemText primary="E-mail" />
+                    <TextField 
+                        id="E-mail" 
+                        label={email} 
+                        variant="filled" 
+                        onChange={(value) => (setEmail(value.target.value))}
+                    />
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary="Password" />
-                    <TextField id="filled-basic" label={password} variant="filled" />
+                    <ListItemText primary="Change Password" />
+                    <TextField 
+                        id="Change Password" 
+                        label={newPassword} 
+                        variant="filled" 
+                        onChange={(value) => (setNewPassword(value.target.value))}
+                    />
+                </ListItem>
+                <ListItem button>
+                    <ListItemText primary="Confirm New Password" />
+                    <TextField 
+                        id="Confirm New Password" 
+                        label={newPassword} 
+                        variant="filled" 
+                    // onChange={(value) => (setNewPassword(value.target.value))}
+                    />
                 </ListItem>
             </List>
-			<PopUp confirm={() => getUserInfo(userName, email, newPassword, password, fullName)} open={openModal} onClose={() => setOpenModal(false)}/>
+            <PopUp sendNewInfo={() => getUserInfo(userName, email, newPassword, password, fullName)} open={openModal} 
+            password={password} setPassword={(value) => setPassword(value)} onClose={() => setOpenModal(false)}/>
             <div style={{ flexDirection:'row'}}>
                         <Button size='small' onClick={onClose} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
                             Cancel

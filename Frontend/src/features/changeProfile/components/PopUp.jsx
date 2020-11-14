@@ -11,13 +11,16 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   
-  export default function PopUp({ open, onClose }) {
+  export default function PopUp({ open, userName, email, newPassword, password, fullName, setPassword, onClose, sendNewInfo }) {
   
     const handleConfirm = () => {
+        sendNewInfo()
         onClose()
     }
     return (
+        
       <div>
+          {console.log(userName)}
           <Dialog
               open={open}
               TransitionComponent={Transition}
@@ -29,9 +32,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
               <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:20 }}>
                  
                   <TextField
-        
-                      style={{ marginBottom: 40, minWidth:300 }}
 
+                      style={{ marginBottom: 40, minWidth:300 }}
+                      value = {password}
+                      onChange={(value) => (setPassword(value.target.value))}
                       id="Password"
                       size='small'
                       type='password'
@@ -43,7 +47,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                   <Button onClick={onClose} color="primary">
                       Cancel
                   </Button>
-                  <Button onClick={handleConfirm} color="primary">
+                  <Button onClick={sendNewInfo} color="primary">
                       Confirm
                   </Button>
               </DialogActions>

@@ -20,7 +20,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return (
         
       <div>
-          {console.log(userName)}
           <Dialog
               open={open}
               TransitionComponent={Transition}

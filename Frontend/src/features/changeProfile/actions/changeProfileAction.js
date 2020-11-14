@@ -7,28 +7,28 @@ import {
   import axios from 'axios'
   import api from '../../../configs/api'
 
-
-export const getUserInfo = (data) => (dispatch, getState) => _getUserInfo(data, dispatch, getState);
-const _getUserInfo = async (data, dispatch, getState) => {
+//userName, email, newPassword, password, fullName
+export const getUserInfo = (userName, email, newPassword, password, fullName) => (dispatch, getState) => _getUserInfo(userName, email, newPassword, password, fullName, dispatch, getState);
+const _getUserInfo = async (userName, email, newPassword, password, fullName, dispatch, getState) => {
 	try {
         dispatch({type: GET_PROFILE_INFO});
         
         let {access_token} = {...getState().login}
         
         let bodyFormData = new FormData();
-        console.log("PASSWORD ANTES DEL IF" + data.password) 
-        console.log("FULLNAME ANTES DEL IF" + data.fullName) 
-        if (data.password === undefined){
-            bodyFormData.append('password', data.password);
-            console.log("PASSWORD INDEFINIDA: " + data.password) 
+        console.log("PASSWORD ANTES DEL IF" + password) 
+        console.log("FULLNAME ANTES DEL IF" + fullName) 
+        if (password === undefined){
+            bodyFormData.append('password', password);
+            console.log("PASSWORD INDEFINIDA: " + password) 
         }
         else{
-            console.log("PASSWORD: " + data.password) 
-            bodyFormData.append('username',data.userName);
-            bodyFormData.append('email',data.email);
-            bodyFormData.append('new_password',data.newPassword);
-            bodyFormData.append('password', data.password);
-            bodyFormData.append('full_name',data.fullName);                       
+            console.log("PASSWORD: " + password) 
+            bodyFormData.append('username',userName);
+            bodyFormData.append('email', email);
+            bodyFormData.append('new_password', newPassword);
+            bodyFormData.append('password', password);
+            bodyFormData.append('full_name', fullName);                       
         }
 
         const response = await axios({
@@ -43,7 +43,7 @@ const _getUserInfo = async (data, dispatch, getState) => {
         dispatch({type:  GET_PROFILE_INFO_SUCCESS, payload: {userInfo:  response.data}})
     } catch (error) {
         console.log(error, "ERROR")
-        console.log("PASSWORD ERROR" + data.password) 
+        console.log("PASSWORD ERROR" + password) 
         let requestError = error.message.split(' ');
         dispatch({type:  GET_PROFILE_INFO_FAIL, payload: {statusCode: requestError[requestError.length -1]}});	
 	}

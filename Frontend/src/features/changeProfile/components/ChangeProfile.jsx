@@ -39,7 +39,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
    
     useEffect(() => {
         getUserInfo(password)
-    },[password])
+    },[])
 
     
     useEffect(() => {
@@ -68,6 +68,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                 <ListItem >
                     <ListItemText primary="Fullname" />
                     <TextField 
+                        value={fullName} 
                         id="Full Name" 
                         label={fullName} 
                         variant="filled"
@@ -78,7 +79,8 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                 </ListItem>
                 <ListItem button>
                     <ListItemText primary="Username" />
-                    <TextField 
+                    <TextField
+                        value={userName}   
                         id="Username" 
                         label={userName} 
                         variant="filled" 
@@ -90,6 +92,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                 <ListItem button>
                     <ListItemText primary="E-mail" />
                     <TextField 
+                        value={email}   
                         id="E-mail" 
                         label={email} 
                         variant="filled" 
@@ -99,6 +102,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                 <ListItem button>
                     <ListItemText primary="Change Password" />
                     <TextField 
+                        value={newPassword} 
                         id="Change Password" 
                         label={newPassword} 
                         variant="filled" 

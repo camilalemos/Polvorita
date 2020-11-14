@@ -18,11 +18,11 @@ class User(db.Entity):
     def update(self, email, username, full_name, new_password):
         if email:
             self.email = email
-        elif username:
+        if username:
             self.username = username
-        elif full_name:
+        if full_name:
             self.full_name = full_name
-        elif new_password:
+        if new_password:
             self.password = new_password
 
         return self

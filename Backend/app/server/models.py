@@ -166,11 +166,6 @@ class Game(BaseModel):
     def new_minister_director(self,minister,headmaster):#
         self.players.get(minister).status = 'MINISTER'
         self.players.get(headmaster).status = 'HEADMASTER'
-    def status_game(self,state):#
-        return self.status != state
-    def reset_state_common(self):
-        for player in self.players.values():
-             player.status = 'COMMON'
     def election_results(self):
         if self.elections.vote_lumos() < self.elections.vote_nox():
             self.elections.rejected()

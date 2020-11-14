@@ -8,6 +8,7 @@ import api from '../../../configs/api'
 
 export const createGame = (data) => (dispatch, getState) => _createGame(dispatch, getState, data);
 const _createGame = async (dispatch, getState, data) => {
+
 	try {
         dispatch({type: CREATE_GAME});
         
@@ -27,12 +28,13 @@ const _createGame = async (dispatch, getState, data) => {
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`
             }
-		});
+		    });
         dispatch({type: CREATE_GAME_SUCCESS})
-        
+
     } catch (error) {
 		console.log(error, "ERROR")
 		let requestError = error.message.split(' ');
         dispatch({type: CREATE_GAME_FAIL, payload: {statusCode: requestError[requestError.length -1]}});		
+
 	}
 };

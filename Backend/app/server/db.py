@@ -1,8 +1,6 @@
 from pony.orm import Database, PrimaryKey, Optional, Required
 
 
-
-
 db = Database()
 db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
 

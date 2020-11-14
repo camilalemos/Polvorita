@@ -1,4 +1,3 @@
-import { SatelliteSharp } from '@material-ui/icons';
 import {
     LOGIN_USER,
     LOGIN_USER_FAIL,

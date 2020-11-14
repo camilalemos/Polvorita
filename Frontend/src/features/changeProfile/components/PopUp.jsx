@@ -11,7 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   
-  export default function PopUp({ open, userName, email, newPassword, password, fullName, setPassword, onClose, sendNewInfo }) {
+  export default function PopUp({ open, password, setPassword, onClose, sendNewInfo }) {
   
     const handleConfirm = () => {
         sendNewInfo()

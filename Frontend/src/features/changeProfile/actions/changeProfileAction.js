@@ -39,7 +39,7 @@ const _getUserInfo = async (userName, email, newPassword, password, fullName, di
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`
             }
-	    	});
+        });
         dispatch({type:  GET_PROFILE_INFO_SUCCESS, payload: {userInfo:  response.data}})
     } catch (error) {
         console.log(error, "ERROR")

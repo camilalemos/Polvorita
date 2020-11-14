@@ -29,6 +29,11 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
     const [email, setEmail] = useState('');
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
+    const [fullNameLabel, setFullNameLabel] = useState('')
+    const [userNameLabel, setUserNameLabel] = useState('')
+    const [emailLabel, setEmailLabel] = useState('')
+    const [renderConfirmPassword, setRenderConfirmPassword] = useState(false)
+
     
     const tet = "hola"
     
@@ -45,10 +50,15 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
     useEffect(() => {
        
         if (status === 'success'){ 
-           console.log("INFO: " + userInfo);
-           setFullName(userInfo.full_name)
-           setUserName(userInfo.username)
-           setEmail(userInfo.email)
+           setFullName('')
+           setFullNameLabel(userInfo.full_name)
+           setUserName('')
+           setUserNameLabel(userInfo.username)
+           setEmail('')
+           setEmailLabel(userInfo.email)
+           setPassword('')
+           setNewPassword('')
+           setRenderConfirmPassword(false)
         }
     },[status])
 
@@ -70,7 +80,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                     <TextField 
                         value={fullName} 
                         id="Full Name" 
-                        label={fullName} 
+                        label={fullNameLabel} 
                         variant="filled"
                        // style={{ marginBottom: 40, minWidth:300 }}
                         onChange={(value) => (setFullName(value.target.value))}
@@ -82,7 +92,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                     <TextField
                         value={userName}   
                         id="Username" 
-                        label={userName} 
+                        label={userNameLabel} 
                         variant="filled" 
                         //style={{ marginBottom: 40, minWidth:300 }}
                         onChange={(value) => (setUserName(value.target.value))}
@@ -94,7 +104,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                     <TextField 
                         value={email}   
                         id="E-mail" 
-                        label={email} 
+                        label={emailLabel} 
                         variant="filled" 
                         onChange={(value) => (setEmail(value.target.value))}
                     />
@@ -104,20 +114,30 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
                     <TextField 
                         value={newPassword} 
                         id="Change Password" 
-                        label={newPassword} 
+                        label="New password" 
+                        type='password'
                         variant="filled" 
-                        onChange={(value) => (setNewPassword(value.target.value))}
+                        onChange={(value) => (setNewPassword(value.target.value), setRenderConfirmPassword(true))}
                     />
                 </ListItem>
-                <ListItem button>
-                    <ListItemText primary="Confirm New Password" />
-                    <TextField 
-                        id="Confirm New Password" 
-                        label={newPassword} 
-                        variant="filled" 
-                    // onChange={(value) => (setNewPassword(value.target.value))}
-                    />
-                </ListItem>
+                <div>
+                    {renderConfirmPassword 
+                    ?
+                    <ListItem button>
+                        <ListItemText primary="Confirm New Password" />
+                        <TextField 
+                            id="Confirm New Password" 
+                            required
+                            label="New Password" 
+                            type='password'
+                            variant="filled" 
+                        // onChange={(value) => (setNewPassword(value.target.value))}
+                        /> 
+                    </ListItem>
+                    :
+                        console.log("working")
+                    }
+                </div>
             </List>
             <PopUp sendNewInfo={() => getUserInfo(userName, email, newPassword, password, fullName)} open={openModal} 
             password={password} setPassword={(value) => setPassword(value)} onClose={() => setOpenModal(false)}/>

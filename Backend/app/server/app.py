@@ -62,7 +62,6 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    
     return {"access_token": access_token, "token_type": "bearer"}
 
 #CHANGE PROFILE AND PASSWORD
@@ -168,6 +167,7 @@ async def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game.proclamations.enact(loyalty)
     if game.get_winner():
         game.finish(manager)
+
     return game
 
 #DISCARD PROCLAMATION
@@ -214,7 +214,6 @@ async def show_election_results(params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="One or more players have not decided their vote")
 
     return game.elections.results()
-
 
 @app.websocket("/lobby/")
 async def websocket_lobby(websocket: WebSocket):

@@ -11,6 +11,18 @@ class User(db.Entity):
     email = Required(str, unique=True)
     password = Required(str)
     full_name = Optional(str)
-    disabled = Required(bool)
+    disabled = Required(bool)        
+
+    def update(self, email, username, full_name, new_password):
+        if email:
+            self.email = email
+        if username:
+            self.username = username
+        if full_name:
+            self.full_name = full_name
+        if new_password:
+            self.password = new_password
+
+        return self
 
 db.generate_mapping(create_tables=True)

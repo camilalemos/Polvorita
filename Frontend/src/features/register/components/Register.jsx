@@ -8,39 +8,27 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withSnackbar } from 'notistack';
 import useDidMountEffect from '../../../constants/hooks/useDidMountEffect'
 
-const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }) {
+const Register = function ({ registerUser, status, enqueueSnackbar, statusCode, errorMsg }) {
 
     const history = useHistory();
     const [userName, setUserName] = useState('');
     const [errorUserName, setErrorUserName] = useState(false);
     const [email, setEmail] = useState('');
     const [errorEmail, setErrorEmail] = useState(false);
-    const [fullName, setFullName] = useState('');
     const [password, setPassword] = useState('');
     const [errorPassword, setErrorPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
 
-    const validate = (email) => {
-        const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
-
-        return expression.test(String(email).toLowerCase())
-    }
-
     const checkForm = () => {
 
         if (!userName) setErrorUserName(true);
-        if (validate(userName) || userName.search('@') !== -1) setErrorUserName(true);
-        if (!validate(email)) setErrorEmail(true);
         if (!email) setErrorEmail(true);
         if (password !== confirmPassword){ 
             setErrorConfirmPassword(true);
             enqueueSnackbar('Passwords do not match', { variant: 'error'});
         }
-        if (!password || password.length < 8){ 
-            setErrorPassword(true);
-            enqueueSnackbar('Password must have a minimum of 8 characters', { variant: 'error'});
-        }
+        if (!password )setErrorPassword(true);
         if (!confirmPassword) setErrorConfirmPassword(true);
 
     }
@@ -71,8 +59,8 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
     }
 
     useDidMountEffect(() => {
-        if (statusCode === '403') enqueueSnackbar('Sign up Failed, Username/email al ready exists', { variant: 'error'});
-    },[statusCode])
+        if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error'});
+    },[status])
 
     useDidMountEffect(() => {
         if (status === 'success') {
@@ -84,17 +72,13 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
     const handleRegister = () => {
         checkForm();
         if (userName && 
-            !validate(userName) && 
-            userName.search('@') === -1 &&
-            validate(email) &&
             email &&
             password === confirmPassword && 
             password &&
-            password.length >= 8 && 
             confirmPassword
         )
 
-        registerUser({userName, email, fullName, password});
+        registerUser({userName, email, password});
     }
 
     return (            
@@ -105,16 +89,6 @@ const Register = function ({ registerUser, status, enqueueSnackbar, statusCode }
                     SECRET VOLDEMORT
                 </b>
                 <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
-                    <TextField
-                        value={fullName}
-                        style={{ marginBottom: 40, minWidth:300 }}
-                        onChange={(value) => setFullName(value.target.value)}
-                        id="userName"
-                        size='small'
-                        label="Full Name"
-                        variant="outlined"
-                        onKeyPress={(e) => {if (e.key === 'Enter') handleRegister()}}
-                    />
                     <TextField
                         value={userName}
                         required

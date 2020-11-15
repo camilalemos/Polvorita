@@ -5,6 +5,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import RegisterContainer from '../../register/containers/RegisterContainers'
 import LoginContainer from '../../login/containers/LoginContainers';
 import JoinGameContainer from '../../joingame/containers/JoinGameContainers';
+import LobbyContainer from '../../joingame/containers/LobbyContainers';
 import { SnackbarProvider } from 'notistack';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import PublicRoute from '../../../constants/Routes/PublicRoute';
@@ -47,12 +48,15 @@ const App = function ({ getUserData, statusLogin, is_logged}) {
         <MuiThemeProvider theme={theme}>
             <SnackbarProvider maxSnack={3}>
                     <Router>
+                    <Switch>
                         <Route exact path="/">
                             <Redirect to="/login" />
                         </Route>
                         <PrivateRoute exact path='/lobby' restricted={is_logged} component={<JoinGameContainer/>} />
+                        <PrivateRoute exact path='/lobby/:game' restricted={is_logged} component={<LobbyContainer/>} />
                         <PublicRoute exact path='/login' component={LoginContainer} />
                         <PublicRoute exact path='/register' component={RegisterContainer} />
+                    </Switch>
                     </Router>
             </SnackbarProvider>
         </MuiThemeProvider>

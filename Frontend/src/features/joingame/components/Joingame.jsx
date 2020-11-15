@@ -4,16 +4,19 @@ import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import { withSnackbar } from 'notistack';
+import { useHistory,withRouter } from "react-router-dom";
 
 import CreateGameContainer from '../../createGameForm/containers/CreateGameContainers';
 import PopUp from './PopUp';
 
 const Joingame = ({joingame, status, enqueueSnackbar }) => {
+	const history = useHistory();
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playerName, setPlayerName] = useState('');
 	const [gamePassword, setPassword] = useState('');
 	const [openModal, setOpenModal] = useState(false);
 	const [openModalCreateGame, setOpenModalCreateGame] = useState(false);
+	const [routeGame, setRouteGame] = useState('')
 
 	useEffect(() => {
 
@@ -25,7 +28,7 @@ const Joingame = ({joingame, status, enqueueSnackbar }) => {
 		
 		ws.onmessage = (event) => {
 		setGameInfo(JSON.parse(event.data));
-	    // console.log(gameInfo);
+	    console.log(gameInfo);
 		};
 		
 		ws.onclose = () => {
@@ -39,8 +42,13 @@ const Joingame = ({joingame, status, enqueueSnackbar }) => {
 
 	useEffect(() => {
 		if (status === 'failed') enqueueSnackbar('Cannot join the game, you are already the owner', { variant: 'error'});
-		if (status === 'success') console.log("ESTOY ADRENTRO DE UNA PERTIDA");
+		if (status === 'success') history.push(`lobby/${routeGame}`);
 	},[status]);
+
+	const handleJoin = (id) => {
+		joingame(id ,playerName, gamePassword);
+		setRouteGame(id);
+	}
 
   return (
     <div style={{display: 'flex', flexDirection:'column', padding:40}}>
@@ -57,9 +65,9 @@ const Joingame = ({joingame, status, enqueueSnackbar }) => {
 		</div>
         {gameInfo.map(currentGame => (
 			<div key={currentGame.name}>
-				<div style={{display:'flex',alignItems:'center'}}>
+				<div style={{display:'flex',alignItems:'center'}} onClick={() => history.push(`lobby/${currentGame.name}`)}>
 					<a style={{flex: 1, fontSize: 20}}>{currentGame.name}</a>
-					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{Object.keys(currentGame.players)}</a>
+					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{Object.keys(currentGame.players)[0]}</a>
 					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{currentGame.num_players}/{currentGame.max_players}</a>
 					<div style={{flex: 1, textAlign: 'right', display:'flex', alignItems:'center', justifyContent:'flex-end'}}>
 					<ListItemIcon >
@@ -70,7 +78,7 @@ const Joingame = ({joingame, status, enqueueSnackbar }) => {
 					</div>
 				</div>
 				<div style={{  height:.5 , backgroundColor:'lightgrey', display:'flex', marginBottom:20, marginTop:10}} />
-				<PopUp join={() => joingame(currentGame.name ,playerName, gamePassword)} open={openModal} playerName={playerName} gamePassword={gamePassword} setPlayerName={(value) => setPlayerName(value)} setPassword={(value) => setPassword(value)} onClose={() => setOpenModal(false)}/>
+				<PopUp join={() => handleJoin(currentGame.name ,playerName, gamePassword)} open={openModal} playerName={playerName} gamePassword={gamePassword} setPlayerName={(value) => setPlayerName(value)} setPassword={(value) => setPassword(value)} onClose={() => setOpenModal(false)}/>
 			</div>	
 			))
         }
@@ -80,4 +88,4 @@ const Joingame = ({joingame, status, enqueueSnackbar }) => {
   );
 };
 
-export default Joingame;
+export default withRouter(withSnackbar(Joingame));

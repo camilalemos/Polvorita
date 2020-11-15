@@ -113,7 +113,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             checkStatusCode();
         }
         if (status === 'success') { 
-            history.push(gameName)
+            history.push(`lobby/${gameName}`);
         }
 
     },[status])

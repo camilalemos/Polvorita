@@ -11,19 +11,19 @@ export const joingame = (gameName, playerName, gamePassword) => (dispatch, getSt
 const _joingame = async (gameName, playerName, gamePassword, dispatch, getState) => {
 
     try {
+        console.log(gameName, playerName, gamePassword, "LOG")
         dispatch({type: JOIN_GAME});
 
         let {access_token} = {...getState().login}
         
         let bodyFormData = new FormData()
-
-        bodyFormData.append('game_name', gameName);
+        
         bodyFormData.append('player_name', playerName);
         bodyFormData.append('password', gamePassword);
 
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game/`,
+            url: `${api.url}/game?game_name=${gameName}`,
             data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',

@@ -157,7 +157,7 @@ def get_player(player_name: str, game = Depends(check_game)):
     return {"game": game, "player": player}
 
 #ENACT PROCLAMATION
-@app.put("/game/proclamation/enact/", response_model=Game)
+@app.put("/game/proclamations/enact/", response_model=Game)
 async def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game = params["game"]
     if params["player"].name != game.elections.headmaster:
@@ -170,7 +170,7 @@ async def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     return game
 
 #DISCARD PROCLAMATION
-@app.put("/game/proclamation/discard/", response_model=Game)
+@app.put("/game/proclamations/discard/", response_model=Game)
 async def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game = params["game"]
     if params["player"].name not in [game.elections.minister, game.elections.headmaster]:
@@ -227,6 +227,7 @@ async def show_election_results(game = Depends(check_game)):
 
     return game.elections.results()
 
+  
 @app.websocket("/lobby/")
 async def websocket_lobby(websocket: WebSocket):
     await manager.connect_lobby(websocket)

@@ -3,8 +3,9 @@ import React, {useEffect, useState} from 'react';
 const ShowRole = ({ user }) => {
 
     const [gameInfo, setGameInfo] = useState([]);
-    const userLoyalty = "DEATH_EATERS";
-    const userRole = "SNAPE"
+    const [playersInfo, setplayersInfo] = useState([]);
+    const [userLoyalty, setUserLotalty] = useState('');
+    const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
 
@@ -15,8 +16,8 @@ const ShowRole = ({ user }) => {
 		};
 
 		ws.onmessage = (event) => {
-		setGameInfo(JSON.parse(event.data));
-	    console.log(gameInfo);
+        setGameInfo(JSON.parse(event.data));
+        //console.log(gameInfo)
 		};
 
 		ws.onclose = () => {
@@ -27,6 +28,14 @@ const ShowRole = ({ user }) => {
 		ws.close();
 		};
     });
+    
+    useEffect(() => {
+		if(gameInfo.players){
+			setplayersInfo(Object.values(gameInfo.players).filter(player => player.name === user)[0]);
+            setUserLotalty(playersInfo?.loyalty)
+            setUserRole(playersInfo?.role)
+		}
+	},[gameInfo])
     
     const handleSelectImgLoyalty = (playerLoyalty) => {
         

@@ -75,11 +75,9 @@ class Proclamations(BaseModel):
             self.proclamations.append('DEATH_EATERS')
         random.shuffle(self.proclamations)
 
-    def get_3proclamations(self, discarded: bool):
-        if len(self.proclamations) >= 3 and discarded:
+    def get_3proclamations(self):
+        if len(self.proclamations) >= 3:
             return [self.proclamations.pop(), self.proclamations.pop(), self.proclamations.pop()]
-        elif len(self.proclamations) >= 3 and not(discarded):
-            return [self.proclamations[0], self.proclamations[1], self.proclamations[2]]
         else:
             self.proclamations.extend(self.discarded_proclamations)
             random.shuffle(self.proclamations)

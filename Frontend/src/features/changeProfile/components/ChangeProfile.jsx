@@ -16,49 +16,80 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, enqueueSnackbar }) {
+const ChangeProfile = function ({ userInfo, getUserInfo, status, statusCode, open, onClose, enqueueSnackbar }) {
     
    
 
     const [openModal, setOpenModal] = useState(false);
     const [userName, setUserName] = useState('');
-    const [errorUserName, setErrorUserName] = useState(false);
     const [fullName, setFullName] = useState('');
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [email, setEmail] = useState('');
+
+    
+    const [errorUserName, setErrorUserName] = useState(false);
     const [errorEmail, setErrorEmail] = useState(false);
+    const [errorFullName, setErrorFullName] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
+    const [errorNewPassword, setErrorNewPassword] = useState(false);
+    const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
+
+    
     const [fullNameLabel, setFullNameLabel] = useState('')
     const [userNameLabel, setUserNameLabel] = useState('')
     const [emailLabel, setEmailLabel] = useState('')
     const [renderConfirmPassword, setRenderConfirmPassword] = useState(false)
+    const [confirmPassword, setConfirmPassword] = useState('');
+    
+    const handleChangePassword = (value) => {
+        setNewPassword(value.target.value)
+        !value.target.value ? setRenderConfirmPassword(false) : setRenderConfirmPassword(true)
+        setErrorNewPassword(false)
+    }
 
-    
-    const tet = "hola"
-    
     const handleSave = () => {
         setOpenModal(true)
-       //getUserInfo(userName, email, newPassword, password, fullName)
     }
    
     useEffect(() => {
         getUserInfo(password)
     },[])
 
+    const updateData = () => {
+        setFullName('')
+        setFullNameLabel(userInfo.full_name)
+        setUserName('')
+        setUserNameLabel(userInfo.username)
+        setEmail('')
+        setEmailLabel(userInfo.email)
+        setPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+        setRenderConfirmPassword(false)
+    }
+
+    const checkStatusCode = () => {
+        switch (statusCode) {
+            case '422':
+                //feedback422();
+                break;
+            case '401':
+                enqueueSnackbar('Please login again', { variant: 'error'});
+                break;
+            default:
+                enqueueSnackbar('Something is going wrong, check your conection or try again later', { variant: 'error'});
+                break;
+        }
+    }
     
     useEffect(() => {
-       
         if (status === 'success'){ 
-           setFullName('')
-           setFullNameLabel(userInfo.full_name)
-           setUserName('')
-           setUserNameLabel(userInfo.username)
-           setEmail('')
-           setEmailLabel(userInfo.email)
-           setPassword('')
-           setNewPassword('')
-           setRenderConfirmPassword(false)
+           updateData()
+           enqueueSnackbar('Data successfully updated', { variant: 'success'});
+        }
+        if (status === 'failed'){
+            checkStatusCode()
         }
     },[status])
 
@@ -76,71 +107,81 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, open, onClose, 
             
             <List component="nav"  aria-label="contacts">
                 <ListItem >
-                    <ListItemText primary="Fullname" />
-                    <TextField 
-                        value={fullName} 
-                        id="Full Name" 
-                        label={fullNameLabel} 
-                        variant="filled"
-                       // style={{ marginBottom: 40, minWidth:300 }}
-                        onChange={(value) => (setFullName(value.target.value))}
-                      
-                    />
-                </ListItem>
-                <ListItem button>
                     <ListItemText primary="Username" />
                     <TextField
                         value={userName}   
+                        error={errorUserName}
                         id="Username" 
                         label={userNameLabel} 
                         variant="filled" 
                         //style={{ marginBottom: 40, minWidth:300 }}
-                        onChange={(value) => (setUserName(value.target.value))}
-                        id="gameName"
+                        onChange={(value) => (setUserName(value.target.value), setErrorUserName(false))}
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                     />
                 </ListItem>
-                <ListItem button>
+                <ListItem>
                     <ListItemText primary="E-mail" />
                     <TextField 
-                        value={email}   
+                        value={email}  
+                        error={errorEmail} 
                         id="E-mail" 
                         label={emailLabel} 
                         variant="filled" 
-                        onChange={(value) => (setEmail(value.target.value))}
+                        onChange={(value) => (setEmail(value.target.value), setErrorEmail(false))}
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                     />
                 </ListItem>
-                <ListItem button>
+                <ListItem>
+                    <ListItemText primary="Fullname" />
+                    <TextField 
+                        value={fullName} 
+                        error={errorFullName}
+                        id="Full Name" 
+                        label={fullNameLabel} 
+                        variant="filled"
+                       // style={{ marginBottom: 40, minWidth:300 }}
+                        onChange={(value) => (setFullName(value.target.value), setErrorFullName(false))}
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
+                      
+                    />
+                </ListItem>
+                <ListItem>
                     <ListItemText primary="Change Password" />
                     <TextField 
                         value={newPassword} 
+                        error={errorNewPassword}
                         id="Change Password" 
                         label="New password" 
                         type='password'
                         variant="filled" 
-                        onChange={(value) => (setNewPassword(value.target.value), setRenderConfirmPassword(true))}
+                        onChange={(value) => (handleChangePassword(value))}
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                     />
                 </ListItem>
                 <div>
                     {renderConfirmPassword 
                     ?
-                    <ListItem button>
+                    <ListItem>
                         <ListItemText primary="Confirm New Password" />
                         <TextField 
+                            value={confirmPassword}
+                            error={errorConfirmPassword}
                             id="Confirm New Password" 
                             required
                             label="New Password" 
                             type='password'
                             variant="filled" 
-                        // onChange={(value) => (setNewPassword(value.target.value))}
+                            onChange={(value) => (setConfirmPassword(value.target.value), setErrorConfirmPassword(false))}
+                            onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                         /> 
                     </ListItem>
                     :
-                        console.log("working")
+                        ()=>{let skipThis = "skip"}
                     }
                 </div>
             </List>
             <PopUp sendNewInfo={() => getUserInfo(userName, email, newPassword, password, fullName)} open={openModal} 
-            password={password} setPassword={(value) => setPassword(value)} onClose={() => setOpenModal(false)}/>
+            password={password} errorPassword={errorPassword} setPassword={(value) => setPassword(value)} setErrorPassword={(value) => setErrorPassword(value)} onClose={() => setOpenModal(false)}/>
             <div style={{ flexDirection:'row'}}>
                         <Button size='small' onClick={onClose} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
                             Cancel

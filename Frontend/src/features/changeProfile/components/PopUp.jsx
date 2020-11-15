@@ -11,7 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   
-  export default function PopUp({ open, password, setPassword, onClose, sendNewInfo }) {
+  export default function PopUp({ open, password, setPassword, errorPassword, setErrorPassword, onClose, sendNewInfo }) {
   
     const handleConfirm = () => {
         sendNewInfo()
@@ -34,7 +34,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
                       style={{ marginBottom: 40, minWidth:300 }}
                       value = {password}
-                      onChange={(value) => (setPassword(value.target.value))}
+                      error={errorPassword}
+                      onChange={(value) => (setPassword(value.target.value), setErrorPassword(false))}
+                      onKeyPress={(e) => {if (e.key === 'Enter') handleConfirm()}}
                       id="Password"
                       size='small'
                       type='password'

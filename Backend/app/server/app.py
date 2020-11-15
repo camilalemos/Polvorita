@@ -182,7 +182,7 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
 
 #CAST SPELL
 @app.put("/game/spells")
-async def cast_spell(spell: Spell, target: Optional[str] = None, params = Depends(check_params)):
+async def cast_spell(spell: Spell, target: Optional[str] = None, params = Depends(get_player)):
     game = params ["game"]
     if target not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target not found")

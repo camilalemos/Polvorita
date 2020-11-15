@@ -158,7 +158,7 @@ def get_player(player_name: str, params = Depends(check_game)):
     return {"game": game, "player": player}
 
 #ENACT PROCLAMATION
-@app.put("/game/proclamation/enact/", response_model=Game)
+@app.put("/game/proclamations/enact/", response_model=Game)
 async def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game = params["game"]
     if params["player"].name != game.elections.headmaster:
@@ -171,7 +171,7 @@ async def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     return game
 
 #DISCARD PROCLAMATION
-@app.put("/game/proclamation/discard/", response_model=Game)
+@app.put("/game/proclamations/discard/", response_model=Game)
 async def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game = params["game"]
     if params["player"].name not in [game.elections.minister, game.elections.headmaster]:
@@ -180,19 +180,33 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game.proclamations.discard(loyalty)
     return game
 
+#CAST SPELL
+@app.put("/game/spells")
+async def cast_spell(spell: Spell, target: Optional[str] = None, params = Depends(check_params)):
+    game = params ["game"]
+    if target not in game.players:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target not found")
+    elif params["player"].name != game.elections.minister:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
+
+    result = game.cast_spell(spell, target)
+    if game.get_winner(target):
+        game.finish(manager)
+
+    return result
+
 #CHOOSE DIRECTOR
 @app.put("/game/elections/", response_model=Game)
 async def choose_director(candidate_name:str, params = Depends(get_player)):
     game = params["game"]
-    candidate = game.players.get(candidate_name)
-    if not candidate:
+    if candidate_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate name not found")
     elif params["player"].name != game.elections.minister_candidate:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the minister candidate can choose the headmaster candidate")
-    elif candidate.name in [game.elections.minister, game.elections.headmaster]:
+    elif candidate_name in [game.elections.minister, game.elections.headmaster]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The candidate is not eligible")
 
-    game.elections.nominate('HEADMASTER', candidate.name)
+    game.elections.nominate('HEADMASTER', candidate_name)
     return game
 
 #VOTE
@@ -215,6 +229,7 @@ async def show_election_results(params = Depends(check_game)):
 
     return game.elections.results()
 
+  
 @app.websocket("/lobby/")
 async def websocket_lobby(websocket: WebSocket):
     await manager.connect_lobby(websocket)

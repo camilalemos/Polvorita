@@ -29,7 +29,7 @@ class Player(BaseModel):
     loyalty: Loyalty = None
 
     def kill(self):
-        self.is_alive = True
+        self.is_alive = False
 
 class Elections(BaseModel):
     minister_candidate: str = None
@@ -75,9 +75,11 @@ class Proclamations(BaseModel):
             self.proclamations.append('DEATH_EATERS')
         random.shuffle(self.proclamations)
 
-    def get_3proclamations(self):
-        if len(self.proclamations) >= 3:
+    def get_3proclamations(self, discarded: bool):
+        if len(self.proclamations) >= 3 and discarded:
             return [self.proclamations.pop(), self.proclamations.pop(), self.proclamations.pop()]
+        elif len(self.proclamations) >= 3 and not(discarded):
+            return [self.proclamations[0], self.proclamations[1], self.proclamations[2]]
         else:
             self.proclamations.extend(self.discarded_proclamations)
             random.shuffle(self.proclamations)
@@ -154,11 +156,20 @@ class Game(BaseModel):
         first_candidate = random.choice(list(self.players.keys()))
         self.elections.nominate('MINISTER', first_candidate)
 
-    def get_winner(self):
+    def cast_spell(self, spell: Spell, target: str):
+        if spell == 'ADIVINATION':
+            return self.proclamations.get_3proclamations(False)
+        elif spell == 'AVADA_KEDAVRA':
+            self.players[target].kill()
+            return self
+
+    def get_winner(self, target: Optional[str]):
         if self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
         elif self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
+        elif target and self.players[target].role == 'VOLDEMORT':
+            self.winner = 'PHOENIX_ORDER'
 
         return self.winner
 

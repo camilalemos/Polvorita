@@ -29,7 +29,7 @@ class Player(BaseModel):
     loyalty: Loyalty = None
 
     def kill(self):
-        self.is_alive = True
+        self.is_alive = False
 
 class Elections(BaseModel):
     minister_candidate: str = None
@@ -103,6 +103,7 @@ class Game(BaseModel):
     min_players: int = 5
     max_players: int = 5
     num_players: int = 0
+    voldemort: str = None
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
     elections: Elections = None
@@ -129,7 +130,9 @@ class Game(BaseModel):
         to_assign_death_eaters = [player for player in self.players.values() if player.loyalty == 'DEATH_EATERS']
         PO_roles = random.sample(PHOENIX_ORDER_ROLES, len(PHOENIX_ORDER_ROLES))
         DE_roles = random.sample(DEATH_EATERS_ROLES, len(DEATH_EATERS_ROLES))
-        to_assign_death_eaters.pop().role = 'VOLDEMORT'
+        voldemort = to_assign_death_eaters.pop()
+        voldemort.role = 'VOLDEMORT'
+        self.voldemort = voldemort.name
         while to_assign_phoenix_order:
             to_assign_phoenix_order.pop().role = PO_roles.pop()
         while to_assign_death_eaters:
@@ -154,11 +157,22 @@ class Game(BaseModel):
         first_candidate = random.choice(list(self.players.keys()))
         self.elections.nominate('MINISTER', first_candidate)
 
+    def cast_spell(self, spell: Spell, target: str):
+        if spell == 'ADIVINATION':
+            return [self.proclamations.proclamations[0],
+                    self.proclamations.proclamations[1],
+                    self.proclamations.proclamations[2]]
+        elif spell == 'AVADA_KEDAVRA':
+            self.players[target].kill()
+            return self
+
     def get_winner(self):
         if self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
         elif self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
+        elif not self.players[self.voldemort].is_alive:
+            self.winner = 'PHOENIX_ORDER'
 
         return self.winner
 

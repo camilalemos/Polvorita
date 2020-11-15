@@ -3,7 +3,7 @@ import { useHistory, withRouter, useParams } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 
 
-const Lobby = function ({ user, startGame }) { 
+const Lobby = function ({ user, startGame, statusStart }) { 
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playersName, setPlayersName] = useState([]);
     const history = useHistory(); 
@@ -30,6 +30,10 @@ const Lobby = function ({ user, startGame }) {
 			ws.close();
 		};
 	});
+
+	useEffect(() => {
+		if (statusStart === 'success') history.push('/login')
+	}, [statusStart])
 	
 	useEffect(() => {
 		if(gameInfo.players){

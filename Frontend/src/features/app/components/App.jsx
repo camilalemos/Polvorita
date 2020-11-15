@@ -26,6 +26,7 @@ const theme = createMuiTheme({
 });
 
 function PrivateRoute({ component, restricted,...rest }) {
+
     return (
     <Route {...rest} render={() =>(
         restricted ? 
@@ -37,16 +38,21 @@ function PrivateRoute({ component, restricted,...rest }) {
     );
 }
 
-const App = function ({ getUserData, statusLogin, is_logged}) {
+const App = function ({ getUserData, statusLogin, is_logged, getLoginData}) {
 
     useEffect(() => {
         getUserData();
     }, [getUserData])
-    
-    if (statusLogin === 'loading') return <MuiThemeProvider theme={theme}><CircularProgress/></MuiThemeProvider>;
+
+    useEffect(() => {
+        if(is_logged) getLoginData()
+    },[is_logged, getLoginData])
+
+    if (statusLogin === 'loading' || statusLogin === 'unknow') return <MuiThemeProvider theme={theme}><CircularProgress/></MuiThemeProvider>;
     return (
         <MuiThemeProvider theme={theme}>
             <SnackbarProvider maxSnack={3}>
+                <Suspense fallback={<CircularProgress />}>
                     <Router>
                     <Switch>
                         <Route exact path="/">
@@ -58,6 +64,7 @@ const App = function ({ getUserData, statusLogin, is_logged}) {
                         <PublicRoute exact path='/register' component={RegisterContainer} />
                     </Switch>
                     </Router>
+                </Suspense>
             </SnackbarProvider>
         </MuiThemeProvider>
     );

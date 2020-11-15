@@ -1,16 +1,21 @@
+import { StarRateTwoTone } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import Lobby from '../components/Lobby';
 
+import { startGame } from '../actions/joingameAction'
+ 
 function mapStateToProps(state) {
     return {
+        user: state.login.user,
     };
 }
 
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
+        startGame
     }, dispatch);
 };
 

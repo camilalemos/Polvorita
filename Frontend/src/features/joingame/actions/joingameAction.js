@@ -60,8 +60,6 @@ const _startGame = async (gameName, dispatch, getState) => {
             }
         });
 
-        console.log(response, "RESPONSE")
-
         dispatch({type: START_GAME_SUCCESS})
         
     } catch (error){

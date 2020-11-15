@@ -9,6 +9,7 @@ import { startGame } from '../actions/joingameAction'
 function mapStateToProps(state) {
     return {
         user: state.login.user,
+        statusStart: state.joingame.statusStart
     };
 }
 

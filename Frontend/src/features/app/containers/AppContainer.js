@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import App from '../components/App';
 
-import { getUserData } from '../../login/actions/LoginAction';
+import { getUserData, getLoginData } from '../../login/actions/LoginAction';
 
 function mapStateToProps(state) {
     return {
@@ -14,7 +14,8 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        getUserData
+        getUserData,
+        getLoginData
     }, dispatch);
 };
 

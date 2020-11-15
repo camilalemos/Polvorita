@@ -4,7 +4,8 @@ import {
     LOGIN_USER_FAIL,
     GET_USER,
     GET_USER_SUCCESS,
-    GET_USER_FAIL
+    GET_USER_FAIL,
+    USER_DATA
 } from '../../../constants/actionTypes/login';
 
 import axios from 'axios';
@@ -68,6 +69,36 @@ const _getUserData = async (dispatch, getState) => {
 console.log(error, 'Error in USER DATA');
     dispatch({type: GET_USER_FAIL});
 
+    }
+
+};
+
+export const getLoginData = () => (dispatch, getState) => _getLoginData(dispatch, getState);
+const _getLoginData = async (dispatch, getState) => {
+
+    try {
+        let {access_token} = {...getState().login}
+
+        let bodyFormData = new FormData();
+        bodyFormData.append('email', "");
+        bodyFormData.append('username', "");
+        bodyFormData.append('full_name', "");
+        bodyFormData.append('new_password', "");
+        bodyFormData.append('password', " ");
+
+        const response = await axios({
+            method: 'PUT',
+            url: `${api.url}/user`,
+            data: bodyFormData,
+            headers: { 'Content-Type':'multipart/form-data',
+            "Authorization" : `Bearer ${access_token}` }
+
+        })
+
+        {dispatch({type: USER_DATA, payload: {user: response.data} })}
+        
+    } catch (error) {
+    console.log(error, "ERROR")
     }
 
 };

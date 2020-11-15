@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { useHistory } from "react-router-dom";
+import { useHistory, withRouter } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -82,7 +82,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
 
 }
 
-export default withSnackbar(Login);
+export default withRouter(withSnackbar(Login));
 
 const useStyles = makeStyles((theme) => ({
     // root: {

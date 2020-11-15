@@ -6,7 +6,7 @@ import {
 
 const initialState= {
     status: 'unknow',
-    statusCode: ''
+    errorMsg: ''
 }
 
 export default (state = initialState, action) => {
@@ -20,12 +20,12 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 status: 'failed',
-                statusCode: action.payload.statusCode
+                errorMsg: action.payload.errorMsg
             }
         case REGISTER_USER_SUCCESS:
             return {
                 ...state, 
-                status: 'success'
+                status: 'success',
             }
         default:
             return {...state};

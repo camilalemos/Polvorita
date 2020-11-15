@@ -1,25 +1,25 @@
+import { StarRateTwoTone } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import Joingame from '../components/Joingame';
+import Lobby from '../components/Lobby';
 
-import { joingame } from '../actions/joingameAction'
-
+import { startGame } from '../actions/joingameAction'
+ 
 function mapStateToProps(state) {
     return {
-        status: state.joingame.status,
-        user: state.login.user
+        user: state.login.user,
     };
 }
 
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        joingame
+        startGame
     }, dispatch);
 };
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Joingame);
+)(Lobby);

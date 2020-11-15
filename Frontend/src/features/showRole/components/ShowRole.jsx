@@ -1,9 +1,32 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
-const ShowRole = () => {
+const ShowRole = ({ user }) => {
 
-    const userLoyalty = "PHOENIX_ORDER";
+    const [gameInfo, setGameInfo] = useState([]);
+    const userLoyalty = "DEATH_EATERS";
     const userRole = "SNAPE"
+
+    useEffect(() => {
+
+		const ws = new WebSocket('ws://localhost:8000/game/Test1');
+
+		ws.onopen = () => {
+		ws.send(JSON.stringify({event: 'game:subscribe'}));
+		};
+
+		ws.onmessage = (event) => {
+		setGameInfo(JSON.parse(event.data));
+	    console.log(gameInfo);
+		};
+
+		ws.onclose = () => {
+		ws.close();
+		};
+
+		return () => {
+		ws.close();
+		};
+    });
     
     const handleSelectImgLoyalty = (playerLoyalty) => {
         

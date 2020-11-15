@@ -5,7 +5,7 @@ import ShowRole from '../components/ShowRole';
 
 function mapStateToProps(state) {
     return {
-
+        user: state.user
     };
 }
 

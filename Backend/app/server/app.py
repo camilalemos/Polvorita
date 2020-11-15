@@ -110,7 +110,7 @@ def get_game(game_name: str, user: User = Depends(get_current_active_user)):
 #JOIN GAME
 @app.put("/game/", response_model=Game)
 async def join_game(player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
-                    password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
+                    password: Optional[str] = Form(None),
                     params = Depends(get_game)):
     game = params["game"]
     username = params["user"].username

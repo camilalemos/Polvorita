@@ -163,7 +163,7 @@ async def get_proclamations(params = Depends(get_player)):
     if params["player"].name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can get proclamations")
 
-    return game.proclamations.get_proclamations(1)
+    return game.proclamations.get_proclamations(3)
 
 #ENACT PROCLAMATION
 @app.put("/game/proclamations/enact/", response_model=Game)

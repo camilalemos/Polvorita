@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-
+import {useParams } from 'react-router-dom';
 const ShowRole = ({ user }) => {
-
+    const { game } = useParams();
     const [gameInfo, setGameInfo] = useState([]);
     const [playersInfo, setplayersInfo] = useState([]);
     const [userLoyalty, setUserLotalty] = useState('');
@@ -9,7 +9,7 @@ const ShowRole = ({ user }) => {
 
     useEffect(() => {
 
-		const ws = new WebSocket('ws://190.190.133.175:8000/game/Testeo');
+		const ws = new WebSocket(`ws://190.190.133.175:8000/game/${game}`);
 
 		ws.onopen = () => {
 		ws.send(JSON.stringify({event: 'game:subscribe'}));

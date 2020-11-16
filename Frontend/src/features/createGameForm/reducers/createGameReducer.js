@@ -5,7 +5,8 @@ import {
 } from '../../../constants/actionTypes/createGame';
 
 const initialState= {
-	status: 'unknow'
+	status: 'unknow',
+	statusCode: ''
 }
 
 export default (state = initialState, action) => {
@@ -18,7 +19,8 @@ export default (state = initialState, action) => {
 		case CREATE_GAME_FAIL:
 			return {
 				...state,
-				status: 'failed'
+				status: 'failed',
+				statusCode: action.payload.statusCode
 			}
 		case CREATE_GAME_SUCCESS:
 			return {

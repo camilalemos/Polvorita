@@ -1,11 +1,15 @@
 import { 
     JOIN_GAME_FAIL,
     JOIN_GAME_SUCCESS,
-    JOIN_GAME
+	JOIN_GAME,
+	START_GAME,
+	START_GAME_SUCCESS,
+	START_GAME_FAIL
 } from '../../../constants/actionTypes/joingame';
 
 const initialState= {
-    status: 'undefined'
+	status: 'undefined',
+	statusStart: 'undefined'
 }
 
 export default (state = initialState, action) => {
@@ -24,6 +28,21 @@ export default (state = initialState, action) => {
 			return {
 				...state, 
 				status: 'success'
+			}
+		case START_GAME:
+			return {
+				...state,
+				statusStart: 'loading'
+			}
+		case START_GAME_FAIL:
+			return {
+				...state,
+				statusStart: 'failed'
+			}
+		case START_GAME_SUCCESS:
+			return {
+				...state, 
+				statusStart: 'success'
 			}
 		default:
 			return {...state};

@@ -1,11 +1,15 @@
-import React, { Component, Suspense } from 'react';
-import { HashRouter as Router, Redirect, Route } from "react-router-dom";
+import React, { Component, Suspense, useEffect } from 'react';
+import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import RegisterContainer from '../../register/containers/RegisterContainers'
 import LoginContainer from '../../login/containers/LoginContainers';
 import JoinGameContainer from '../../joingame/containers/JoinGameContainers';
+import LobbyContainer from '../../joingame/containers/LobbyContainers';
 import { SnackbarProvider } from 'notistack';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import PublicRoute from '../../../constants/Routes/PublicRoute';
+import ShowRoleContainer from '../../../features/showRole/containers/ShowRoleContainers'
 
 
 const theme = createMuiTheme({
@@ -22,36 +26,52 @@ const theme = createMuiTheme({
     },
 });
 
+function PrivateRoute({ component, restricted,...rest }) {
 
+    return (
+    <Route {...rest} render={() =>(
+        restricted ? 
+            component
+        : 
+            <Redirect to="/login" />
+        )}
+    />
+    );
+}
 
+const App = function ({ getUserData, statusLogin, is_logged, getLoginData}) {
 
-class App extends Component {
+    useEffect(() => {
+        getUserData();
+    }, [getUserData])
 
-    componentDidMount() {
-        this.props.getUserData()
-    }
+    useEffect(() => {
+        if(is_logged) getLoginData()
+    },[is_logged, getLoginData])
 
-    render() {
-        return (
-            <MuiThemeProvider theme={theme}>
-                <SnackbarProvider maxSnack={3}>
+    if (statusLogin === 'loading' || statusLogin === 'unknow') return <MuiThemeProvider theme={theme}><CircularProgress/></MuiThemeProvider>;
+    return (
+        <MuiThemeProvider theme={theme}>
+            <SnackbarProvider maxSnack={3}>
+                <Suspense fallback={<CircularProgress />}>
                     <Router>
+                    <Switch>
                         <Route exact path="/">
-                            {this.props.statusLogin === 'success' ?
-                                <Redirect to="/lobby" />
-                            :
-                                <Redirect to='/login' />
-                            }
+                            <Redirect to="/login" />
                         </Route>
-                        <Route exact path='/login' component={LoginContainer} />
-                        <Route exact path='/register' component={RegisterContainer} />
-                        <Route exact path='/lobby' component={JoinGameContainer} /> 
+                        <PrivateRoute exact path='/lobby' restricted={is_logged} component={<JoinGameContainer/>} />
+                        <PrivateRoute exact path='/lobby/:game' restricted={is_logged} component={<LobbyContainer/>} />
+                        <PrivateRoute exact path='/game/:game' restricted={is_logged} component={<ShowRoleContainer/>} />
+                        <PublicRoute exact path='/login' component={LoginContainer} />
+                        <PublicRoute exact path='/register' component={RegisterContainer} />
+                    </Switch>
                     </Router>
-                </SnackbarProvider>
-            </MuiThemeProvider>
-        );
-    }
+                </Suspense>
+            </SnackbarProvider>
+        </MuiThemeProvider>
+    );
 
 }
+
 
 export default App;

@@ -18,7 +18,6 @@ const _registerUser = async (data, dispatch) => {
         let bodyFormData = new FormData();
         bodyFormData.append('username', data.userName);
         bodyFormData.append('email', data.email);
-        bodyFormData.append('fullname', data.fullName);
         bodyFormData.append('password', data.password);
 
         const response = await axios({
@@ -32,8 +31,9 @@ const _registerUser = async (data, dispatch) => {
         
     } catch (error) {
     console.log(error, "ERROR");
-        let requestError = error.message.split(' ');
-        dispatch({type: REGISTER_USER_FAIL, payload: {statusCode: requestError[requestError.length -1]}});
+        if (error.response.status === 403) dispatch({type: REGISTER_USER_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 422) dispatch({type: REGISTER_USER_FAIL, payload: {errorMsg: error.response.data.detail[0].msg }});
     }
+
 
 };

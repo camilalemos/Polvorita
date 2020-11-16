@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {useParams } from 'react-router-dom';
-const ShowRole = ({ user }) => {
-    const { game } = useParams();
+
+const ShowRole = ({ user , game }) => {
+
     const [gameInfo, setGameInfo] = useState([]);
     const [playersInfo, setplayersInfo] = useState([]);
     const [userLoyalty, setUserLotalty] = useState('');
@@ -111,8 +111,8 @@ const ShowRole = ({ user }) => {
                 <p style={{ flex: 1, textAlign: 'center', fontSize:40 }}>Loyalty: {userLoyalty}</p>
             </div>  
             <div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between'}}>
-            <img src={handelSelectImgRole(userRole)} alt= "Role" style={{display: 'flex', width: '49%'}}/>
-            <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '49%'}}/>
+            <img src={handelSelectImgRole(userRole)} alt= "Role" style={{display: 'flex', width: '200px', height: '270'}}/>
+            <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270'}}/>
             </div>
         </div>
     );

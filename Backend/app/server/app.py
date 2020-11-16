@@ -76,10 +76,10 @@ async def change_profile(email: Optional[EmailStr] = Form(None),
         if username or email or full_name or new_password:
             if not verify_password(password, user.password):
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect credentials")
-        elif username and db.User.exists(username=username):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username already exist")
-        elif email and db.User.exists(email=email):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="E-mail already exist")
+            elif username and db.User.exists(username=username):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username already exist")
+            elif email and db.User.exists(email=email):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="E-mail already exist")
 
         updated_user = db.User[user.id]
         hashed_password = get_password_hash(new_password)
@@ -239,11 +239,19 @@ async def show_election_results(game = Depends(check_game)):
     if len(game.elections.votes) != game.num_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="One or more players have not decided their vote")
 
-    result = game.elections.results()
+    return game.elections.results()
+
+#NEXT TURN
+@app.put("/game/turn/")
+async def next_turn(game = Depends(check_game)):
+    if len(game.elections.votes) != game.num_players:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="The voting round is not over")
+
+    game.elections.next_turn(list(game.players))
     if game.get_winner():
         game.finish(manager)
 
-    return result
+    return game
 
 #LOBBY WEBSOCKET
 @app.websocket("/lobby/")
@@ -265,9 +273,9 @@ async def websocket_game(websocket: WebSocket, game_name: str):
     try:
         while True:
             await websocket.receive_text()
-            if game_name in manager.games:
-                game = manager.games.get(game_name).dict()
-                connections = manager.game_connections.get(game_name)
+            game = manager.games.get(game_name).dict()
+            connections = manager.game_connections.get(game_name)
+            if game and connections:
                 await manager.broadcast_json(game, connections)
 
     except Exception:

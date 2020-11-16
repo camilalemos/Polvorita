@@ -30,6 +30,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 		
 		ws.onmessage = (event) => {
 		setGameInfo(JSON.parse(event.data));
+	    console.log(gameInfo);
 		};
 		
 		ws.onclose = () => {

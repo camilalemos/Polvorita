@@ -32,7 +32,7 @@ const Lobby = function ({ user, startGame, statusStart }) {
 	});
 
 	useEffect(() => {
-		if (statusStart === 'success') history.push('/login')
+		if (statusStart === 'success') history.push(`/game/${game}`)
 	}, [statusStart])
 	
 	useEffect(() => {

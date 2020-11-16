@@ -2,33 +2,10 @@ import React, {useEffect, useState} from 'react';
 
 const ShowRole = ({ user , gameInfo }) => {
 
-    // const [gameInfo, setGameInfo] = useState([]);
     const [playersInfo, setplayersInfo] = useState([]);
     const [userLoyalty, setUserLotalty] = useState('');
     const [userRole, setUserRole] = useState('');
 
-    // useEffect(() => {
-
-	// 	const ws = new WebSocket(`ws://localhost:8000/game/${game}`);
-
-	// 	ws.onopen = () => {
-	// 	ws.send(JSON.stringify({event: 'game:subscribe'}));
-	// 	};
-
-	// 	ws.onmessage = (event) => {
-    //     setGameInfo(JSON.parse(event.data));
-    //     console.log(gameInfo)
-	// 	};
-
-	// 	ws.onclose = () => {
-	// 	ws.close();
-	// 	};
-
-	// 	return () => {
-	// 	ws.close();
-	// 	};
-    // });
-    
     useEffect(() => {
 		if(gameInfo.players){
 			setplayersInfo(Object.values(gameInfo.players).filter(player => player.user_name === user.username)[0]);

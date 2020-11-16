@@ -76,10 +76,10 @@ async def change_profile(email: Optional[EmailStr] = Form(None),
         if username or email or full_name or new_password:
             if not verify_password(password, user.password):
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect credentials")
-        elif username and db.User.exists(username=username):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username already exist")
-        elif email and db.User.exists(email=email):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="E-mail already exist")
+            elif username and db.User.exists(username=username):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Username already exist")
+            elif email and db.User.exists(email=email):
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="E-mail already exist")
 
         updated_user = db.User[user.id]
         hashed_password = get_password_hash(new_password)

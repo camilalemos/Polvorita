@@ -5,3 +5,8 @@ export const SELECT_CANDIDATE_FAIL = "SELECT_CANDIDATE_FAIL"
 export const VOTE = "VOTE"
 export const VOTE_SUCCESS = "VOTE_SUCCESS"
 export const VOTE_FAIL = "VOTE_FAIL"
+
+export const GET_RESULTS = "GET_RESULTS"
+export const GET_RESULTS_SUCCESS = "GET_RESULTS_SUCCESS"
+export const GET_RESULTS_FAIL = "GET_RESULTS_FAIL"
+

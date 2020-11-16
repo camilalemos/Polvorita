@@ -3,20 +3,22 @@ import { bindActionCreators } from 'redux';
 
 import PlayersActions from '../components/PlayersActions';
 
-import { selectDirector, vote } from '../actions/playersActions';
+import { selectDirector, vote, getResults } from '../actions/playersActions';
 
 function mapStateToProps(state) {
     return {
         user: state.login.user,
-        status: state.playerActionsReducer.status
+        statusVote: state.playerActionsReducer.statusVote,
+        statusResults: state.playerActionsReducer.statusResults,
+        results: state.playerActionsReducer.results
     };
 }
-
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         selectDirector,
-        vote
+        vote,
+        getResults
     }, dispatch);
 };
 

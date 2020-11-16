@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import SelectDirectorCandidate from './SelectDirectorCandidate';
+import { SettingsVoiceOutlined } from '@material-ui/icons';
 
-const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
+const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getResults, statusResults,results }) => {
 
     const [minister, setMinister] = useState('');
     const [players, setPlanyers] = useState([]);
@@ -10,7 +11,23 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
     const [isCandidateMinister, setIsCandidateMinister] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [candidatePlayers, setCandidatePlayers] = useState([]);
-    const [voting, setVoting] = useState(false)
+    const [voting, setVoting] = useState(false);
+    const [candidateToDirector, setCandidateToDirector] = useState(null);
+    const [voted, setVoted] = useState(false);
+    const [voteChoice, setVoteChoice] = useState('')
+    const [viewResults, setViewResults] = useState(false);
+    const [dataResults, setDataResults] = useState(false);
+    // console.log(gameInfo, "GAME INFO"); 
+    useEffect(() => {
+        if(gameInfo.length !== 0 && Object.keys(gameInfo.elections.votes).length === 5) setViewResults(true);
+    },[gameInfo])
+
+    useEffect(() => {
+        if(statusResults === 'success') {
+            setViewResults(false);
+            setDataResults(true)
+        }
+    },[statusResults])
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -38,32 +55,50 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
             for(const player of players) {
                 if(player.name !== currentPlayer.name) array.push(player);
             }
-
         }
         setCandidatePlayers(array);
     },[setCandidatePlayers,players,currentPlayer])
 
     useEffect(() => {
         if(gameInfo.length !== 0) {
-            if (gameInfo.elections.headmaster_candidate) setVoting(true);
+            if (gameInfo.elections.headmaster_candidate !== candidateToDirector) {
+                setCandidateToDirector(gameInfo.elections.headmaster_candidate);
+                setVoting(true);
+                setVoted(false);
+            }
         }
-    },[gameInfo])
+    },[gameInfo,setCandidateToDirector, setVoting])
 
-    const handleVote = (type) => {
+    useEffect(() => {
+        if (statusVote === 'success') setVoted(true);
+    },[statusVote])
+
+    const handleVote = (type) => {  
+        setVoteChoice(type);
         vote(type, currentPlayer.name, gameInfo.name)
     }   
 
+    console.log(dataResults, voted, voting,results);
+
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
-            {isCandidateMinister && !gameInfo.elections.headmaster_candidate &&
+            {viewResults &&
+                <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={() => getResults(gameInfo.name)}>
+                    View Results
+                </Button>
+            }
+            {dataResults &&
+                <a style={{ flex:1, textAlign:'center', fontSize:30 }}>The results of votation is : {results}</a>
+            }   
+            {isCandidateMinister && !gameInfo.elections.headmaster_candidate && !voting &&
                 <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={() => setOpenModal(true)}>
                     Choose director
                 </Button>
             }
-            {isCandidateMinister && gameInfo.elections.headmaster_candidate &&
-                <a style={{flex:1, textAlign:'center', fontSize:30 }}>Voting Time!!</a>
+            {voted && 
+                <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Your vote is: {voteChoice} </a>
             }
-            {voting && !isCandidateMinister &&
+            {voting && !voted && !dataResults &&
                 <>
                 <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Candidate to director is: {gameInfo.elections.headmaster_candidate}</a>
                 <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >
@@ -76,7 +111,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
                 </div>
                 </>
             }
-        <SelectDirectorCandidate open={openModal} onClose={() => setOpenModal(false)} candidatePlayers={candidatePlayers} selectDirector={(playerName) => selectDirector(playerName, currentPlayer.name, gameInfo.name)} vote={(playerName, newVote) => vote(newVote, playerName, gameInfo.name) } />
+        <SelectDirectorCandidate open={openModal} onClose={() => setOpenModal(false)} candidatePlayers={candidatePlayers} selectDirector={(playerName) => selectDirector(playerName, currentPlayer.name, gameInfo.name)} />
         </div>
     )
 

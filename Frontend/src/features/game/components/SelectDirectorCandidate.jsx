@@ -9,13 +9,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function SelectDirectorCandidate({ open, onClose, candidatePlayers, selectDirector, vote }) {
+export default function SelectDirectorCandidate({ open, onClose, candidatePlayers, selectDirector }) {
 
     const handleClick = useCallback((player) => {
         selectDirector(player.name)
-        vote(player.name, "LUMOS")
         onClose()
-    }, [onClose, selectDirector, vote])
+    }, [onClose, selectDirector])
 
     return (
         <div>

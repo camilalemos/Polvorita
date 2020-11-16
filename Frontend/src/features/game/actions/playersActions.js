@@ -4,7 +4,10 @@ import {
     SELECT_CANDIDATE_FAIL,
     VOTE,
     VOTE_SUCCESS,
-    VOTE_FAIL
+    VOTE_FAIL,
+    GET_RESULTS,
+    GET_RESULTS_SUCCESS,
+    GET_RESULTS_FAIL
 } from '../../../constants/actionTypes/playersActions';
 import axios from 'axios';
 import api from '../../../configs/api';
@@ -59,5 +62,31 @@ const _vote = async ( vote, playerName, gameName, dispatch, getState) => {
     } catch (error){
         console.log(error, "ERROR")
         dispatch({type: VOTE_FAIL});
+    }
+};
+
+export const getResults = (gameName) => (dispatch, getState) => _getResults(gameName, dispatch, getState);
+const _getResults = async (gameName, dispatch, getState) => {
+
+    try {
+
+        dispatch({type: GET_RESULTS});
+
+        let {access_token} = {...getState().login}
+
+        const response = await axios({
+            method: 'get',
+            url: `${api.url}/game/elections/results?game_name=${gameName}`,
+            headers: { 
+            'Content-Type':'multipart/form-data',
+            "Authorization" : `Bearer ${access_token}`
+            }
+        });
+        console.log(response , "RESPONSE");
+        dispatch({type: GET_RESULTS_SUCCESS, payload: {results: response.data}})
+        
+    } catch (error){
+        console.log(error, "ERROR")
+        dispatch({type: GET_RESULTS_FAIL});
     }
 };

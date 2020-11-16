@@ -59,6 +59,7 @@ class Elections(BaseModel):
             self.headmaster = self.headmaster_candidate
             result = 'LUMOS'
 
+        self.headmaster_candidate = None
         self.votes.clear()
         return result
 
@@ -75,13 +76,17 @@ class Proclamations(BaseModel):
             self.proclamations.append('DEATH_EATERS')
         random.shuffle(self.proclamations)
 
-    def get_3proclamations(self):
-        if len(self.proclamations) >= 3:
-            return [self.proclamations.pop(), self.proclamations.pop(), self.proclamations.pop()]
-        else:
+    def shuffle(self):
+        if len(self.proclamations) < 3:
             self.proclamations.extend(self.discarded_proclamations)
             random.shuffle(self.proclamations)
-            self.get_3proclamations()
+
+    def get_proclamations(self, num_proclamations: int):
+        self.shuffle()
+        result = []
+        for i in range(num_proclamations):
+            result.append(self.proclamations.pop())
+        return result
 
     def enact(self, loyalty: Loyalty):
         if loyalty == 'PHOENIX_ORDER':
@@ -90,10 +95,7 @@ class Proclamations(BaseModel):
             self.DE_enacted_proclamations += 1
 
     def discard(self, loyalty: Loyalty):
-        if loyalty == 'DEATH_EATERS':
-            self.PO_discarded_proclamations += 1
-        elif loyalty == 'DEATH_EATERS':
-            self.DE_discarded_proclamations += 1
+        self.discarded_proclamations.append(loyalty)
 
 class Game(BaseModel):
     name: str
@@ -107,7 +109,7 @@ class Game(BaseModel):
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
     elections: Elections = None
-    spells: List[Spell] = []
+    spells: List[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
     chat: List[str] = []
 
     def exist(self, username: str):
@@ -158,7 +160,9 @@ class Game(BaseModel):
         self.elections.nominate('MINISTER', first_candidate)
 
     def cast_spell(self, spell: Spell, target: str):
+        self.spells.remove(spell)
         if spell == 'ADIVINATION':
+            self.proclamations.shuffle()
             return [self.proclamations.proclamations[0],
                     self.proclamations.proclamations[1],
                     self.proclamations.proclamations[2]]
@@ -173,6 +177,8 @@ class Game(BaseModel):
             self.winner = 'DEATH_EATERS'
         elif not self.players[self.voldemort].is_alive:
             self.winner = 'PHOENIX_ORDER'
+        elif self.elections.headmaster == self.voldemort and self.proclamations.DE_enacted_proclamations >= 3:
+            self.winner = 'DEATH_EATERS'
 
         return self.winner
 

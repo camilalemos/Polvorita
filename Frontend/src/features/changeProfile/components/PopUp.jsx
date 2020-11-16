@@ -1,21 +1,50 @@
-import React from 'react';
+import React, {Component, useState, useEffect} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import TextField from '@material-ui/core/TextField';
+import { withSnackbar } from 'notistack';
+
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   
-  export default function PopUp({ open, password, setPassword, errorPassword, setErrorPassword, onClose, sendNewInfo }) {
+    const PopUp = function ({ open, password, setPassword, errorPassword, setErrorPassword, onClose, sendNewInfo, enqueueSnackbar}) {
   
+    const allowed_password = (password) => {
+        let isAllowed = true;
+        const passwordexpression = /^[A-Za-z0-9]*$/
+        if (!passwordexpression.test(String(password).toLowerCase())){
+            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
+            setErrorPassword(true);
+            isAllowed = false;
+        }
+        if (password.length === 0 ){
+            enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
+            setErrorPassword(true);
+            isAllowed = false;
+        }
+        if (password.length > 0 && (password.length > 20 || password.length < 5)) {
+            enqueueSnackbar( 'Password must have 5 to 20 characters', { variant: 'error'});
+            setErrorPassword(true);
+            isAllowed = false;
+        }
+        return isAllowed
+    }
+    const handleChange = (value) => {
+        setPassword(value.target.value);
+        setErrorPassword(false);
+    } 
     const handleConfirm = () => {
-        sendNewInfo()
-        onClose()
+       
+        if (allowed_password(password)) {
+            onClose()
+            sendNewInfo()
+        }
     }
     return (
         
@@ -35,9 +64,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                       style={{ marginBottom: 40, minWidth:300 }}
                       value = {password}
                       error={errorPassword}
-                      onChange={(value) => (setPassword(value.target.value), setErrorPassword(false))}
+                      onChange={(value) => (handleChange(value))}
                       onKeyPress={(e) => {if (e.key === 'Enter') handleConfirm()}}
                       id="Password"
+                      required
                       size='small'
                       type='password'
                       label="Password"
@@ -56,3 +86,5 @@ const Transition = React.forwardRef(function Transition(props, ref) {
       </div>
     );
   }
+  
+  export default withSnackbar(PopUp);

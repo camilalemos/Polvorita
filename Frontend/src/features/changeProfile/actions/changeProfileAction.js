@@ -16,14 +16,11 @@ const _getUserInfo = async (userName, email, newPassword, password, fullName, di
         let {access_token} = {...getState().login}
         
         let bodyFormData = new FormData();
-        console.log("PASSWORD ANTES DEL IF" + password) 
-        console.log("FULLNAME ANTES DEL IF" + fullName) 
+
         if (password === undefined){
             bodyFormData.append('password', password);
-            console.log("PASSWORD INDEFINIDA: " + password) 
         }
         else{
-            console.log("PASSWORD: " + password) 
             bodyFormData.append('username',userName);
             bodyFormData.append('email', email);
             bodyFormData.append('new_password', newPassword);
@@ -43,7 +40,6 @@ const _getUserInfo = async (userName, email, newPassword, password, fullName, di
         dispatch({type:  GET_PROFILE_INFO_SUCCESS, payload: {userInfo:  response.data}})
     } catch (error) {
         console.log(error, "ERROR")
-        console.log("PASSWORD ERROR" + password) 
         let requestError = error.message.split(' ');
         dispatch({type:  GET_PROFILE_INFO_FAIL, payload: {statusCode: requestError[requestError.length -1]}});	
 	}

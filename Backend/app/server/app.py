@@ -239,11 +239,16 @@ async def show_election_results(game = Depends(check_game)):
     if len(game.elections.votes) != game.num_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="One or more players have not decided their vote")
 
-    result = game.elections.results(list(game.players))
+    return game.elections.results()
+
+#NEXT TURN
+@app.put("/game/turn/")
+async def next_turn(game = Depends(check_game)):
+    game.elections.next_turn(list(game.players))
     if game.get_winner():
         game.finish(manager)
 
-    return result
+    return game
 
 #LOBBY WEBSOCKET
 @app.websocket("/lobby/")

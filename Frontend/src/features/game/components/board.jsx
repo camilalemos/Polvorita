@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
+import Button from '@material-ui/core/Button';
 
 export default function  Board() {
   
@@ -45,7 +46,7 @@ export default function  Board() {
 
     return (
       <div>
-        <button onClick={handleClick}>
+        <button style={{ cursor: 'pointer' }} onClick={handleClick}>
           Proclamaciones: {numProclamationInDeck}
           <img src= {require('../../../constants/images/Proclamacion.jpg')} alt= "Proclamacion" style={{width: "150px", height: "190px"}}></img>
         </button>
@@ -64,17 +65,16 @@ export default function  Board() {
 
   return (
     <div className={classes.root}> 
-      <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible}
-        style={{width: '70%',}} disable>
-        <span className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroM1.png')})`,}} />
-        <span className={classes.imageBackdrop}>
+      <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%', justifyContent:'space-between'}} disable>
+        <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroM1.png')})`,}} />
+        <div className={classes.imageBackdrop}>
           {ShowSquare()}
           {ShowSquare()}
           {ShowSquare()}
           {ShowSquare()}
           {ShowSquare()}
           {ShowSquare()}
-        </span>
+        </div>
       </div>
       <div display= 'flex' style= {{width: 'min-content'}}>
             {Deck(deckfake,21)}

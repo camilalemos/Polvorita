@@ -41,7 +41,6 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
     const [userNameLabel, setUserNameLabel] = useState('')
     const [emailLabel, setEmailLabel] = useState('')
     const [renderConfirmPassword, setRenderConfirmPassword] = useState(false)
-    
 
     const handleUpdateInfo = () =>{
         getUserInfo(userName, email, newPassword, password, fullName);
@@ -87,12 +86,17 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
         setNewPassword('')
         setConfirmPassword('')
         setRenderConfirmPassword(false)
+        setErrorNewPassword(false)
+        setErrorConfirmPassword(false)
     }
     
     useEffect(() => {
-        if (status === 'success'){ 
-           updateData()
-           enqueueSnackbar('Profile data successfully updated', { variant: 'success'});
+
+        if (status === 'success') { 
+            updateData()
+            if (password){
+                enqueueSnackbar('Profile data successfully updated', { variant: 'success'});
+           }
         }
         if (status === 'failed'){
             if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error'});

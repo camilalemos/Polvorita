@@ -38,6 +38,7 @@ class Elections(BaseModel):
     headmaster: str = None
     rejected: int = 0
     votes: Dict[str, Vote] = {}
+    minister_idx = 0
 
     def nominate(self, nomination: Nomination, candidate: str):
         if nomination == 'MINISTER':
@@ -45,20 +46,23 @@ class Elections(BaseModel):
         elif nomination == 'HEADMASTER':
             self.headmaster_candidate = candidate
 
-    def vote(self, player_name, vote):
+    def vote(self, player_name: str, vote: Vote):
         self.votes[player_name] = vote
 
-    def results(self):
+    def results(self, players: List[str]):
         lumos_votes = sum(map(('LUMOS').__eq__, self.votes.values()))
         nox_votes = sum(map(('NOX').__eq__, self.votes.values()))
         if lumos_votes < nox_votes:
             self.rejected += 1
             result = 'NOX'
         else:
+            self.rejected = 0
             self.minister = self.minister_candidate
             self.headmaster = self.headmaster_candidate
             result = 'LUMOS'
 
+        self.minister_idx = (self.minister_idx + 1) % len(players)
+        self.minister_candidate = players[self.minister_idx]
         self.headmaster_candidate = None
         self.votes.clear()
         return result
@@ -156,7 +160,7 @@ class Game(BaseModel):
         self.assign_loyalties()
         self.assign_roles()
         self.elections = Elections()
-        first_candidate = random.choice(list(self.players.keys()))
+        first_candidate = list(self.players)[0]
         self.elections.nominate('MINISTER', first_candidate)
 
     def cast_spell(self, spell: Spell, target: str):

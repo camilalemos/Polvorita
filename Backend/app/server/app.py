@@ -239,7 +239,7 @@ async def show_election_results(game = Depends(check_game)):
     if len(game.elections.votes) != game.num_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="One or more players have not decided their vote")
 
-    result = game.elections.results()
+    result = game.elections.results(list(game.players))
     if game.get_winner():
         game.finish(manager)
 
@@ -265,9 +265,9 @@ async def websocket_game(websocket: WebSocket, game_name: str):
     try:
         while True:
             await websocket.receive_text()
-            if game_name in manager.games:
-                game = manager.games.get(game_name).dict()
-                connections = manager.game_connections.get(game_name)
+            game = manager.games.get(game_name).dict()
+            connections = manager.game_connections.get(game_name)
+            if game and connections:
                 await manager.broadcast_json(game, connections)
 
     except Exception:

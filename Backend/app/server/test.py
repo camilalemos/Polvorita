@@ -5,25 +5,47 @@ from .app import app
 
 client = TestClient(app)
 
-#REGISTER
-def test_post_create_user():
-    data = {
-        "username": "Admin_1", 
+users = [
+    {
+        "username": "Admin_1",
         "email": "Admin_1@admin.com",
         "password": "Admin123",
-        }
-    response = client.post("/user/", 
-        data=data)
-    assert response.status_code == 201
+    },
+    {
+        "username": "Admin_2",
+        "email": "Admin_2@admin.com",
+        "password": "Admin123",
+    },
+    {
+        "username": "Admin_3",
+        "email": "Admin_3@admin.com",
+        "password": "Admin123",
+    },
+    {
+        "username": "Admin_4",
+        "email": "Admin_4@admin.com",
+        "password": "Admin123",
+    },
+    {
+        "username": "Admin_5",
+        "email": "Admin_5@admin.com",
+        "password": "Admin123",
+    }
+]
+
+#REGISTER
+def test_post_create_user():
+    for user in users:
+        response = client.post("/user/", data=user)
+        assert response.status_code == 201
 
 def test_post_create_user_with_malformed_username():
     data = {
-        "username": "Admin_2?", 
+        "username": "Admin_2?",
         "email": "Admin_2@admin.com",
         "password": "Admin123",
-        }
-    response = client.post("/user/", 
-        data=data)
+    }
+    response = client.post("/user/", data=data)
     assert response.status_code == 422
 
 def test_post_create_user_with_malformed_email():
@@ -31,9 +53,8 @@ def test_post_create_user_with_malformed_email():
         "username": "Admin_3", 
         "email": "Admin_3",
         "password": "Admin123",
-        }
-    response = client.post("/user/", 
-        data=data)
+    }
+    response = client.post("/user/", data=data)
     assert response.status_code == 422
 
 def test_post_create_user_with_existing_username():
@@ -41,13 +62,12 @@ def test_post_create_user_with_existing_username():
         "username": "Admin_1", 
         "email":"Admin_4@admin.com",
         "password": "Admin123",
-        }
-    response = client.post("/user/", 
-        data=data)
+    }
+    response = client.post("/user/", data=data)
     assert response.status_code == 403
     assert response.json() == {
         "detail":"Username or E-mail already exist"
-        }
+    }
 
 def test_post_create_user_with_existing_email():
     data = {
@@ -55,59 +75,84 @@ def test_post_create_user_with_existing_email():
         "email": "Admin_1@admin.com",
         "password": "Admin123",
         }
-    response = client.post("/user/", 
-        data=data)
+    response = client.post("/user/", data=data)
     assert response.status_code == 403
     assert response.json() == {
         "detail": "Username or E-mail already exist"
-        }
+    }
 
 #LOGIN
 def test_post_login_with_username():
     data = {
         "username": "Admin_1", 
         "password": "Admin123",
-        }
-    response = client.post("/token/", 
-        data=data)
+    }
+    response = client.post("/login/", data=data)
     assert response.status_code == 201
 
 def test_post_login_with_email():
     data = {
         "username": "Admin_1@admin.com",
         "password": "Admin123",
-        }
-    response = client.post("/token/", 
-        data=data)
+    }
+    response = client.post("/login/", data=data)
     assert response.status_code == 201
 
 def test_post_login_wrong_password():
     data = {
         "username": "Admin_1",
         "password": "Admin1234",
-        }
-    response = client.post("/token/", 
-        data=data)
+    }
+    response = client.post("/login/", data=data)
     assert response.status_code == 401
 
 def test_post_login_wrong_username():
     data = {
         "username": "none",
         "password": "Admin123",
-        }
-    response = client.post("/token/", 
-        data=data)
+    }
+    response = client.post("/login/", data=data)
     assert response.status_code == 401
 
 def test_post_login_wrong_email():
     data = {
         "username": "none@none.com",
         "password": "Admin123",
-        }
-    response = client.post("/token/", 
-        data=data)
+    }
+    response = client.post("/login/", data=data)
     assert response.status_code == 401
 
+#CHANGE PROFILE
+def test_put_change_profile_wrong_password():
+    login = {
+        "username": "Admin_1", 
+        "password": "Admin123",
+    }
+    response = client.post("/login/", data=login)
+    token = response.json()['access_token']
+    headers={"Authorization" : f'Bearer {token}'}
+    data = {
+        "email": "none@none.com",
+        "password": "none"
+    }
+    response = client.put("/user/", headers=headers, data=data)
+    assert response.status_code == 401
+
+def test_put_change_profile_with_existing_username():
+    login = {
+        "username": "Admin_1", 
+        "password": "Admin123",
+    }
+    response = client.post("/login/", data=login)
+    token = response.json()['access_token']
+    headers={"Authorization" : f'Bearer {token}'}
+    data = {
+        "username": "Admin_2",
+        "password": "Admin123"
+    }
+    response = client.put("/user/", headers=headers, data=data)
+    assert response.status_code == 403
+"""
 #CREATE GAME
 def test_post_create_game():
     for i in range(0, 2):
@@ -344,3 +389,4 @@ def test_put_discard_proclamation_only_headmaster():
     response = client.put("/game/proclamation/discard/Player_0?game_name=Juego_0&loyalty=PHOENIX_ORDER")
     assert response.status_code == 403
     assert response.json() == {"detail": "Only minister or headmaster can discard a proclamation"}
+"""

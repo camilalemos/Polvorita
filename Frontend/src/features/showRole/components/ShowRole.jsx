@@ -105,14 +105,18 @@ const ShowRole = ({ user , game }) => {
 
     return (
 
-        <div style={{display: 'flex', flexDirection:'column', padding:40}}>
-            <div style= {{display: 'flex', marginBottom: 40}}>
-                <p style={{ flex: 1, textAlign: 'center', fontSize:40 }}>Role: {userRole}</p>
-                <p style={{ flex: 1, textAlign: 'center', fontSize:40 }}>Loyalty: {userLoyalty}</p>
-            </div>  
+        <div style={{display: 'flex', flexDirection:'column', padding:20}}>
             <div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between'}}>
-            <img src={handelSelectImgRole(userRole)} alt= "Role" style={{display: 'flex', width: '200px', height: '270'}}/>
-            <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270'}}/>
+
+            <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center' , fontSize:30 }}>Role: {userRole}</p>
+                <img  src={handelSelectImgRole(userRole)} alt= "Role" style={{display: 'flex', width: '200px', height: '270'}}/>
+            </div>  
+            <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center', fontSize:30 }}>Loyalty: {userLoyalty}</p>
+                <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270'}}/>
+            </div>  
+
             </div>
         </div>
     );

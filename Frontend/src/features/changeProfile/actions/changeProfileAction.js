@@ -40,7 +40,9 @@ const _getUserInfo = async (userName, email, newPassword, password, fullName, di
         dispatch({type:  GET_PROFILE_INFO_SUCCESS, payload: {userInfo:  response.data}})
     } catch (error) {
         console.log(error, "ERROR")
-        let requestError = error.message.split(' ');
-        dispatch({type:  GET_PROFILE_INFO_FAIL, payload: {statusCode: requestError[requestError.length -1]}});	
+        
+        if (error.response.status === 401) dispatch({type: GET_PROFILE_INFO_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 403) dispatch({type: GET_PROFILE_INFO_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 422) dispatch({type: GET_PROFILE_INFO_FAIL, payload: {errorMsg: error.response.data.detail[0].msg }});	
 	}
 };

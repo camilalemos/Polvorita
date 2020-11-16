@@ -6,8 +6,8 @@ import {
 import axios from 'axios';
 import api from '../../../configs/api';
 
-export const joingame = ( loyalty, playerName, gameName) => (dispatch, getState) => _joingame(loyalty, playerName, gameName, dispatch, getState);
-const _joingame = async ( loyalty, playerName, gameName, dispatch, getState) => {
+export const enacproclamation = ( loyalty, playerName, gameName) => (dispatch, getState) => _enacproclamation(loyalty, playerName, gameName, dispatch, getState);
+const _enacproclamation = async ( loyalty, playerName, gameName, dispatch, getState) => {
 
     try {
 

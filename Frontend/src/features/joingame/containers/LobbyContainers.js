@@ -1,4 +1,3 @@
-import { StarRateTwoTone } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

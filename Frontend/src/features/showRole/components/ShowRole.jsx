@@ -9,7 +9,7 @@ const ShowRole = ({ user }) => {
 
     useEffect(() => {
 
-		const ws = new WebSocket('ws://localhost:8000/game/Test1');
+		const ws = new WebSocket('ws://190.190.133.175:8000/game/Testeo');
 
 		ws.onopen = () => {
 		ws.send(JSON.stringify({event: 'game:subscribe'}));
@@ -17,7 +17,7 @@ const ShowRole = ({ user }) => {
 
 		ws.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
-        //console.log(gameInfo)
+        console.log(gameInfo)
 		};
 
 		ws.onclose = () => {
@@ -31,7 +31,7 @@ const ShowRole = ({ user }) => {
     
     useEffect(() => {
 		if(gameInfo.players){
-			setplayersInfo(Object.values(gameInfo.players).filter(player => player.name === user)[0]);
+			setplayersInfo(Object.values(gameInfo.players).filter(player => player.user_name === "Testedor1")[0]);
             setUserLotalty(playersInfo?.loyalty)
             setUserRole(playersInfo?.role)
 		}

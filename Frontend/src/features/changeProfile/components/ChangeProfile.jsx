@@ -15,7 +15,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-const ChangeProfile = function ({ userInfo, getUserInfo, status, statusCode, open, onClose, enqueueSnackbar }) {
+const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open, onClose, enqueueSnackbar }) {
     
    
 
@@ -31,9 +31,6 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, statusCode, ope
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorFullName, setErrorFullName] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
-    const [errorPasswordLength, setErrorPasswordLength] = useState(false);
-    const [errorPasswordSpecialChars, setErrorPasswordSpecialChars] = useState(false);
-    const [errorPasswordVoid, setErrorPasswordVoid] = useState(false);
 
 
     const [errorNewPassword, setErrorNewPassword] = useState(false);
@@ -45,79 +42,6 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, statusCode, ope
     const [emailLabel, setEmailLabel] = useState('')
     const [renderConfirmPassword, setRenderConfirmPassword] = useState(false)
     
-    const allowedFullName = () => {
-        let isAllowed = true;
-        const expression = /^([A-Z_a-z0-9])*$/
-        
-        if (!expression.test(String(fullName).toLowerCase())){
-            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
-            setErrorUserName(true);
-            isAllowed = false;
-        }
-        if (fullName.length !== 0 && (fullName.length > 30 || fullName.length < 5)){
-            enqueueSnackbar( 'Full Name must have 5 to 30 characters', { variant: 'error'});
-            setErrorFullName(true);
-        }
-        return isAllowed;
-    }
-
-    const allowedUserName = () => {
-        let isAllowed = true;
-        const expression = /^([A-Z_a-z0-9])*$/
-        
-        if (!expression.test(String(userName).toLowerCase())){
-            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
-            setErrorUserName(true);
-            isAllowed = false;
-        }
-        if (userName.length > 0 && (userName.length > 20 || userName.length < 5)){
-            enqueueSnackbar( 'User Name must have 5 to 20 characters', { variant: 'error'});
-            setErrorUserName(true);
-            isAllowed = false;
-        }
-        return isAllowed;
-    }
-    const allowedEmail = (email) => {
-        
-        const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
-        let isAllowed = true;
-        
-        if (email.length !== 0 && !expression.test(String(email).toLowerCase())){            
-            enqueueSnackbar( 'Enter a valid email', { variant: 'error'});
-            setErrorEmail(true);
-            isAllowed = false;
-        }
-        return isAllowed;
-    }
-
-    const allowedPasswords = () => {
-        
-        let isAllowed = true;
-        const passwordexpression = /^[A-Za-z0-9]*$/
-        
-        if (!passwordexpression.test(String(newPassword).toLowerCase()) || !passwordexpression.test(String(confirmPassword).toLowerCase())){
-            setErrorNewPassword(true);
-            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
-            isAllowed = false;
-        }
-        if (confirmPassword.length === 0 && newPassword.length !== 0){
-            setErrorConfirmPassword(true);
-            enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
-            isAllowed = false;
-        }
-        if (newPassword !== confirmPassword) {
-            setErrorNewPassword(true);
-            setErrorConfirmPassword(true);
-            enqueueSnackbar('Passwords do not match', { variant: 'error'});
-            isAllowed = false;
-        }
-        if (newPassword.length > 0 && (newPassword.length > 20 || newPassword.length < 5)){
-            enqueueSnackbar( 'New password must have 5 to 20 characters', { variant: 'error'});
-            setErrorNewPassword(true);
-        }
-        return isAllowed
-    }
-
 
     const handleUpdateInfo = () =>{
         getUserInfo(userName, email, newPassword, password, fullName);
@@ -129,30 +53,8 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, statusCode, ope
         setErrorNewPassword(false)
     }
 
-    const checkFormInput = () => {
-        let isAllowed = true;
-
-        if (!allowedUserName()) {
-            isAllowed = false;
-        }
-        if (!allowedEmail(email)) {
-            isAllowed = false;
-        }
-        if (!allowedPasswords()) {
-            isAllowed = false;
-        }
-        if (!allowedFullName()) {
-            isAllowed = false;
-        }
-        
-        return isAllowed;
-    }
-
     const handleSave = () => {
-
-        if (checkFormInput()) {
-            setOpenModal(true)
-        }
+        setOpenModal(true)
     }
    
     useEffect(() => {
@@ -171,20 +73,6 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, statusCode, ope
         setConfirmPassword('')
         setRenderConfirmPassword(false)
     }
-
-    const checkStatusCode = () => {
-        switch (statusCode) {
-            case '422':
-                enqueueSnackbar('Something is going wrong, check your input and try again', { variant: 'error'});
-                break;
-            case '401':
-                enqueueSnackbar('Wrong Credentials', { variant: 'error'});
-                break;
-            default:
-                enqueueSnackbar('Something is going wrong, check your conection or try again later', { variant: 'error'});
-                break;
-        }
-    }
     
     useEffect(() => {
         if (status === 'success'){ 
@@ -192,7 +80,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, statusCode, ope
            enqueueSnackbar('Profile data successfully updated', { variant: 'success'});
         }
         if (status === 'failed'){
-            checkStatusCode()
+            if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error'});
         }
     },[status])
 

@@ -6,7 +6,7 @@ import ChangeProfile from "../components/ChangeProfile";
 function mapStateToProps(state) {
     return {
         status: state.getUserInfo.status,
-        statusCode: state.getUserInfo.statusCode,
+        errorMsg: state.getUserInfo.errorMsg,
         userInfo: state.getUserInfo.userInfo
     };
 }

@@ -6,8 +6,8 @@ import {
 
 const initialState= {
 	status: 'unknow',
-    statusCode: '',
-    userInfo: {}
+   	errorMsg: '' ,
+	userInfo: {}
 }
 
 export default (state = initialState, action) => {
@@ -21,7 +21,7 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				status: 'failed',
-				statusCode: action.payload.statusCode
+                errorMsg: action.payload.errorMsg
 			}
 		case GET_PROFILE_INFO_SUCCESS:
 			return {

@@ -1,12 +1,18 @@
 import {
     ENACT_PROCLAMATION,
     ENACT_PROCLAMATION_FAIL,
-    ENACT_PROCLAMATION_SUCCESS
+	ENACT_PROCLAMATION_SUCCESS,
+	GET_PROCLAMATIONS,
+	GET_PROCLAMATIONS_SUCCESS,
+	GET_PROCLAMATIONS_FAIL
 } from '../../../constants/actionTypes/enactproclamation';
 
 const initialState= {
 	status: 'unknow',
-	statusCode: ''
+	statusCode: '',
+	statusGetProclamation: 'unknow',
+	errorMsg: '',
+	proclamationsInfo: {}
 }
 
 export default (state = initialState, action) => {
@@ -26,6 +32,23 @@ export default (state = initialState, action) => {
 			return {
 				...state, 
 				status: 'success'
+			}
+		case GET_PROCLAMATIONS:
+			return {
+				...state,
+				statusGetProclamation: 'loading'
+			}
+		case GET_PROCLAMATIONS_FAIL:
+			return {
+				...state,
+				statusGetProclamation: 'failed',
+				errorMsg: action.payload.errorMsg //revisar
+			}
+		case GET_PROCLAMATIONS_SUCCESS:
+			return {
+				...state, 
+				statusGetProclamation: 'success',
+				proclamationsInfo: action.payload.proclamationsInfo
 			}
 		default:
 			return {...state};

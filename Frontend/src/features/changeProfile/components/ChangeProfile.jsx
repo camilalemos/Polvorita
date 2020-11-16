@@ -52,8 +52,23 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
         !value.target.value ? setRenderConfirmPassword(false) : setRenderConfirmPassword(true)
         setErrorNewPassword(false)
     }
+    const checkNewPassword = () => {
+        let isAllowed = true
+        if (newPassword.length > 0 && newPassword !== confirmPassword) {
+            isAllowed = false
+            setErrorNewPassword(true)
+            setErrorConfirmPassword(true)
+            enqueueSnackbar('Passwords do not match', { variant: 'error'})
+        }
+        if (confirmPassword.length === 0){
+            enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
+            isAllowed = false
+        }
+        return isAllowed
+    }
 
     const handleSave = () => {
+        if(checkNewPassword())
         setOpenModal(true)
     }
    

@@ -6,7 +6,6 @@ import {
 
 const initialState= {
 	status: 'unknow',
-
 }
 
 export default (state = initialState, action) => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import SelectDirectorCandidate from './SelectDirectorCandidate';
 
-const PlayersAction = ({ gameInfo, user, selectDirector, status }) => {
+const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
 
     const [minister, setMinister] = useState('');
     const [players, setPlanyers] = useState([]);
@@ -10,6 +10,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status }) => {
     const [isCandidateMinister, setIsCandidateMinister] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [candidatePlayers, setCandidatePlayers] = useState([]);
+    const [voting, setVoting] = useState(false)
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -42,15 +43,40 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status }) => {
         setCandidatePlayers(array);
     },[setCandidatePlayers,players,currentPlayer])
 
+    useEffect(() => {
+        if(gameInfo.length !== 0) {
+            if (gameInfo.elections.headmaster_candidate) setVoting(true);
+        }
+    },[gameInfo])
+
+    const handleVote = (type) => {
+        vote(currentPlayer.name, type, gameInfo.name)
+    }
+
     return (
-        <div style={{ padding:20 }}>
-            {isCandidateMinister &&
-                <Button color='secondary' style={{ backgroundColor: 'lightblue' }} onClick={() => setOpenModal(true)}>
+        <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
+            {isCandidateMinister && !gameInfo.elections.headmaster_candidate &&
+                <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={() => setOpenModal(true)}>
                     Choose director
                 </Button>
-
             }
-        <SelectDirectorCandidate open={openModal} onClose={() => setOpenModal(false)} candidatePlayers={candidatePlayers} selectDirector={(playerName) => selectDirector(playerName, currentPlayer.name, gameInfo.name)} />
+            {isCandidateMinister && gameInfo.elections.headmaster_candidate &&
+                <a style={{flex:1, textAlign:'center', fontSize:30 }}>Voting Time!!</a>
+            }
+            {voting && !isCandidateMinister &&
+                <>
+                <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Candidate to director is: {gameInfo.elections.headmaster_candidate}</a>
+                <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >
+                    <Button size='large' style={{ backgroundColor: 'lightblue', marginRight:40 }} onClick={() => handleVote("LUMUS")}>
+                        LUMUS
+                    </Button>
+                    <Button size='large' style={{ backgroundColor: 'lightblue' }} onClick={() => handleVote("NOX")} >
+                        NOX
+                    </Button>
+                </div>
+                </>
+            }
+        <SelectDirectorCandidate open={openModal} onClose={() => setOpenModal(false)} candidatePlayers={candidatePlayers} selectDirector={(playerName) => selectDirector(playerName, currentPlayer.name, gameInfo.name)} vote={(playerName, newVote) => vote(newVote, playerName, gameInfo.name) } />
         </div>
     )
 

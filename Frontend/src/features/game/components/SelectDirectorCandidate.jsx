@@ -2,8 +2,6 @@ import React, {useCallback} from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 
@@ -11,12 +9,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function SelectDirectorCandidate({ open, onClose, candidatePlayers, selectDirector }) {
+export default function SelectDirectorCandidate({ open, onClose, candidatePlayers, selectDirector, vote }) {
 
     const handleClick = useCallback((player) => {
         selectDirector(player.name)
+        vote(player.name, "LUMUS")
         onClose()
-    }, [onClose, selectDirector])
+    }, [onClose, selectDirector, vote])
 
     return (
         <div>

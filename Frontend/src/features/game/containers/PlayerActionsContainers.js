@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 
 import PlayersActions from '../components/PlayersActions';
 
-import { selectDirector } from '../actions/playersActions';
+import { selectDirector, vote } from '../actions/playersActions';
 
 function mapStateToProps(state) {
     return {
@@ -15,7 +15,8 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        selectDirector
+        selectDirector,
+        vote
     }, dispatch);
 };
 

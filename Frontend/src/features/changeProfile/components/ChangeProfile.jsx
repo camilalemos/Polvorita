@@ -60,7 +60,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
             setErrorConfirmPassword(true)
             enqueueSnackbar('Passwords do not match', { variant: 'error'})
         }
-        if (confirmPassword.length === 0){
+        if (confirmPassword.length === 0 && newPassword.length > 0){
             enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
             isAllowed = false
         }

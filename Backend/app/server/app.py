@@ -244,6 +244,9 @@ async def show_election_results(game = Depends(check_game)):
 #NEXT TURN
 @app.put("/game/turn/")
 async def next_turn(game = Depends(check_game)):
+    if len(game.elections.votes) != game.num_players:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="The voting round is not over")
+
     game.elections.next_turn(list(game.players))
     if game.get_winner():
         game.finish(manager)

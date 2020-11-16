@@ -59,7 +59,7 @@ class Elections(BaseModel):
         return 'NOX' if lumos_votes < nox_votes else 'LUMOS'
 
     def next_turn(self, players: List[str]):
-        if self.results == 'NOX':
+        if self.results() == 'NOX':
             self.rejected += 1
         else:
             self.rejected = 0

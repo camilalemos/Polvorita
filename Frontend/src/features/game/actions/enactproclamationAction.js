@@ -19,13 +19,10 @@ const _enacproclamation = async ( loyalty, playerName, gameName, dispatch, getSt
         let {access_token} = {...getState().login}
         
         let bodyFormData = new FormData()
-        
-        bodyFormData.append('loyalty', loyalty); //Enviar como query
-        bodyFormData.append('player_name', playerName); //Enviar como query
 
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game/proclamations/enact?game_name=${gameName}`,
+            url: `${api.url}/game/proclamations/enact?game_name=${gameName}&player_name:${playerName}&loyalty${loyalty}`,
             data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
@@ -54,7 +51,7 @@ const _getProclamationsInfo = async (playerName, gameName, dispatch, getState) =
 
         const response = await axios({
             method: 'get',
-            url: `${api.url}/game/proclamations/?game_name=${gameName}`,
+            url: `${api.url}/game/proclamations/?game_name=${gameName}&player_name${playerName}`,
             data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',

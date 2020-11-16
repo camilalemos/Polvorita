@@ -50,8 +50,8 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
     },[gameInfo])
 
     const handleVote = (type) => {
-        vote(currentPlayer.name, type, gameInfo.name)
-    }
+        vote(type, currentPlayer.name, gameInfo.name)
+    }   
 
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
@@ -67,8 +67,8 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
                 <>
                 <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Candidate to director is: {gameInfo.elections.headmaster_candidate}</a>
                 <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >
-                    <Button size='large' style={{ backgroundColor: 'lightblue', marginRight:40 }} onClick={() => handleVote("LUMUS")}>
-                        LUMUS
+                    <Button size='large' style={{ backgroundColor: 'lightblue', marginRight:40 }} onClick={() => handleVote("LUMOS")}>
+                        LUMOS
                     </Button>
                     <Button size='large' style={{ backgroundColor: 'lightblue' }} onClick={() => handleVote("NOX")} >
                         NOX

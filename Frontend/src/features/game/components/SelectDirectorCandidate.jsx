@@ -13,7 +13,7 @@ export default function SelectDirectorCandidate({ open, onClose, candidatePlayer
 
     const handleClick = useCallback((player) => {
         selectDirector(player.name)
-        vote(player.name, "LUMUS")
+        vote(player.name, "LUMOS")
         onClose()
     }, [onClose, selectDirector, vote])
 

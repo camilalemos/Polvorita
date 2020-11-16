@@ -13,7 +13,7 @@ export const selectDirector = ( candidateName, playerName, gameName) => (dispatc
 const _selectDirector = async ( candidateName, playerName, gameName, dispatch, getState) => {
 
     try {
-        console.log(candidateName, playerName, gameName, "DATOS" )
+
         dispatch({type: SELECT_CANDIDATE});
 
         let {access_token} = {...getState().login}
@@ -26,8 +26,6 @@ const _selectDirector = async ( candidateName, playerName, gameName, dispatch, g
             "Authorization" : `Bearer ${access_token}`
             }
         });
-
-        console.log(response, "RESPONSE")
 
         dispatch({type: SELECT_CANDIDATE_SUCCESS})
         
@@ -45,6 +43,7 @@ const _vote = async ( vote, playerName, gameName, dispatch, getState) => {
         dispatch({type: VOTE});
 
         let {access_token} = {...getState().login}
+        console.log(`${api.url}/game/elections/vote?vote=${vote}&player_name=${playerName}&game_name=${gameName}`, "URL");
 
         const response = await axios({
             method: 'put',
@@ -54,8 +53,6 @@ const _vote = async ( vote, playerName, gameName, dispatch, getState) => {
             "Authorization" : `Bearer ${access_token}`
             }
         });
-
-        console.log(response, "RESPONSE")
 
         dispatch({type: VOTE_SUCCESS})
         

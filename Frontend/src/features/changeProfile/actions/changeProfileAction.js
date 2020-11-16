@@ -7,7 +7,7 @@ import {
   import axios from 'axios'
   import api from '../../../configs/api'
 
-//userName, email, newPassword, password, fullName
+
 export const getUserInfo = (userName, email, newPassword, password, fullName) => (dispatch, getState) => _getUserInfo(userName, email, newPassword, password, fullName, dispatch, getState);
 const _getUserInfo = async (userName, email, newPassword, password, fullName, dispatch, getState) => {
 	try {

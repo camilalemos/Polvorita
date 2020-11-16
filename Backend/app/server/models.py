@@ -40,6 +40,10 @@ class Elections(BaseModel):
     votes: Dict[str, Vote] = {}
     minister_idx = 0
 
+    def init(self, players: List[str]):
+        self.minister_idx = random.choice(range(len(players)))
+        self.minister_candidate = players[self.minister_idx]
+
     def nominate(self, nomination: Nomination, candidate: str):
         if nomination == 'MINISTER':
             self.minister_candidate = candidate
@@ -160,8 +164,7 @@ class Game(BaseModel):
         self.assign_loyalties()
         self.assign_roles()
         self.elections = Elections()
-        first_candidate = list(self.players)[0]
-        self.elections.nominate('MINISTER', first_candidate)
+        self.elections.init(list(self.players))
 
     def cast_spell(self, spell: Spell, target: str):
         self.spells.remove(spell)

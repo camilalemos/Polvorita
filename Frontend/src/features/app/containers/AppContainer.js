@@ -3,17 +3,19 @@ import { connect } from 'react-redux';
 
 import App from '../components/App';
 
-import { getUserData } from '../../login/actions/LoginAction';
+import { getUserData, getLoginData } from '../../login/actions/LoginAction';
 
 function mapStateToProps(state) {
     return {
-        statusLogin: state.login.statusLogin
+        statusLogin: state.login.statusLogin,
+        is_logged: state.login.is_logged
     };
 }
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        getUserData
+        getUserData,
+        getLoginData
     }, dispatch);
 };
 

@@ -19,15 +19,17 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const CreateGameForm = function ({ createGame, status, statusCode, open, onClose, enqueueSnackbar }) {
 
+
     const [gameName, setGameName] = useState('');
     const [playerName, setPlayerName] = useState('');
     const [gamePassword, setPassword] = useState('');
     const [playerNameError, setPlayerNameError] = useState(false);
     const [gameNameError, setGameNameError] = useState(false);
+    const [gamePasswordError, setGamePasswordError] = useState(false);
     const history = useHistory();
 
 
-    const checkInput = () => {
+    const notEmpty = () => {
         let result = true;
         if (gameName.length === 0  || playerName.length === 0){
             enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
@@ -36,6 +38,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         return result;
     }
 
+    
     const handleContinue = () => {
         if (!gameName) {
             setGameNameError(true);
@@ -43,28 +46,66 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         if (!playerName) {
             setPlayerNameError(true);
         }
-        if (checkInput()) {
+        if (notEmpty()) {
             createGame({ playerName, gameName, gamePassword })
         }
     }
 
+    
+    const validated = (gameName, playerName, gamePassword) => {
+        let isAllowed = true;
+        const expression = /^([A-Z_a-z0-9])*$/
+        const passwordexpression = /^[A-Za-z0-9]*$/
+        
+        if (!expression.test(String(gameName).toLowerCase())){
+            setGameNameError(true);
+            isAllowed = false;
+        }
+        if (!expression.test(String(playerName).toLowerCase())){
+            setPlayerNameError(true);
+            isAllowed = false;
+        }
+        if (!passwordexpression.test(String(gamePassword).toLowerCase())){
+            setGamePasswordError(true);
+            isAllowed = false;
+        }
+        return isAllowed
+    }
+    
     const hasWhiteSpace = (input) => {
         return input.indexOf(' ') >= 0;
     }
 
-    const checkStatusCode = () => {
-        if (statusCode === '422' && (gameName.length > 20 || gameName.length < 5)){
+    const feedback422 = () =>{
+        if ((!validated(gameName, playerName, gamePassword))){
+            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
+        }
+        if (gameName.length > 20 || gameName.length < 5){
             enqueueSnackbar( 'Game Name must have 5 to 20 characters', { variant: 'error'});
+            setGameNameError(true);
         }
-        if (statusCode === '422' && (playerName.length > 10 || playerName.length < 3)){
+        if (playerName.length > 10 || playerName.length < 3){
             enqueueSnackbar( 'Player Name must have 3 to 10 characters', { variant: 'error'});
+            setPlayerNameError(true);
         }
-        if (statusCode === '422' && (hasWhiteSpace(playerName) || hasWhiteSpace(gameName))){
-            enqueueSnackbar( 'White Space is not allowed', { variant: 'error'});
+        if (!hasWhiteSpace(gamePassword) && gamePassword.length > 0 && (gamePassword.length > 10 || gamePassword.length < 5)){
+            enqueueSnackbar( 'Password is optional, but if you want it, must have 5 to 10 characters', { variant: 'error'});
+            setGamePasswordError(true);
         }
-        if (statusCode === '403'){
-            enqueueSnackbar('Game name already in use', { variant: 'error'});
-        } 
+    }
+
+    const checkStatusCode = () => {
+        switch (statusCode) {
+            case '422':
+                feedback422();
+                break;
+            case '403':
+                enqueueSnackbar('Game name already in use', { variant: 'error'});
+                break;
+            default:
+                enqueueSnackbar('Something is going wrong, check your conection or try again later', { variant: 'error'});
+                break;
+        }
     }
     
     useEffect(() => {
@@ -72,8 +113,9 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             checkStatusCode();
         }
         if (status === 'success') { 
-            history.push(gameName)
+            history.push(`/lobby/${gameName}`);
         }
+
     },[status])
 
     return (      
@@ -93,6 +135,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                     error={gameNameError}
                     style={{ marginBottom: 40, minWidth:300 }}
                     onChange={(value) => (setGameName(value.target.value), setGameNameError(false))}
+                    onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     id="gameName"
                     size='small'
                     label="Game Name"
@@ -104,6 +147,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                     error={playerNameError}
                     style={{ marginBottom: 40, minWidth:300 }}
                     onChange={(value) => (setPlayerName(value.target.value), setPlayerNameError(false))}
+                    onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     id="playerName"
                     size='small'
                     label="Player Name"
@@ -115,9 +159,11 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                         id="outlined-adornment-password"
                         type='password'
                         value={gamePassword}
+                        error={gamePasswordError}
                         style={{ marginBottom: 40, minWidth:300 }}
                         label = 'password'
-                        onChange={(value) => setPassword(value.target.value)}
+                        onChange={(value) => setPassword(value.target.value, setGamePasswordError(false))}
+                        onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     />
                 </FormControl>
             

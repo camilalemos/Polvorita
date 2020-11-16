@@ -2,14 +2,16 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function  Board({gameInfo, enacproclamation, getProclamationsInfo, proclamationsInfo}) {
-  
+export default function  Board( {gameInfo, enacproclamation, getProclamationsInfo, proclamationsInfo}) {
+    
     const classes = useStyles();
-    const [ playerName, setPlayerName ] = useState([]);
+    const [ playerName, setPlayerName ] = useState('');
     const [ gameName, setGameName] = useState('');
-    const [ deck, setDeck] = useState(["DEATH_EATERS","PHOENIX_ORDER","PHOENIX_ORDER"]);
+    const [ deck, setDeck] = useState([]);
     const [ numProclamations, setNumProclamations] = useState();
     const [ valueProclamation, setValueProclamation ] = useState('');
+
+    console.log(gameInfo)
 
     useEffect(() => {
         if (gameInfo){
@@ -19,10 +21,15 @@ export default function  Board({gameInfo, enacproclamation, getProclamationsInfo
     }, [gameInfo,setPlayerName])
 
     useEffect(() => {
-            //getProclamationsInfo(playerName,gameName)
-            //setDeck(proclamationsInfo);
-            setNumProclamations(Object((gameInfo.proclamations)?.proclamations).length);
-    },[gameInfo])
+        if (playerName) {
+            getProclamationsInfo(playerName,gameName)
+            setDeck(proclamationsInfo);
+        }
+    },[playerName,gameName,getProclamationsInfo,setDeck,proclamationsInfo])
+
+    useEffect(() => {
+        setNumProclamations(Object((gameInfo.proclamations)?.proclamations).length);
+    }, )
 
     function ShowSquare(proclamation){
 
@@ -31,6 +38,29 @@ export default function  Board({gameInfo, enacproclamation, getProclamationsInfo
                 {assignImgProclamation(proclamation)}
             </button>
         );
+    }
+
+    function ShowBoards(proclamation, loyalt){
+        
+        const [ phoenixOrderBoard, setPhoenixOrderBoard ] = useState([null,null,null,null,null])
+        const [ deathEatersBoard, setDeathEatersBoard ] = useState([null,null,null,null,null,null])
+        
+        if (loyalt === 'OF') {
+            setPhoenixOrderBoard[0] = proclamation;
+            return (
+                <button className = "square" >
+                    {assignImgProclamation(proclamation)}
+                </button>
+            );    
+        } else if (loyalt === 'DE'){
+            setDeathEatersBoard[0] = proclamation;
+
+            return (
+                <button className = "square" >
+                    {assignImgProclamation(proclamation)}
+                </button>
+            );
+        }
     }
 
     const assignImgProclamation = (proclamations) => {
@@ -57,6 +87,7 @@ export default function  Board({gameInfo, enacproclamation, getProclamationsInfo
         const handleClose = (value) => {
             setOpen(false)
             setValueProclamation(value)
+            //console.log(valueProclamation)
         };
 
         return (
@@ -95,14 +126,14 @@ export default function  Board({gameInfo, enacproclamation, getProclamationsInfo
                 {Deck(deck,numProclamations)}
             </div>
                 <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%',}} disable>
-                <span className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroOF.png')})`,}}/>
-                <span className={classes.imageBackdrop}>
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                </span>
+                <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroOF.png')})`,}}/>
+                <div className={classes.imageBackdrop}>
+                {ShowSquare()}
+                {ShowSquare()}
+                {ShowSquare()}
+                {ShowSquare()}
+                {ShowSquare()}
+                </div>
             </div>
         </div>
     )

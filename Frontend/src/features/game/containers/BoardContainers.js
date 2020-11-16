@@ -8,10 +8,10 @@ import { enacproclamation, getProclamationsInfo } from '../actions/enactproclama
 function mapStateToProps(state) {
     return {
         user: state.login.user,
-        status: state.enacproclamation.status,
-        statusGetProclamation: state.enacproclamation.statusGetProclamation,
-        errorMsg: state.enacproclamation.errorMsg,
-        proclamationsInfo: state.enacproclamation.proclamationsInfo
+        status: state.enactProclamation.status,
+        statusGetProclamation: state.enactProclamation.statusGetProclamation,
+        errorMsg: state.enactProclamation.errorMsg,
+        proclamationsInfo: state.enactProclamation.proclamationsInfo
     };
 }
 

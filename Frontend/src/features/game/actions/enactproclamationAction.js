@@ -38,6 +38,7 @@ const _enacproclamation = async ( loyalty, playerName, gameName, dispatch, getSt
 export const getProclamationsInfo = (playerName, gameName) => (dispatch, getState) => _getProclamationsInfo(playerName, gameName, dispatch, getState);
 const _getProclamationsInfo = async (playerName, gameName, dispatch, getState) => {
 	try {
+        console.log(playerName, gameName, 'isajdis')
         dispatch({type: GET_PROCLAMATIONS});
         
         let {access_token} = {...getState().login}

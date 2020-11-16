@@ -18,12 +18,9 @@ const _enacproclamation = async ( loyalty, playerName, gameName, dispatch, getSt
 
         let {access_token} = {...getState().login}
         
-        let bodyFormData = new FormData()
-
         const response = await axios({
             method: 'put',
             url: `${api.url}/game/proclamations/enact?game_name=${gameName}&player_name:${playerName}&loyalty${loyalty}`,
-            data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`
@@ -44,21 +41,16 @@ const _getProclamationsInfo = async (playerName, gameName, dispatch, getState) =
         dispatch({type: GET_PROCLAMATIONS});
         
         let {access_token} = {...getState().login}
-        
-        let bodyFormData = new FormData();
-
-            bodyFormData.append('¨Player Name', playerName) //Enviar como query       
 
         const response = await axios({
             method: 'get',
             url: `${api.url}/game/proclamations/?game_name=${gameName}&player_name${playerName}`,
-            data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`
             }
         });
-        dispatch({type:  GET_PROCLAMATIONS_SUCCESS, payload: {userInfo:  response.data}})
+        dispatch({type:  GET_PROCLAMATIONS_SUCCESS, payload: {proclamationsInfo:  response.data}})
     } catch (error) {
         console.log(error, "ERROR")
         

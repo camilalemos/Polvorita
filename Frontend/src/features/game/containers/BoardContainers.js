@@ -2,8 +2,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import Board from '../components/board';
-import { enacproclamation} from '../actions/enactproclamationAction'
-import { getProclamationsInfo } from '../actions/enactproclamationAction'
+
+import { enacproclamation, getProclamationsInfo } from '../actions/enactproclamationAction'
 
 function mapStateToProps(state) {
     return {
@@ -15,11 +15,10 @@ function mapStateToProps(state) {
     };
 }
 
-
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         enacproclamation,
-        getProclamationsInfo
+        getProclamationsInfo,
     }, dispatch);
 };
 

@@ -5,7 +5,7 @@ import SelectDirectorCandidate from './SelectDirectorCandidate';
 const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
 
     const [minister, setMinister] = useState('');
-    const [players, setPlanyers] = useState([]);
+    const [players, setPlayers] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [isCandidateMinister, setIsCandidateMinister] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -15,11 +15,11 @@ const PlayersAction = ({ gameInfo, user, selectDirector, status, vote }) => {
     useEffect(() => {
         if (gameInfo.length !== 0) {
             let players = Object.keys(gameInfo.players);
-            setPlanyers(Object.values(gameInfo.players));
+            setPlayers(Object.values(gameInfo.players));
             let indexPlayerMinister = players.findIndex(names => names === gameInfo.elections.minister_candidate);
             setMinister(indexPlayerMinister);
         }
-    }, [gameInfo, setPlanyers, setMinister])
+    }, [gameInfo, setPlayers, setMinister])
 
     useEffect(() => {
         setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);

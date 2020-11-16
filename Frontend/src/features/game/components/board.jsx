@@ -1,59 +1,74 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function  Board() {
+export default function  Board({gameInfo, enacproclamation, getProclamationsInfo, proclamationsInfo}) {
   
     const classes = useStyles();
-    const deckfake = ["OF","OF","Mortifago"]
+    const [ playerName, setPlayerName ] = useState([]);
+    const [ gameName, setGameName] = useState('');
+    const [ deck, setDeck] = useState(["DEATH_EATERS","PHOENIX_ORDER","PHOENIX_ORDER"]);
+    const [ numProclamations, setNumProclamations] = useState();
+    const [ valueProclamation, setValueProclamation ] = useState('');
 
-    function ShowSquare(){
+    useEffect(() => {
+        if (gameInfo){
+            setPlayerName(gameInfo.elections?.minister); 
+            setGameName(gameInfo.name);
+        }
+    }, [gameInfo,setPlayerName])
+
+    useEffect(() => {
+            //getProclamationsInfo(playerName,gameName)
+            //setDeck(proclamationsInfo);
+            setNumProclamations(Object((gameInfo.proclamations)?.proclamations).length);
+    },[gameInfo])
+
+    function ShowSquare(proclamation){
 
         return (
             <button className = "square" >
-                Cartas
+                {assignImgProclamation(proclamation)}
             </button>
         );
     }
 
     const assignImgProclamation = (proclamations) => {
 
-        if (proclamations == "OF") {
+        if (proclamations === "PHOENIX_ORDER") {
             return (
                 <img src={require('../../../constants/images/ProclamacionF.jpg')} alt= "Proclamacion Orden Fenix" style={{width: "150px", height: "190px"}}></img>)
-        } else {
+        } else if (proclamations === "DEATH_EATERS" ){
             return (
                 <img src={require('../../../constants/images/ProclamacionM.jpg')} alt= "Proclamacion Mortifagos" style={{width: "150px", height: "190px"}}></img>)
+        } else {
+            return null;
         }
     }
 
-
-    const Deck = (proclamations, numproclamations,) => {
+    const Deck = (proclamations, numProclamationsInDeck,) => {
 
         const [open, setOpen] = useState(false);
-        const [numProclamationInDeck, setNumProclamationInDeck] = useState(numproclamations);
-        
+
         const handleClick = () => {
             setOpen(true);
-            if (numProclamationInDeck > 0) {
-                setNumProclamationInDeck(numProclamationInDeck - 3);
-            }
         };
     
-        const handleClose = (event) => {
+        const handleClose = (value) => {
             setOpen(false)
+            setValueProclamation(value)
         };
 
         return (
             <div>
                 <button style={{ cursor: 'pointer' }} onClick={handleClick}>
-                    Proclamaciones: {numProclamationInDeck}
+                    Proclamaciones: {numProclamationsInDeck}
                 <img src= {require('../../../constants/images/Proclamacion.jpg')} alt= "Proclamacion" style={{width: "150px", height: "190px"}}></img>
                 </button>
                 <Snackbar open={open} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (
-                        <button onClick={handleClose}>
+                        <button onClick={ () => handleClose(threeproclamations)}>
                         {assignImgProclamation(threeproclamations)}
                         </button>
                         ))}
@@ -68,7 +83,7 @@ export default function  Board() {
             <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%', justifyContent:'space-between'}} disable>
                 <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroM1.png')})`,}} />
                 <div className={classes.imageBackdrop}>
-                {ShowSquare()}
+                {ShowSquare(valueProclamation)}
                 {ShowSquare()}
                 {ShowSquare()}
                 {ShowSquare()}
@@ -77,7 +92,7 @@ export default function  Board() {
                 </div>
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
-                {Deck(deckfake,21)}
+                {Deck(deck,numProclamations)}
             </div>
                 <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%',}} disable>
                 <span className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroOF.png')})`,}}/>
@@ -93,7 +108,7 @@ export default function  Board() {
     )
 }
 
-const images = [
+/*const images = [
     {
         url: require('../../../constants/images/Proclamacion.jpg'),
         title: 'Mortifagos1',
@@ -104,7 +119,7 @@ const images = [
         title: 'Descarte',
         width: '20%',
     }
-];
+];*/
 
 const useStyles = makeStyles((theme) => ({
     root: {

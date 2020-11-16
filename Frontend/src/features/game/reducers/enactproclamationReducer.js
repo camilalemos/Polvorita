@@ -12,7 +12,7 @@ const initialState= {
 	statusCode: '',
 	statusGetProclamation: 'unknow',
 	errorMsg: '',
-	proclamationsInfo: {} //revisar
+	proclamationsInfo: [] //revisar
 }
 
 export default (state = initialState, action) => {

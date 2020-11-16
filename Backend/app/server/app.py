@@ -144,7 +144,7 @@ def check_game(params = Depends(get_game)):
     game = params["game"]
     if game.status != 'STARTED':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
-    
+
     return game
 
 def get_player(player_name: str, game = Depends(check_game)):
@@ -163,7 +163,7 @@ async def get_proclamations(params = Depends(get_player)):
     if params["player"].name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can get proclamations")
 
-    return game.proclamations.get_3proclamations()
+    return game.proclamations.get_proclamations(1)
 
 #ENACT PROCLAMATION
 @app.put("/game/proclamations/enact/", response_model=Game)
@@ -192,8 +192,10 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
 @app.put("/game/spells")
 async def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(get_player)):
     game = params ["game"]
-    if target_name not in game.players:
+    if target_name and target_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target name not found")
+    elif spell not in game.spells:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
     elif params["player"].name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
 
@@ -237,9 +239,13 @@ async def show_election_results(game = Depends(check_game)):
     if len(game.elections.votes) != game.num_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="One or more players have not decided their vote")
 
-    return game.elections.results()
+    result = game.elections.results()
+    if game.get_winner():
+        game.finish(manager)
 
-  
+    return result
+
+#LOBBY WEBSOCKET
 @app.websocket("/lobby/")
 async def websocket_lobby(websocket: WebSocket):
     await manager.connect_lobby(websocket)
@@ -252,6 +258,7 @@ async def websocket_lobby(websocket: WebSocket):
     except WebSocketDisconnect:
         manager.disconnect_lobby(websocket)
 
+#GAME WEBSOCKET
 @app.websocket("/game/{game_name}")
 async def websocket_game(websocket: WebSocket, game_name: str):
     await manager.connect_game(websocket, game_name)

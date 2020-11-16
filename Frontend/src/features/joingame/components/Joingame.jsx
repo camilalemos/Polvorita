@@ -20,7 +20,7 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 
 	useEffect(() => {
 
-		/*const ws = new WebSocket('ws://localhost:8000/lobby/');
+		const ws = new WebSocket('ws://localhost:8000/lobby/');
 
 		ws.onopen = () => {
 		ws.send(JSON.stringify({event: 'lobby:subscribe'}));
@@ -28,7 +28,6 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 		
 		ws.onmessage = (event) => {
 		setGameInfo(JSON.parse(event.data));
-	    // console.log(gameInfo);
 		};
 		
 		ws.onclose = () => {
@@ -37,7 +36,7 @@ const GameList = ({joingame, status, enqueueSnackbar }) => {
 
 		return () => {
 		ws.close();
-		};*/
+		};
 	});
 
 	useEffect(() => {

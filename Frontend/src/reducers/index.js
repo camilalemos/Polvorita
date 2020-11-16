@@ -6,13 +6,15 @@ import { combineReducers } from 'redux';
 import joingame from '../features/joingame/reducers/joingame';
 import register from '../features/register/reducers/register';
 import login from '../features/login/reducers/login';
-import createGame from '../features/createGameForm/reducers/createGameReducer'
+import createGame from '../features/createGameForm/reducers/createGameReducer';
+import getUserInfo from '../features/changeProfile/reducers/changeProfile';
 
 const rootReducer = combineReducers({
 	register,
 	login,
 	createGame,
-    joingame
+	joingame, 
+	getUserInfo
 });
 
 export default rootReducer;

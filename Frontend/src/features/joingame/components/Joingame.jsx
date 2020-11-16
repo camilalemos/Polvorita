@@ -7,6 +7,7 @@ import { withSnackbar } from 'notistack';
 import { useHistory,withRouter } from "react-router-dom";
 
 import CreateGameContainer from '../../createGameForm/containers/CreateGameContainers';
+import ChangeProfileContainer from '../../changeProfile/containers/ChangeProfileContainer';
 import PopUp from './PopUp';
 
 const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
@@ -16,6 +17,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 	const [gamePassword, setPassword] = useState('');
 	const [openModal, setOpenModal] = useState(false);
 	const [openModalCreateGame, setOpenModalCreateGame] = useState(false);
+	const [openModalChangeProfile, setOpenModalChangeProfile] = useState(false);
 	const [routeGame, setRouteGame] = useState('')
 
 	useEffect(() => {
@@ -28,7 +30,6 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 		
 		ws.onmessage = (event) => {
 		setGameInfo(JSON.parse(event.data));
-	    // console.log(gameInfo);
 		};
 		
 		ws.onclose = () => {
@@ -67,6 +68,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
     <div style={{display: 'flex', flexDirection:'column', padding:40}}>
 		<div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
         	<b style={{ fontSize:70 }}>GAMES</b>
+			<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => setOpenModalChangeProfile(true)} variant="contained" >Profile</Button>
 			<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => setOpenModalCreateGame(true)} variant="contained" >Create Game</Button>
 		</div>
 		<div style={{padding:40}}>
@@ -98,6 +100,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 		)})
         }
 		</div>
+		<ChangeProfileContainer open={openModalChangeProfile} onClose={() => setOpenModalChangeProfile(false)}/>
 		<CreateGameContainer open={openModalCreateGame} onClose={() => setOpenModalCreateGame(false)}/>
     </div>
   );

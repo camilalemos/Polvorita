@@ -17,16 +17,13 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
     const [voteChoice, setVoteChoice] = useState('')
     const [viewResults, setViewResults] = useState(false);
     const [dataResults, setDataResults] = useState(false);
-    // console.log(gameInfo, "GAME INFO"); 
+    console.log(gameInfo, "GAME INFO"); 
     useEffect(() => {
-        if(gameInfo.length !== 0 && Object.keys(gameInfo.elections.votes).length === 5) setViewResults(true);
+        if(gameInfo.length !== 0 && Object.keys(gameInfo.elections.votes).length === 5) getResults(gameInfo.name);
     },[gameInfo])
 
     useEffect(() => {
-        if(statusResults === 'success') {
-            setViewResults(false);
-            setDataResults(true)
-        }
+        if(statusResults === 'success') setDataResults(true);
     },[statusResults])
 
     useEffect(() => {
@@ -82,11 +79,6 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
 
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
-            {viewResults &&
-                <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={() => getResults(gameInfo.name)}>
-                    View Results
-                </Button>
-            }
             {dataResults &&
                 <a style={{ flex:1, textAlign:'center', fontSize:30 }}>The results of votation is : {results}</a>
             }   

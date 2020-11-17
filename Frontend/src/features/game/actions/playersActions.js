@@ -76,7 +76,7 @@ const _getResults = async (gameName, dispatch, getState) => {
 
         const response = await axios({
             method: 'get',
-            url: `${api.url}/game/elections/results?game_name=${gameName}`,
+            url: `${api.url}/game/elections/result?game_name=${gameName}`,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`

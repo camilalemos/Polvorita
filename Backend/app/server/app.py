@@ -234,20 +234,20 @@ async def player_vote(vote:Vote, params = Depends(get_player)):
     return game
 
 #SHOW ELECTION RESULTS
-@app.get("/game/elections/results/")
+@app.get("/game/elections/result/")
 async def show_election_results(game = Depends(check_game)):
     if len(game.elections.votes) != game.num_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="One or more players have not decided their vote")
 
-    return game.elections.results()
+    return game.elections.get_result()
 
 #NEXT TURN
-@app.put("/game/turn/")
-async def next_turn(game = Depends(check_game)):
+@app.put("/game/elections/result/")
+async def set_result(game = Depends(check_game)):
     if len(game.elections.votes) != game.num_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="The voting round is not over")
 
-    game.elections.next_turn(list(game.players))
+    game.elections.set_result(list(game.players))
     if game.get_winner():
         game.finish(manager)
 

@@ -7,6 +7,11 @@ client = TestClient(app)
 
 users = [
     {
+        "username": "Admin",
+        "email": "Admin@admin.com",
+        "password": "Admin123",
+    },
+    {
         "username": "Admin_1",
         "email": "Admin_1@admin.com",
         "password": "Admin123",
@@ -41,26 +46,39 @@ def test_post_create_user():
 
 def test_post_create_user_with_malformed_username():
     data = {
-        "username": "Admin_2?",
-        "email": "Admin_2@admin.com",
+        "username": "Admin?",
+        "email": "Admin@admin.com",
         "password": "Admin123",
     }
     response = client.post("/user/", data=data)
     assert response.status_code == 422
+    assert response.json() == {
+        'detail':
+            [{'ctx': {'pattern': '^[A-Z_a-z0-9]*$'},
+              'loc': ['body', 'username'],
+              'msg': 'string does not match regex "^[A-Z_a-z0-9]*$"',
+              'type': 'value_error.str.regex'}]
+    }
 
 def test_post_create_user_with_malformed_email():
     data = {
-        "username": "Admin_3", 
-        "email": "Admin_3",
+        "username": "Admin", 
+        "email": "Admin",
         "password": "Admin123",
     }
     response = client.post("/user/", data=data)
     assert response.status_code == 422
+    assert response.json() == {
+        'detail':
+            [{'loc': ['body', 'email'],
+              'msg': 'value is not a valid email address',
+              'type': 'value_error.email'}]
+    }
 
 def test_post_create_user_with_existing_username():
     data = {
         "username": "Admin_1", 
-        "email":"Admin_4@admin.com",
+        "email":"Admin@admin.com",
         "password": "Admin123",
     }
     response = client.post("/user/", data=data)
@@ -71,7 +89,7 @@ def test_post_create_user_with_existing_username():
 
 def test_post_create_user_with_existing_email():
     data = {
-        "username": "Admin_5",  
+        "username": "Admin",  
         "email": "Admin_1@admin.com",
         "password": "Admin123",
         }
@@ -101,10 +119,13 @@ def test_post_login_with_email():
 def test_post_login_wrong_password():
     data = {
         "username": "Admin_1",
-        "password": "Admin1234",
+        "password": "none",
     }
     response = client.post("/login/", data=data)
     assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Incorrect credentials"
+    }
 
 def test_post_login_wrong_username():
     data = {
@@ -113,231 +134,377 @@ def test_post_login_wrong_username():
     }
     response = client.post("/login/", data=data)
     assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Incorrect credentials"
+    }
 
 def test_post_login_wrong_email():
     data = {
-        "username": "none@none.com",
+        "username": "none",
         "password": "Admin123",
     }
     response = client.post("/login/", data=data)
     assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Incorrect credentials"
+    }
 
-#CHANGE PROFILE
-def test_put_change_profile_wrong_password():
+def get_header(username):
     login = {
-        "username": "Admin_1", 
+        "username": username, 
         "password": "Admin123",
     }
     response = client.post("/login/", data=login)
     token = response.json()['access_token']
-    headers={"Authorization" : f'Bearer {token}'}
+    return {"Authorization" : f'Bearer {token}'}
+
+#CHANGE PROFILE
+def test_put_change_profile_with_malformed_username():
+    headers = get_header("Admin_1")
     data = {
-        "email": "none@none.com",
+        "username": "Admin_1?",
+        "password": "Admin123"
+    }
+    response = client.put("/user/", headers=headers, data=data)
+    assert response.status_code == 422
+    assert response.json() == {
+        'detail':
+            [{'ctx': {'pattern': '^[A-Z_a-z0-9]*$'},
+              'loc': ['body', 'username'],
+              'msg': 'string does not match regex "^[A-Z_a-z0-9]*$"',
+              'type': 'value_error.str.regex'}]
+    }
+
+def test_put_change_profile_with_malformed_email():
+    headers = get_header("Admin_1")
+    data = {
+        "email": "Admin_1",
+        "password": "Admin123"
+    }
+    response = client.put("/user/", headers=headers, data=data)
+    assert response.status_code == 422
+    assert response.json() == {
+        'detail':
+            [{'loc': ['body', 'email'],
+              'msg': 'value is not a valid email address',
+              'type': 'value_error.email'}]
+    }
+
+def test_put_change_profile_with_malformed_fullname():
+    headers = get_header("Admin_1")
+    data = {
+        "full_name": "Admin_1",
+        "password": "Admin123"
+    }
+    response = client.put("/user/", headers=headers, data=data)
+    assert response.status_code == 422
+    assert response.json() == {
+        'detail':
+            [{'ctx': {'pattern': '^[A-Z a-z0-9]*$'},
+              'loc': ['body', 'full_name'],
+              'msg': 'string does not match regex "^[A-Z a-z0-9]*$"',
+              'type': 'value_error.str.regex'}]
+    }
+
+def test_put_change_profile_wrong_password():
+    headers = get_header("Admin_1")
+    data = {
+        "email": "Admin@admin.com",
         "password": "none"
     }
     response = client.put("/user/", headers=headers, data=data)
     assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Incorrect credentials"
+    }
 
 def test_put_change_profile_with_existing_username():
-    login = {
-        "username": "Admin_1", 
-        "password": "Admin123",
-    }
-    response = client.post("/login/", data=login)
-    token = response.json()['access_token']
-    headers={"Authorization" : f'Bearer {token}'}
+    headers = get_header("Admin_1")
     data = {
         "username": "Admin_2",
         "password": "Admin123"
     }
     response = client.put("/user/", headers=headers, data=data)
     assert response.status_code == 403
-"""
+    assert response.json() == {
+        "detail": "Username already exist"
+    }
+
+def test_put_change_profile_with_existing_email():
+    headers = get_header("Admin_1")
+    data = {
+        "email": "Admin_2@admin.com",
+        "password": "Admin123"
+    }
+    response = client.put("/user/", headers=headers, data=data)
+    assert response.status_code == 403
+    assert response.json() == {
+        "detail": "E-mail already exist"
+    }
+
+def test_put_change_profile():
+    headers = get_header("Admin_1")
+    data = {
+        "full_name": "Sergio Rodriguez",
+        "password": "Admin123"
+    }
+    response = client.put("/user/", headers=headers, data=data)
+    assert response.status_code == 200
+
 #CREATE GAME
+def test_post_create_game_with_malformed_game_name():
+    headers = get_header("Admin_1")
+    data={
+        "game_name": "juego?",
+        "player_name": "Player_1",
+        "password": "Player123"
+    }
+    response = client.post("/game/", headers=headers, data=data)
+    assert response.status_code == 422
+    assert response.json() == {
+        'detail': [{'ctx': {'pattern': '^[A-Z_a-z0-9]*$'},
+                    'loc': ['body', 'game_name'],
+                    'msg': 'string does not match regex "^[A-Z_a-z0-9]*$"',
+                    'type': 'value_error.str.regex'}],
+    }
+
+def test_post_create_game_with_malformed_player_name():
+    headers = get_header("Admin_1")
+    data={
+        "game_name": "juego",
+        "player_name": "Player?",
+        "password": "Player123"
+    }
+    response = client.post("/game/", headers=headers, data=data)
+    assert response.status_code == 422
+    assert response.json() == {
+        'detail': [{'ctx': {'pattern': '^[A-Z_a-z0-9]*$'},
+                    'loc': ['body', 'player_name'],
+                    'msg': 'string does not match regex "^[A-Z_a-z0-9]*$"',
+                    'type': 'value_error.str.regex'}],
+    }
+
+def test_post_create_game_with_malformed_password():
+    headers = get_header("Admin_1")
+    data={
+        "game_name": "juego",
+        "player_name": "Player_1",
+        "password": "Player123?"
+    }
+    response = client.post("/game/", headers=headers, data=data)
+    assert response.status_code == 422
+    assert response.json() == {
+        'detail': [{'ctx': {'pattern': '^[A-Za-z0-9]*$'},
+                    'loc': ['body', 'password'],
+                    'msg': 'string does not match regex "^[A-Za-z0-9]*$"',
+                    'type': 'value_error.str.regex'}],
+    }
+
 def test_post_create_game():
-    for i in range(0, 2):
-        response = client.post("/game/", 
-            data={
-            "game_name": f"Juego_{i}",
-            "player_name": f"Player_{i}",
-            "password": "Player123"
-            })
-        assert response.status_code == 201
-        assert response.json() == {
-            "name": f"Juego_{i}",
-            "owner_name": f"Player_{i}",
-            "owner_username": response.json()["owner_username"],
-            "password": "Player123",
-            "max_players": 5,
-            "status": "CREATED",
-            "players": {
-                f"Player_{i}": {
-                "name": f"Player_{i}",
-                "game_name": f"Juego_{i}",
+    headers = get_header("Admin_1")
+    data1={
+        "game_name": "juego",
+        "player_name": "Player_1",
+        "password": "Player123"
+    }
+    data2={
+        "game_name": "juego1",
+        "player_name": "Player_1",
+        "password": "Player123"
+    }
+    response = client.post("/game/", headers=headers, data=data1)
+    client.post("/game/", headers=headers, data=data2)
+    assert response.status_code == 201
+    assert response.json() == {
+        "name": "juego",
+        "password": "Player123",
+        "status": "CREATED",
+        "winner": None,
+        "min_players": 5,
+        "max_players": 5,
+        "num_players": 1,
+        "voldemort": None,
+        "players": {
+            "Player_1": {
+                "name": "Player_1",
+                "user_name": "Admin_1",
                 "is_alive": True,
                 "role": None,
-                "loyalty": None,
-                "status": "COMMON"
-                }
-            },
-            "winner": None,
-            "board": None,
-            "elections": None,
-            "chat": []
+                "loyalty": None
             }
+        },
+        "proclamations": None,
+        "elections": None,
+        "spells": [
+            "ADIVINATION",
+            "AVADA_KEDAVRA",
+            "CRUCIO",
+            "IMPERIUS"
+        ],
+        "chat": []
+    }
 
 def test_post_create_game_with_existing_name():
-    data = {
-        "game_name": "Juego_0",
-        "player_name": "Player_0",
+    headers = get_header("Admin_1")
+    data={
+        "game_name": "juego",
+        "player_name": "Player_1",
         "password": "Player123"
-        }
-    response = client.post("/game/", 
-        data=data)
+    }
+    response = client.post("/game/", headers=headers, data=data)
     assert response.status_code == 403
     assert response.json() == {'detail': 'Game name already exist'}
 
 #JOIN GAME
-def test_put_join_game_not_found():
+def test_put_join_game_with_malformed_player_name():
+    headers = get_header("Admin_1")
     data = {
-        "game_name": "Juego_5",
-        "player_name": "Player_0",
+        "player_name": "Player?",
         "password": "Player123"
-        }
-    response = client.put("/game/", 
-        data=data)
+    }
+    response = client.put("/game/?game_name=juego", headers=headers, data=data)
+    assert response.status_code == 422
+    assert response.json() == {
+        'detail': [{'ctx': {'pattern': '^[A-Z_a-z0-9]*$'},
+                    'loc': ['body', 'player_name'],
+                    'msg': 'string does not match regex "^[A-Z_a-z0-9]*$"',
+                    'type': 'value_error.str.regex'}],
+    }
+
+def test_put_join_game_not_found():
+    headers = get_header("Admin_1")
+    data = {
+        "player_name": "Player_2",
+        "password": "Player123"
+    }
+    response = client.put("/game/?game_name=Juego_5", headers=headers, data=data)
     assert response.status_code == 404
     assert response.json() == {'detail': 'Game not found'}
 
-def test_put_join_game_with_wrong_password():
+def test_put_join_game_twice():
+    headers = get_header("Admin_1")
     data = {
-        "game_name": "Juego_0",
-        "player_name": "Player_1",
-        "password": "Player1234"
-        }
-    response = client.put("/game/", 
-        data=data)
-    assert response.status_code == 401
-    assert response.json() == {'detail': 'Wrong password'}
+        "player_name": "Player_2",
+        "password": "none"
+    }
+    response = client.put("/game/?game_name=juego", headers=headers, data=data)
+    assert response.status_code == 403
+    assert response.json() == {'detail': 'A user cannot enter a game twice'}
 
 def test_put_join_game_with_existing_player_name():
+    headers = get_header("Admin_2")
     data = {
-        "game_name": "Juego_0",
-        "player_name": "Player_0",
+        "player_name": "Player_1",
         "password": "Player123"
-        }
-    response = client.put("/game/", 
-        data=data)
+    }
+    response = client.put("/game/?game_name=juego", headers=headers, data=data)
     assert response.status_code == 403
     assert response.json() == {'detail': 'Player name already exist in this game'}
 
-dict = {
-    "Player_0": {
-        "name": "Player_0",
-        "game_name": "Juego_0",
-        "is_alive": True,
-        "role": None,
-        "loyalty": None,
-        "status": "COMMON"
-        }
-    }
-
 def test_put_join_game():
-    for i in range(1, 5):
-        response = client.put("/game/", 
-            data={
-            "game_name": f"Juego_0",
+    for i in range(2, 6):
+        headers = get_header(f"Admin_{i}")
+        data = {
             "player_name": f"Player_{i}",
             "password": "Player123"
-            })
+        }
+        response = client.put("/game/?game_name=juego", headers=headers, data=data)
         assert response.status_code == 200
-        dict[f"Player_{i}"] = {
-                "name": f"Player_{i}",
-                "game_name": "Juego_0",
-                "is_alive": True,
-                "role": None,
-                "loyalty": None,
-                "status": "COMMON"
-                }
         assert response.json() == {
-            "name": f"Juego_0",
-            "owner_name": f"Player_0",
-            "owner_username": response.json()["owner_username"],
+            "name": "juego",
             "password": "Player123",
-            "max_players": 5,
             "status": "CREATED",
-            "players": dict,
             "winner": None,
-            "board": None,
+            "min_players": 5,
+            "max_players": 5,
+            "num_players": i,
+            "voldemort": None,
+            "players": response.json()["players"],
+            "proclamations": None,
             "elections": None,
+            "spells": [
+                "ADIVINATION",
+                "AVADA_KEDAVRA",
+                "CRUCIO",
+                "IMPERIUS"
+            ],
             "chat": []
-            }
+        }
 
 def test_put_join_game_full():
+    headers = get_header("Admin")
     data = {
-        "game_name": "Juego_0",
-        "player_name": "Player_5",
+        "player_name": "Player",
         "password": "Player123"
-        }
-    response = client.put("/game/", 
-        data=data)
+    }
+    response = client.put("/game/?game_name=juego", headers=headers, data=data)
     assert response.status_code == 403
     assert response.json() == {'detail': 'Game full'}
 
 #START GAME
 def test_put_start_game_not_found():
-    response = client.put("/game/start/Player_0?game_name=Juego_5")
+    headers = get_header("Admin_1")
+    response = client.put("/game/start/?game_name=juego_1", headers=headers)
     assert response.status_code == 404
     assert response.json() == {"detail": "Game not found"}
 
-def test_put_start_game_player_not_found():
-    response = client.put("/game/start/Player_5?game_name=Juego_0")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Player not found"}
 
 def test_put_start_game_not_owner():
-    response = client.put("/game/start/Player_1?game_name=Juego_0")
+    headers = get_header("Admin_2")
+    response = client.put("/game/start/?game_name=juego", headers=headers)
     assert response.status_code == 403
     assert response.json() == {"detail": "Only game owner can start the game"}
 
-def test_put_start_game():
-    response = client.put("/game/start/Player_0?game_name=Juego_0")
-    assert response.status_code == 200
-    assert response.json() == {
-        "name": "Juego_0",
-        "owner_name": "Player_0",
-        "owner_username": response.json()["owner_username"],
-        "password": "Player123",
-        "max_players": 5,
-        "status": "STARTED",
-        "players": dict,
-        "winner": None,
-        "board": {
-            "proclamations": response.json()["board"]["proclamations"],
-            "PO_enacted_proclamations": 0,
-            "PO_discarded_proclamations": 0,
-            "DE_enacted_proclamations": 0,
-            "DE_discarded_proclamations": 0,
-            "spells": []
-        },
-        "elections": {
-            "minister_candidate": response.json()["elections"]["minister_candidate"],
-            "headmaster_candidate": None,
-            "votes": {}
-        },
-        "chat": []
-        }
-
-def test_put_start_game_already_started():
-    response = client.put("/game/start/Player_0?game_name=Juego_0")
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Game already started"}
-
 def test_put_start_game_not_enough_players():
-    response = client.put("/game/start/Player_1?game_name=Juego_1")
+    headers = get_header("Admin_1")
+    response = client.put("/game/start/?game_name=juego1", headers=headers)
     assert response.status_code == 403
     assert response.json() == {"detail": "Not enough players"}
 
+def test_put_start_game():
+    headers = get_header("Admin_1")
+    response = client.put("/game/start/?game_name=juego", headers=headers)
+    assert response.status_code == 200
+    assert response.json() == {
+        "name": "juego",
+        "password": "Player123",
+        "status": "STARTED",
+        "winner": None,
+        "min_players": 5,
+        "max_players": 5,
+        "num_players": 5,
+        "voldemort": response.json()["voldemort"],
+        "players": response.json()["players"],
+        "proclamations": {
+            "DE_enacted_proclamations": 0,
+            "PO_enacted_proclamations": 0,
+            "discarded_proclamations": [],
+            "proclamations": response.json()["proclamations"]["proclamations"]
+        },
+        "elections": {
+            "headmaster": None,
+            "headmaster_candidate": None,
+            "minister": None,
+            "minister_candidate": response.json()["elections"]["minister_candidate"],
+            "minister_idx": response.json()["elections"]["minister_idx"],
+            "rejected": 0,
+            "votes": {}
+        },
+        "spells": [
+            "ADIVINATION",
+            "AVADA_KEDAVRA",
+            "CRUCIO",
+            "IMPERIUS"
+        ],
+        "chat": []
+    }
+
+def test_put_start_game_already_started():
+    headers = get_header("Admin_1")
+    response = client.put("/game/start/?game_name=juego", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Game already started"}
+"""
 #ENACT PROCLAMATION
 def test_put_enact_proclamation_game_not_found():
     response = client.put("/game/proclamation/enact/Player_0?game_name=Juego_5&loyalty=PHOENIX_ORDER")

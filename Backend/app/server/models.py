@@ -36,8 +36,9 @@ class Elections(BaseModel):
     headmaster_candidate: str = None
     minister: str = None
     headmaster: str = None
-    rejected: int = 0
     votes: Dict[str, Vote] = {}
+    result: Vote = None
+    rejected: int = 0
     minister_idx = 0
 
     def init(self, players: List[str]):
@@ -59,7 +60,8 @@ class Elections(BaseModel):
         return 'NOX' if lumos_votes < nox_votes else 'LUMOS'
 
     def set_result(self, players: List[str]):
-        if self.get_result() == 'NOX':
+        self.result = self.get_result()
+        if self.result == 'NOX':
             self.rejected += 1
         else:
             self.rejected = 0

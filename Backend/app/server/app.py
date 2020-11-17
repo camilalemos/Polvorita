@@ -222,7 +222,7 @@ async def choose_director(candidate_name:str, params = Depends(get_player)):
 
 #VOTE
 @app.put("/game/elections/vote/", response_model=Game)
-async def player_vote(vote:Vote, params = Depends(get_player)):
+async def vote(vote:Vote, params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
     if not game.elections.headmaster_candidate:
@@ -231,25 +231,8 @@ async def player_vote(vote:Vote, params = Depends(get_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
-    return game
-
-#SHOW ELECTION RESULTS
-@app.get("/game/elections/result/")
-async def show_election_results(game = Depends(check_game)):
-    if len(game.elections.votes) != game.num_players:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="One or more players have not decided their vote")
-
-    return game.elections.get_result()
-
-#NEXT TURN
-@app.put("/game/elections/result/")
-async def set_result(game = Depends(check_game)):
-    if len(game.elections.votes) != game.num_players:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="The voting round is not over")
-
-    game.elections.set_result(list(game.players))
-    if game.get_winner():
-        game.finish(manager)
+    if len(game.elections.votes) == game.num_players:
+        game.elections.set_result(list(game.players))
 
     return game
 

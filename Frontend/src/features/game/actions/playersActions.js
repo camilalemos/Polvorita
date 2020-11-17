@@ -7,7 +7,10 @@ import {
     VOTE_FAIL,
     GET_RESULTS,
     GET_RESULTS_SUCCESS,
-    GET_RESULTS_FAIL
+    GET_RESULTS_FAIL,
+    PUT_RESULTS,
+    PUT_RESULTS_SUCCESS,
+    PUT_RESULTS_FAIL
 } from '../../../constants/actionTypes/playersActions';
 import axios from 'axios';
 import api from '../../../configs/api';
@@ -88,5 +91,31 @@ const _getResults = async (gameName, dispatch, getState) => {
     } catch (error){
         console.log(error, "ERROR")
         dispatch({type: GET_RESULTS_FAIL});
+    }
+};
+
+export const putResults = (gameName) => (dispatch, getState) => _putResults(gameName, dispatch, getState);
+const _putResults = async (gameName, dispatch, getState) => {
+
+    try {
+
+        dispatch({type: PUT_RESULTS});
+
+        let {access_token} = {...getState().login}
+
+        const response = await axios({
+            method: 'put',
+            url: `${api.url}/game/elections/result?game_name=${gameName}`,
+            headers: { 
+            'Content-Type':'multipart/form-data',
+            "Authorization" : `Bearer ${access_token}`
+            }
+        });
+
+        dispatch({type: PUT_RESULTS_SUCCESS})
+        
+    } catch (error){
+        console.log(error, "ERROR")
+        dispatch({type: PUT_RESULTS_FAIL});
     }
 };

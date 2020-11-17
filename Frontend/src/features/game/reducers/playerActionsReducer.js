@@ -7,13 +7,17 @@ import {
 	VOTE_SUCCESS,
 	GET_RESULTS,
 	GET_RESULTS_SUCCESS,
-	GET_RESULTS_FAIL
+	GET_RESULTS_FAIL,
+	PUT_RESULTS,
+	PUT_RESULTS_FAIL,
+	PUT_RESULTS_SUCCESS
 } from '../../../constants/actionTypes/playersActions';
 
 const initialState= {
 	status: 'unknow',
 	statusVote: 'unknow',
 	statusResults: 'unknow',
+	statusResultsPut: 'unknow',
 	results: null
 }
 
@@ -64,6 +68,21 @@ export default (state = initialState, action) => {
 				...state, 
 				statusResults: 'success',
 				results: action.payload.results
+			}
+		case PUT_RESULTS:
+			return {
+				...state,
+				statusResultsPut: 'loading'
+			}
+		case PUT_RESULTS_FAIL:
+			return {
+				...state,
+				statusResultsPut: 'failed',
+			}
+		case PUT_RESULTS_SUCCESS:
+			return {
+				...state, 
+				statusResultsPut: 'success',
 			}
 		default:
 			return {...state};

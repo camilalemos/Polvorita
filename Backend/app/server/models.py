@@ -36,12 +36,14 @@ class Elections(BaseModel):
     headmaster_candidate: str = None
     minister: str = None
     headmaster: str = None
+    players: List[str] = None
     votes: Dict[str, Vote] = {}
     result: Vote = None
     rejected: int = 0
     minister_idx = 0
 
     def init(self, players: List[str]):
+        self.players = players
         self.minister_idx = random.choice(range(len(players)))
         self.minister_candidate = players[self.minister_idx]
 
@@ -53,13 +55,15 @@ class Elections(BaseModel):
 
     def vote(self, player_name: str, vote: Vote):
         self.votes[player_name] = vote
+        if len(self.votes) == len(self.players):
+            self.set_result()
 
     def get_result(self):
         lumos_votes = sum(map(('LUMOS').__eq__, self.votes.values()))
         nox_votes = sum(map(('NOX').__eq__, self.votes.values()))
         return 'NOX' if lumos_votes < nox_votes else 'LUMOS'
 
-    def set_result(self, players: List[str]):
+    def set_result(self):
         self.result = self.get_result()
         if self.result == 'NOX':
             self.rejected += 1
@@ -68,8 +72,8 @@ class Elections(BaseModel):
             self.minister = self.minister_candidate
             self.headmaster = self.headmaster_candidate
 
-        self.minister_idx = (self.minister_idx + 1) % len(players)
-        self.minister_candidate = players[self.minister_idx]
+        self.minister_idx = (self.minister_idx + 1) % len(self.players)
+        self.minister_candidate = self.players[self.minister_idx]
         self.headmaster_candidate = None
         self.votes.clear()
 

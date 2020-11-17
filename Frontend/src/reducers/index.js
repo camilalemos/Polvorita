@@ -18,7 +18,7 @@ const rootReducer = combineReducers({
 	joingame, 
 	getUserInfo,
 	enactProclamation,
-	playerActionsReducer
+	playerActionsReducer,
 });
 
 export default rootReducer;

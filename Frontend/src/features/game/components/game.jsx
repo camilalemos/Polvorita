@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Board from './board';
+import Board from '../containers/BoardContainers';
 import ShowRoleContainers from '../../../features/showRole/containers/ShowRoleContainers';
 import { useParams } from 'react-router-dom';
 import PlayersActions from '../containers/PlayerActionsContainers'
@@ -39,7 +39,7 @@ export default function Game () {
                 <div style={{ flex:1, borderTop:'solid', borderTopWidth:1, borderTopColor:'lightgrey' }}><PlayersActions gameInfo={gameInfo} /></div>
             </div>
             <div className="game-board" style={{display:'flex', flex:2.5}}>
-                <Board />
+                <Board gameInfo={ gameInfo }/>
             </div>
             <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
                 <div>{/* status */}</div>

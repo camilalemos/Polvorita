@@ -1,59 +1,109 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function  Board() {
-  
+export default function  Board( {gameInfo, enacproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo}) {
+    
     const classes = useStyles();
-    const deckfake = ["OF","OF","Mortifago"]
+    const [ playerName, setPlayerName ] = useState('');
+    const [ gameName, setGameName] = useState('');
+    const [ deck, setDeck] = useState([]);
+    const [ numProclamations, setNumProclamations] = useState();
+    const [ valueProclamation, setValueProclamation ] = useState('');
 
-    function ShowSquare(){
+    console.log(gameInfo)
+
+    useEffect(() => {
+        if (gameInfo){
+            setPlayerName(gameInfo.elections?.minister); 
+            setGameName(gameInfo.name);
+        }
+    }, [gameInfo,setPlayerName])
+
+    useEffect(() => {
+        if (playerName) {
+            getProclamationsInfo(playerName,gameName) 
+        }
+    },[playerName])
+
+    useEffect(() => {
+        if (statusGetProclamation === 'success')
+            setDeck(proclamationsInfo);
+    }, [statusGetProclamation])
+
+    useEffect(() => {
+        setNumProclamations(Object((gameInfo.proclamations)?.proclamations).length);
+    }, )
+
+    function ShowSquare(proclamation){
 
         return (
             <button className = "square" >
-                Cartas
+                {assignImgProclamation(proclamation)}
             </button>
         );
     }
 
-    const assignImgProclamation = (proclamations) => {
+    function ShowBoards(proclamation, loyalt){
+        
+        const [ phoenixOrderBoard, setPhoenixOrderBoard ] = useState([null,null,null,null,null])
+        const [ deathEatersBoard, setDeathEatersBoard ] = useState([null,null,null,null,null,null])
+        
+        if (loyalt === 'OF') {
+            setPhoenixOrderBoard[0] = proclamation;
+            return (
+                <button className = "square" >
+                    {assignImgProclamation(proclamation)}
+                </button>
+            );    
+        } else if (loyalt === 'DE'){
+            setDeathEatersBoard[0] = proclamation;
 
-        if (proclamations == "OF") {
             return (
-                <img src={require('../../../constants/images/ProclamacionF.jpg')} alt= "Proclamacion Orden Fenix" style={{width: "150px", height: "190px"}}></img>)
-        } else {
-            return (
-                <img src={require('../../../constants/images/ProclamacionM.jpg')} alt= "Proclamacion Mortifagos" style={{width: "150px", height: "190px"}}></img>)
+                <button className = "square" >
+                    {assignImgProclamation(proclamation)}
+                </button>
+            );
         }
     }
 
+    const assignImgProclamation = (proclamations) => {
 
-    const Deck = (proclamations, numproclamations,) => {
+        if (proclamations === "PHOENIX_ORDER") {
+            return (
+                <img src={require('../../../constants/images/ProclamacionF.jpg')} alt= "Proclamacion Orden Fenix" style={{width: "150px", height: "190px"}}></img>)
+        } else if (proclamations === "DEATH_EATERS" ){
+            return (
+                <img src={require('../../../constants/images/ProclamacionM.jpg')} alt= "Proclamacion Mortifagos" style={{width: "150px", height: "190px"}}></img>)
+        } else {
+            return null;
+        }
+    }
+
+    const Deck = (proclamations, numProclamationsInDeck,) => {
 
         const [open, setOpen] = useState(false);
-        const [numProclamationInDeck, setNumProclamationInDeck] = useState(numproclamations);
-        
+
         const handleClick = () => {
             setOpen(true);
-            if (numProclamationInDeck > 0) {
-                setNumProclamationInDeck(numProclamationInDeck - 3);
-            }
         };
     
-        const handleClose = (event) => {
+        const handleClose = (value) => {
             setOpen(false)
+            setValueProclamation(value)
+            //console.log(valueProclamation)
         };
 
         return (
             <div>
                 <button style={{ cursor: 'pointer' }} onClick={handleClick}>
-                    Proclamaciones: {numProclamationInDeck}
+                    Proclamations: {numProclamationsInDeck}
                 <img src= {require('../../../constants/images/Proclamacion.jpg')} alt= "Proclamacion" style={{width: "150px", height: "190px"}}></img>
                 </button>
                 <Snackbar open={open} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (
-                        <button onClick={handleClose}>
+                        <button onClick={ () => handleClose(threeproclamations)}>
                         {assignImgProclamation(threeproclamations)}
                         </button>
                         ))}
@@ -68,7 +118,7 @@ export default function  Board() {
             <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%', justifyContent:'space-between'}} disable>
                 <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroM1.png')})`,}} />
                 <div className={classes.imageBackdrop}>
-                {ShowSquare()}
+                {ShowSquare(valueProclamation)}
                 {ShowSquare()}
                 {ShowSquare()}
                 {ShowSquare()}
@@ -77,34 +127,21 @@ export default function  Board() {
                 </div>
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
-                {Deck(deckfake,21)}
+                {Deck(deck,numProclamations)}
             </div>
                 <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%',}} disable>
-                <span className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroOF.png')})`,}}/>
-                <span className={classes.imageBackdrop}>
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                </span>
+                <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroOF.png')})`,}}/>
+                <div className={classes.imageBackdrop}>
+                {ShowSquare()}
+                {ShowSquare()}
+                {ShowSquare()}
+                {ShowSquare()}
+                {ShowSquare()}
+                </div>
             </div>
         </div>
     )
 }
-
-const images = [
-    {
-        url: require('../../../constants/images/Proclamacion.jpg'),
-        title: 'Mortifagos1',
-        width: '20%',
-    },
-    {
-        url: require('../../../constants/images/Descarte.jpg'),
-        title: 'Descarte',
-        width: '20%',
-    }
-];
 
 const useStyles = makeStyles((theme) => ({
     root: {

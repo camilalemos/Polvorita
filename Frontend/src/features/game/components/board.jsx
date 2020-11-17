@@ -97,7 +97,7 @@ export default function  Board( {gameInfo, enacproclamation, statusGetProclamati
         return (
             <div>
                 <button style={{ cursor: 'pointer' }} onClick={handleClick}>
-                    Proclamaciones: {numProclamationsInDeck}
+                    Proclamations: {numProclamationsInDeck}
                 <img src= {require('../../../constants/images/Proclamacion.jpg')} alt= "Proclamacion" style={{width: "150px", height: "190px"}}></img>
                 </button>
                 <Snackbar open={open} display= 'flex'>

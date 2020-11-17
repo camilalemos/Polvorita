@@ -273,9 +273,9 @@ async def websocket_game(websocket: WebSocket, game_name: str):
     try:
         while True:
             await websocket.receive_text()
-            game = manager.games.get(game_name).dict()
-            connections = manager.game_connections.get(game_name)
-            if game and connections:
+            if game_name in manager.games:
+                game = manager.games.get(game_name).dict()
+                connections = manager.game_connections.get(game_name)
                 await manager.broadcast_json(game, connections)
 
     except Exception:

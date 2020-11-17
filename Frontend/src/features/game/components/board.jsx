@@ -24,8 +24,10 @@ export default function  Board( {gameInfo, enacproclamation, getProclamationsInf
         if (playerName) {
             getProclamationsInfo(playerName,gameName)
             setDeck(proclamationsInfo);
+            console.log(deck, 'proclamacion en deck')
+            console.log(proclamationsInfo,'procl info')
         }
-    },[playerName,gameName,getProclamationsInfo,setDeck,proclamationsInfo])
+    },[playerName])
 
     useEffect(() => {
         setNumProclamations(Object((gameInfo.proclamations)?.proclamations).length);

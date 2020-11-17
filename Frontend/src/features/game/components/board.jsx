@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function  Board( {gameInfo, enacproclamation, getProclamationsInfo, proclamationsInfo}) {
+export default function  Board( {gameInfo, enacproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo}) {
     
     const classes = useStyles();
     const [ playerName, setPlayerName ] = useState('');
@@ -22,12 +22,14 @@ export default function  Board( {gameInfo, enacproclamation, getProclamationsInf
 
     useEffect(() => {
         if (playerName) {
-            getProclamationsInfo(playerName,gameName)
-            setDeck(proclamationsInfo);
-            console.log(deck, 'proclamacion en deck')
-            console.log(proclamationsInfo,'procl info')
+            getProclamationsInfo(playerName,gameName) 
         }
     },[playerName])
+
+    useEffect(() => {
+        if (statusGetProclamation === 'success')
+            setDeck(proclamationsInfo);
+    }, [statusGetProclamation])
 
     useEffect(() => {
         setNumProclamations(Object((gameInfo.proclamations)?.proclamations).length);
@@ -140,19 +142,6 @@ export default function  Board( {gameInfo, enacproclamation, getProclamationsInf
         </div>
     )
 }
-
-/*const images = [
-    {
-        url: require('../../../constants/images/Proclamacion.jpg'),
-        title: 'Mortifagos1',
-        width: '20%',
-    },
-    {
-        url: require('../../../constants/images/Descarte.jpg'),
-        title: 'Descarte',
-        width: '20%',
-    }
-];*/
 
 const useStyles = makeStyles((theme) => ({
     root: {

@@ -53,13 +53,13 @@ class Elections(BaseModel):
     def vote(self, player_name: str, vote: Vote):
         self.votes[player_name] = vote
 
-    def results(self):
+    def get_result(self):
         lumos_votes = sum(map(('LUMOS').__eq__, self.votes.values()))
         nox_votes = sum(map(('NOX').__eq__, self.votes.values()))
         return 'NOX' if lumos_votes < nox_votes else 'LUMOS'
 
-    def next_turn(self, players: List[str]):
-        if self.results() == 'NOX':
+    def set_result(self, players: List[str]):
+        if self.get_result() == 'NOX':
             self.rejected += 1
         else:
             self.rejected = 0

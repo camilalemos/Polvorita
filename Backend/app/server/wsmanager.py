@@ -29,7 +29,7 @@ class ConnectionManager:
 
     async def connect_game(self, websocket: WebSocket, game_name: str):
         connections = self.game_connections.get(game_name)
-        if connections and websocket not in connections:
+        if not connections and websocket not in connections:
             await websocket.accept()
             connections.append(websocket)
 

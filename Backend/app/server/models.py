@@ -78,28 +78,28 @@ class Elections(BaseModel):
         self.votes.clear()
 
 class Proclamations(BaseModel):
-    proclamations: List[Loyalty] = []
+    deck: List[Loyalty] = []
     discarded_proclamations: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
     def init(self):
         for i in range(6):
-            self.proclamations.append('PHOENIX_ORDER')
+            self.deck.append('PHOENIX_ORDER')
         for i in range(11):
-            self.proclamations.append('DEATH_EATERS')
-        random.shuffle(self.proclamations)
+            self.deck.append('DEATH_EATERS')
+        random.shuffle(self.deck)
 
     def shuffle(self):
-        if len(self.proclamations) < 3:
-            self.proclamations.extend(self.discarded_proclamations)
+        if len(self.deck) < 3:
+            self.deck.extend(self.discarded_proclamations)
             random.shuffle(self.proclamations)
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()
         result = []
         for i in range(num_proclamations):
-            result.append(self.proclamations.pop())
+            result.append(self.deck.pop())
         return result
 
     def enact(self, loyalty: Loyalty):
@@ -119,6 +119,7 @@ class Game(BaseModel):
     min_players: int = 5
     max_players: int = 5
     num_players: int = 0
+    owner: str = None
     voldemort: str = None
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
@@ -130,8 +131,8 @@ class Game(BaseModel):
         users = [player.user_name for player in self.players.values()]
         return username in users
 
-    def owner(self):
-        return list(self.players.values())[0].user_name
+    def get_username(self, player_name):
+        return self.players[player_name].user_name
 
     def create_player(self, player_name: str, username: str):
         self.players[player_name] = Player(name=player_name, user_name=username)
@@ -176,9 +177,9 @@ class Game(BaseModel):
         self.spells.remove(spell)
         if spell == 'ADIVINATION':
             self.proclamations.shuffle()
-            return [self.proclamations.proclamations[0],
-                    self.proclamations.proclamations[1],
-                    self.proclamations.proclamations[2]]
+            return [self.proclamations.deck[0],
+                    self.proclamations.deck[1],
+                    self.proclamations.deck[2]]
         elif spell == 'AVADA_KEDAVRA':
             self.players[target].kill()
             return self

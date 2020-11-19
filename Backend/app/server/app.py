@@ -180,6 +180,8 @@ async def vote(vote:Vote, params = Depends(get_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
+    if game.get_winner():
+        game.finish(manager)
     return game
 
 #GET PROCLAMATIONS

@@ -5,42 +5,10 @@ from .app import app
 
 client = TestClient(app)
 
-users = [
-    {
-        "username": "Admin",
-        "email": "Admin@admin.com",
-        "password": "Admin123",
-    },
-    {
-        "username": "Admin_1",
-        "email": "Admin_1@admin.com",
-        "password": "Admin123",
-    },
-    {
-        "username": "Admin_2",
-        "email": "Admin_2@admin.com",
-        "password": "Admin123",
-    },
-    {
-        "username": "Admin_3",
-        "email": "Admin_3@admin.com",
-        "password": "Admin123",
-    },
-    {
-        "username": "Admin_4",
-        "email": "Admin_4@admin.com",
-        "password": "Admin123",
-    },
-    {
-        "username": "Admin_5",
-        "email": "Admin_5@admin.com",
-        "password": "Admin123",
-    }
-]
 
 def get_header(username):
     login = {
-        "username": username, 
+        "username": username,
         "password": "Admin123",
     }
     response = client.post("/login/", data=login)
@@ -61,14 +29,20 @@ def get_candidates(game):
 
 #REGISTER
 def test_post_register():
-    for user in users:
-        response = client.post("/user/", data=user)
+    for i in range(6):
+        data = {
+            "username": f"Admin_{i}",
+            "email": f"Admin_{i}@admin.com",
+            "password": "Admin123"
+        }
+        response = client.post("/user/", data=data)
         assert response.status_code == 201
+        assert response.json() == i+1
 
 def test_post_register_with_malformed_username():
     data = {
         "username": "Admin?",
-        "email": "Admin@admin.com",
+        "email": "Admin_0@admin.com",
         "password": "Admin123",
     }
     response = client.post("/user/", data=data)
@@ -83,8 +57,8 @@ def test_post_register_with_malformed_username():
 
 def test_post_register_with_malformed_email():
     data = {
-        "username": "Admin", 
-        "email": "Admin",
+        "username": "Admin_0", 
+        "email": "Admin_0",
         "password": "Admin123",
     }
     response = client.post("/user/", data=data)
@@ -99,7 +73,7 @@ def test_post_register_with_malformed_email():
 def test_post_register_with_existing_username():
     data = {
         "username": "Admin_1", 
-        "email":"Admin@admin.com",
+        "email":"Admin_0@admin.com",
         "password": "Admin123",
     }
     response = client.post("/user/", data=data)
@@ -110,7 +84,7 @@ def test_post_register_with_existing_username():
 
 def test_post_register_with_existing_email():
     data = {
-        "username": "Admin",  
+        "username": "Admin_0",  
         "email": "Admin_1@admin.com",
         "password": "Admin123",
         }
@@ -221,7 +195,7 @@ def test_put_change_profile_with_malformed_fullname():
 def test_put_change_profile_wrong_password():
     headers = get_header("Admin_1")
     data = {
-        "email": "Admin@admin.com",
+        "email": "Admin_0@admin.com",
         "password": "none"
     }
     response = client.put("/user/", headers=headers, data=data)
@@ -262,6 +236,13 @@ def test_put_change_profile():
     }
     response = client.put("/user/", headers=headers, data=data)
     assert response.status_code == 200
+    assert response.json() == {
+        "username": "Admin_1",
+        "email": "Admin_1@admin.com",
+        "full_name": "Sergio Rodriguez",
+        "password": response.json()['password'],
+        "disabled": False
+    }
 
 #CREATE GAME
 def test_post_create_game_with_malformed_game_name():
@@ -425,30 +406,10 @@ def test_put_join_game():
         }
         response = client.put("/game/?game_name=juego", headers=headers, data=data)
         assert response.status_code == 200
-        assert response.json() == {
-            "name": "juego",
-            "password": "Player123",
-            "status": "CREATED",
-            "winner": None,
-            "min_players": 5,
-            "max_players": 5,
-            "num_players": i,
-            "owner": "Player_1",
-            "voldemort": None,
-            "players": response.json()["players"],
-            "proclamations": None,
-            "elections": None,
-            "spells": [
-                "ADIVINATION",
-                "AVADA_KEDAVRA",
-                "CRUCIO",
-                "IMPERIUS"
-            ],
-            "chat": []
-        }
+        assert len(response.json()['players']) == i
 
 def test_put_join_game_full():
-    headers = get_header("Admin")
+    headers = get_header("Admin_0")
     data = {
         "player_name": "Player",
         "password": "Player123"
@@ -486,41 +447,24 @@ def test_put_start_game():
     response = client.put("/game/start/?game_name=juego", headers=headers)
     started_game = response.json()
     assert response.status_code == 200
-    assert response.json() == {
-        "name": "juego",
-        "password": "Player123",
-        "status": "STARTED",
-        "winner": None,
-        "min_players": 5,
-        "max_players": 5,
-        "num_players": 5,
-        "owner": "Player_1",
-        "voldemort": response.json()["voldemort"],
-        "players": response.json()["players"],
-        "proclamations": {
-            "DE_enacted_proclamations": 0,
-            "PO_enacted_proclamations": 0,
-            "discarded_proclamations": [],
-            "deck": response.json()["proclamations"]["deck"]
-        },
-        "elections": {
-            "headmaster": None,
-            "headmaster_candidate": None,
-            "minister": None,
-            "minister_candidate": response.json()["elections"]["minister_candidate"],
-            "players": response.json()["elections"]["players"],
-            "votes": {},
-            "result": None,
-            "rejected": 0,
-            "minister_idx": response.json()["elections"]["minister_idx"]
-        },
-        "spells": [
-            "ADIVINATION",
-            "AVADA_KEDAVRA",
-            "CRUCIO",
-            "IMPERIUS"
-        ],
-        "chat": []
+    assert response.json()['status'] == 'STARTED'
+    assert len(response.json()['players']) == response.json()['num_players']
+    assert response.json()['proclamations'] == {
+        "DE_enacted_proclamations": 0,
+        "PO_enacted_proclamations": 0,
+        "discarded_proclamations": [],
+        "deck": response.json()["proclamations"]["deck"]
+    }
+    assert response.json()['elections'] == {
+        "headmaster": None,
+        "headmaster_candidate": None,
+        "minister": None,
+        "minister_candidate": response.json()["elections"]["minister_candidate"],
+        "players": response.json()["elections"]["players"],
+        "votes": {},
+        "result": None,
+        "rejected": 0,
+        "minister_idx": response.json()["elections"]["minister_idx"]
     }
 
 def test_put_start_game_already_started():
@@ -555,7 +499,7 @@ def test_put_choose_director_player_not_found():
 
 def test_put_choose_director_unauthorized():
     candidates = get_candidates(started_game)
-    headers = get_header("Admin")
+    headers = get_header("Admin_0")
     response = client.put(f"/game/elections/nominate/?candidate_name={candidates['headmaster']}&player_name={candidates['minister']}&game_name={started_game['name']}", headers=headers)
     assert response.status_code == 401
     assert response.json() == {"detail": "Unauthorized"}
@@ -594,42 +538,7 @@ def test_put_choose_director():
     headers = get_header(candidates["minister_user"])
     response = client.put(f"/game/elections/nominate/?candidate_name={candidates['headmaster']}&player_name={candidates['minister']}&game_name={started_game['name']}", headers=headers)
     assert response.status_code == 200
-    assert response.json() == {
-        "name": "juego",
-        "password": "Player123",
-        "status": "STARTED",
-        "winner": None,
-        "min_players": 5,
-        "max_players": 5,
-        "num_players": 5,
-        "owner": "Player_1",
-        "voldemort": response.json()["voldemort"],
-        "players": response.json()["players"],
-        "proclamations": {
-            "DE_enacted_proclamations": 0,
-            "PO_enacted_proclamations": 0,
-            "discarded_proclamations": [],
-            "deck": response.json()["proclamations"]["deck"]
-        },
-        "elections": {
-            "headmaster": None,
-            "headmaster_candidate": candidates['headmaster'],
-            "minister": None,
-            "minister_candidate": candidates['minister'],
-            "players": response.json()["elections"]["players"],
-            "votes": {},
-            "result": None,
-            "rejected": 0,
-            "minister_idx": response.json()["elections"]["minister_idx"]
-        },
-        "spells": [
-            "ADIVINATION",
-            "AVADA_KEDAVRA",
-            "CRUCIO",
-            "IMPERIUS"
-        ],
-        "chat": []
-    }
+    assert response.json()['elections']['headmaster_candidate'] == candidates['headmaster']
 
 #VOTE
 def test_put_vote_game_not_found():
@@ -651,15 +560,21 @@ def test_put_vote_player_not_found():
     assert response.json() == {"detail": "Player not found"}
 
 def test_put_vote_unauthorized():
-    headers = get_header(f"Admin")
+    headers = get_header(f"Admin_0")
     response = client.put(f"/game/elections/vote/?vote=LUMOS&player_name=Player_1&game_name=juego", headers=headers)
     assert response.status_code == 401
     assert response.json() == {"detail": "Unauthorized"}
+
+def test_put_vote_not_valid_vote():
+    headers = get_header(f"Admin_1")
+    response = client.put(f"/game/elections/vote/?vote=SARASA&player_name=Player_1&game_name=juego", headers=headers)
+    assert response.status_code == 422
 
 def test_put_vote():
     headers = get_header(f"Admin_1")
     response = client.put(f"/game/elections/vote/?vote=LUMOS&player_name=Player_1&game_name=juego", headers=headers)
     assert response.status_code == 200
+    assert response.json()['elections']['votes'] == {"Player_1": 'LUMOS'}
 
 def test_put_vote_player_already_voted():
     headers = get_header(f"Admin_1")
@@ -673,6 +588,12 @@ def test_put_vote_rest():
         headers = get_header(f"Admin_{i}")
         response = client.put(f"/game/elections/vote/?vote=LUMOS&player_name=Player_{i}&game_name=juego", headers=headers)
         assert response.status_code == 200
+        if i == 5:
+            assert not response.json()['elections']['votes']
+            assert len(response.json()['elections']['votes']) == 0
+        else:
+            assert f"Player_{i}" in response.json()['elections']['votes']
+            assert len(response.json()['elections']['votes']) == i
     voted_game = response.json()
 
 #CHOOSE DIRECTOR
@@ -716,7 +637,7 @@ def test_get_get_proclamations_player_not_found():
 
 def test_get_get_proclamations_unauthorized():
     old_candidates = get_candidates(started_game)
-    headers = get_header("Admin")
+    headers = get_header("Admin_0")
     response = client.get(f"/game/proclamations/?player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
     assert response.status_code == 401
     assert response.json() == {"detail": "Unauthorized"}
@@ -733,57 +654,110 @@ def test_get_get_proclamations():
     headers = get_header(old_candidates["minister_user"])
     response = client.get(f"/game/proclamations/?player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
     assert response.status_code == 200
+    assert len(response.json()) == 3
 
-"""
-#ENACT PROCLAMATION
-def test_put_enact_proclamation_game_not_found():
-    response = client.put("/game/proclamation/enact/Player_0?game_name=Juego_5&loyalty=PHOENIX_ORDER")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Game not found"}
-
-def test_put_enact_proclamation_player_not_found():
-    response = client.put("/game/proclamation/enact/Player_5?game_name=Juego_0&loyalty=PHOENIX_ORDER")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Player not found"}
-
-
-def test_put_enact_proclamation_game_not_started():
-    response = client.put("/game/proclamation/enact/Player_1?game_name=Juego_1&loyalty=PHOENIX_ORDER")
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Game not started"}
-
-def test_put_enact_proclamation_not_valid_loyaly():
-    response = client.put("/game/proclamation/enact/Player_0?game_name=Juego_0&loyalty=SARASA")
-    assert response.status_code == 422
-
-def test_put_enact_proclamation_only_headmaster():
-    response = client.put("/game/proclamation/enact/Player_0?game_name=Juego_0&loyalty=PHOENIX_ORDER")
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Only headmaster can enact a proclamation"}
 
 #DISCARD PROCLAMATION
 def test_put_discard_proclamation_game_not_found():
-    response = client.put("/game/proclamation/discard/Player_0?game_name=Juego_5&loyalty=PHOENIX_ORDER")
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/discard/?loyalty=PHOENIX_ORDER&player_name={old_candidates['minister']}&game_name=none", headers=headers)
     assert response.status_code == 404
     assert response.json() == {"detail": "Game not found"}
 
-def test_put_discard_proclamation_player_not_found():
-    response = client.put("/game/proclamation/discard/Player_5?game_name=Juego_0&loyalty=PHOENIX_ORDER")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Player not found"}
-
-
 def test_put_discard_proclamation_game_not_started():
-    response = client.put("/game/proclamation/discard/Player_1?game_name=Juego_1&loyalty=PHOENIX_ORDER")
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/discard/?loyalty=PHOENIX_ORDER&player_name={old_candidates['minister']}&game_name=juego1", headers=headers)
     assert response.status_code == 403
     assert response.json() == {"detail": "Game not started"}
 
+def test_put_discard_proclamation_player_not_found():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/discard/?loyalty=PHOENIX_ORDER&player_name=none&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Player not found"}
+
+def test_put_discard_proclamation_unauthorized():
+    old_candidates = get_candidates(started_game)
+    headers = get_header("Admin_0")
+    response = client.put(f"/game/proclamations/discard/?loyalty=PHOENIX_ORDER&player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Unauthorized"}
+
 def test_put_discard_proclamation_not_valid_loyaly():
-    response = client.put("/game/proclamation/discard/Player_0?game_name=Juego_0&loyalty=SARASA")
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/discard/?loyalty=SARASA&player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
     assert response.status_code == 422
 
-def test_put_discard_proclamation_only_headmaster():
-    response = client.put("/game/proclamation/discard/Player_0?game_name=Juego_0&loyalty=PHOENIX_ORDER")
+def test_put_discard_proclamation_not_minister_or_headmaster():
+    new_candidates = get_candidates(voted_game)
+    headers = get_header(new_candidates["headmaster_user"])
+    response = client.put(f"/game/proclamations/discard/?loyalty=PHOENIX_ORDER&player_name={new_candidates['headmaster']}&game_name={voted_game['name']}", headers=headers)
     assert response.status_code == 403
     assert response.json() == {"detail": "Only minister or headmaster can discard a proclamation"}
-"""
+
+def test_put_discard_proclamation_minister():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/discard/?loyalty=PHOENIX_ORDER&player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 200
+    assert response.json()['proclamations']['discarded_proclamations'] == ['PHOENIX_ORDER']
+
+def test_put_discard_proclamation_headmaster():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["headmaster_user"])
+    response = client.put(f"/game/proclamations/discard/?loyalty=DEATH_EATERS&player_name={old_candidates['headmaster']}&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 200
+    assert response.json()['proclamations']['discarded_proclamations'] == ['PHOENIX_ORDER', 'DEATH_EATERS']
+
+#ENACT PROCLAMATION
+def test_put_enact_proclamation_game_not_found():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name=none", headers=headers)
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Game not found"}
+
+def test_put_enact_proclamation_game_not_started():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name=juego1", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Game not started"}
+
+def test_put_enact_proclamation_player_not_found():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name=none&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Player not found"}
+
+def test_put_enact_proclamation_unauthorized():
+    old_candidates = get_candidates(started_game)
+    headers = get_header("Admin_0")
+    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Unauthorized"}
+
+def test_put_enact_proclamation_not_valid_loyaly():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/enact/?loyalty=SARASA&player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 422
+
+def test_put_enact_proclamation_not_headmaster():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["minister_user"])
+    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Only headmaster can enact a proclamation"}
+
+def test_put_enact_proclamation_headmaster():
+    old_candidates = get_candidates(started_game)
+    headers = get_header(old_candidates["headmaster_user"])
+    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['headmaster']}&game_name={voted_game['name']}", headers=headers)
+    assert response.status_code == 200
+    assert response.json()['proclamations']['DE_enacted_proclamations'] == 1

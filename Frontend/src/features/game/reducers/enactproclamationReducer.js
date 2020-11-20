@@ -8,10 +8,8 @@ import {
 } from '../../../constants/actionTypes/enactproclamation';
 
 const initialState= {
-	status: 'unknow',
-	statusCode: '',
+	statusEnactProclamation: 'unknow',
 	statusGetProclamation: 'unknow',
-	errorMsg: '',
 	proclamationsInfo: [] //revisar
 }
 
@@ -20,18 +18,17 @@ export default (state = initialState, action) => {
 		case ENACT_PROCLAMATION:
 			return {
 				...state,
-				status: 'loading'
+				statusEnactProclamation: 'loading'
 			}
 		case ENACT_PROCLAMATION_FAIL:
 			return {
 				...state,
-				status: 'failed',
-				statusCode: action.payload.statusCode
+				statusEnactProclamation: 'failed',
 			}
 		case ENACT_PROCLAMATION_SUCCESS:
 			return {
 				...state, 
-				status: 'success'
+				statusEnactProclamation: 'success'
 			}
 		case GET_PROCLAMATIONS:
 			return {
@@ -42,7 +39,6 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				statusGetProclamation: 'failed',
-				errorMsg: action.payload.errorMsg //revisar
 			}
 		case GET_PROCLAMATIONS_SUCCESS:
 			return {

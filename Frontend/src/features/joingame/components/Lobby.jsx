@@ -11,14 +11,14 @@ const Lobby = function ({ user, startGame, statusStart }) {
 
     useEffect(() => {
 
-		const ws = new WebSocket('ws://localhost:8000/lobby/');
+		const ws = new WebSocket(`ws://localhost:8000/game/${game}`);
 
 		ws.onopen = () => {
-			ws.send(JSON.stringify({event: 'lobby:subscribe'}));
+			ws.send(JSON.stringify({event: 'game:subscribe'}));
 		};
 		
 		ws.onmessage = (event) => {
-			setGameInfo(JSON.parse(event.data).filter(games => games.name === game)[0]);
+			setGameInfo(JSON.parse(event.data));
 	    	// console.log(gameInfo);	
 		};
 		
@@ -32,7 +32,7 @@ const Lobby = function ({ user, startGame, statusStart }) {
 	});
 
 	useEffect(() => {
-		if (statusStart === 'success') history.push('/login')
+		if (statusStart === 'success') history.push(`/game/${game}`)
 	}, [statusStart])
 	
 	useEffect(() => {

@@ -87,7 +87,7 @@ def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^
     if game_name in manager.games:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game name already exist")
 
-    game = Game(name=game_name, owner=player_name, password=password)
+    game = Game(name=game_name, owner=user.username, password=password)
     game.create_player(player_name, user.username)
     manager.create_game(game)
     return game
@@ -124,7 +124,7 @@ def start_game(params = Depends(get_game)):
     game = params["game"]
     if game.status != 'CREATED':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
-    elif params["user"].username != game.get_username(game.owner):
+    elif params["user"].username != game.owner:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
     elif game.num_players < game.min_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough players")

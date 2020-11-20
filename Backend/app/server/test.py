@@ -312,7 +312,7 @@ def test_post_create_game():
             "min_players": 5,
             "max_players": 5,
             "num_players": 1,
-            "owner": "Player_0",
+            "owner": "Admin_0",
             "voldemort": None,
             "players": {
                 "Player_0": {
@@ -467,7 +467,7 @@ def test_put_start_game():
     }
 
 def test_put_start_game_already_started():
-    user = started_Juego_0["players"][started_Juego_0["owner"]]["user_name"]
+    user = started_Juego_0["owner"]
     headers = get_header(user)
     response = client.put("/game/start/?game_name=Juego_0", headers=headers)
     assert response.status_code == 403

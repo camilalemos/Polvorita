@@ -36,11 +36,14 @@ class Elections(BaseModel):
     headmaster_candidate: str = None
     minister: str = None
     headmaster: str = None
-    rejected: int = 0
+    players: Set[str] = None
     votes: Dict[str, Vote] = {}
+    result: Vote = None
+    rejected: int = 0
     minister_idx = 0
 
-    def init(self, players: List[str]):
+    def init(self, players: Set[str]):
+        self.players = players
         self.minister_idx = random.choice(range(len(players)))
         self.minister_candidate = players[self.minister_idx]
 
@@ -52,48 +55,51 @@ class Elections(BaseModel):
 
     def vote(self, player_name: str, vote: Vote):
         self.votes[player_name] = vote
+        if len(self.votes) == len(self.players):
+            self.set_result()
 
     def get_result(self):
         lumos_votes = sum(map(('LUMOS').__eq__, self.votes.values()))
         nox_votes = sum(map(('NOX').__eq__, self.votes.values()))
         return 'NOX' if lumos_votes < nox_votes else 'LUMOS'
 
-    def set_result(self, players: List[str]):
-        if self.get_result() == 'NOX':
+    def set_result(self):
+        self.result = self.get_result()
+        if self.result == 'NOX':
             self.rejected += 1
         else:
             self.rejected = 0
             self.minister = self.minister_candidate
             self.headmaster = self.headmaster_candidate
 
-        self.minister_idx = (self.minister_idx + 1) % len(players)
-        self.minister_candidate = players[self.minister_idx]
+        self.minister_idx = (self.minister_idx + 1) % len(self.players)
+        self.minister_candidate = self.players[self.minister_idx]
         self.headmaster_candidate = None
         self.votes.clear()
 
 class Proclamations(BaseModel):
-    proclamations: List[Loyalty] = []
+    deck: List[Loyalty] = []
     discarded_proclamations: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
     def init(self):
         for i in range(6):
-            self.proclamations.append('PHOENIX_ORDER')
+            self.deck.append('PHOENIX_ORDER')
         for i in range(11):
-            self.proclamations.append('DEATH_EATERS')
-        random.shuffle(self.proclamations)
+            self.deck.append('DEATH_EATERS')
+        random.shuffle(self.deck)
 
     def shuffle(self):
-        if len(self.proclamations) < 3:
-            self.proclamations.extend(self.discarded_proclamations)
+        if len(self.deck) < 3:
+            self.deck.extend(self.discarded_proclamations)
             random.shuffle(self.proclamations)
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()
         result = []
         for i in range(num_proclamations):
-            result.append(self.proclamations.pop())
+            result.append(self.deck.pop())
         return result
 
     def enact(self, loyalty: Loyalty):
@@ -113,19 +119,20 @@ class Game(BaseModel):
     min_players: int = 5
     max_players: int = 5
     num_players: int = 0
+    owner: str = None
     voldemort: str = None
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
     elections: Elections = None
-    spells: List[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
+    spells: Set[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
     chat: List[str] = []
 
     def exist(self, username: str):
         users = [player.user_name for player in self.players.values()]
         return username in users
 
-    def owner(self):
-        return list(self.players.values())[0].user_name
+    def get_username(self, player_name):
+        return self.players[player_name].user_name
 
     def create_player(self, player_name: str, username: str):
         self.players[player_name] = Player(name=player_name, user_name=username)
@@ -170,9 +177,9 @@ class Game(BaseModel):
         self.spells.remove(spell)
         if spell == 'ADIVINATION':
             self.proclamations.shuffle()
-            return [self.proclamations.proclamations[0],
-                    self.proclamations.proclamations[1],
-                    self.proclamations.proclamations[2]]
+            return [self.proclamations.deck[0],
+                    self.proclamations.deck[1],
+                    self.proclamations.deck[2]]
         elif spell == 'AVADA_KEDAVRA':
             self.players[target].kill()
             return self

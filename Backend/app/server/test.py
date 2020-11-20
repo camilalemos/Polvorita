@@ -325,12 +325,7 @@ def test_post_create_game():
             },
             "proclamations": None,
             "elections": None,
-            "spells": [
-                "ADIVINATION",
-                "AVADA_KEDAVRA",
-                "CRUCIO",
-                "IMPERIUS"
-            ],
+            "spells": response.json()['spells'],
             "chat": []
         }
 
@@ -829,4 +824,10 @@ def test_put_cast_spell_adivination_game_not_found():
     response = client.put(f"/game/spells/?spell=ADIVINATION&player_name={old_candidates['minister']}&game_name=none", headers=headers)
     assert response.status_code == 404
     assert response.json() == {"detail": "Game not found"}
+
+def test_websocket():
+    for i in range(10):
+        with client.websocket_connect("/lobby/") as websocket:
+            data = websocket.receive_json()
+            assert data == []
 """

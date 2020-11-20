@@ -38,10 +38,6 @@ class ConnectionManager:
         if connections and websocket in connections:
             connections.remove(websocket)
 
-    async def broadcast_text(self, message: str, dst: List[WebSocket]):
-        for connection in dst:
-            await connection.send_text(message)
-
     async def broadcast_json(self, message: any, dst: List[WebSocket]):
         for connection in dst:
             await connection.send_json(message)

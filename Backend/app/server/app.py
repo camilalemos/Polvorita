@@ -1,12 +1,6 @@
-from typing import Optional
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-
-from fastapi import FastAPI, Depends, Form, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
-from pony.orm import db_session, exists
-from pydantic import EmailStr
+import asyncio
 
 from .authentication import *
 from .wsmanager import *
@@ -14,14 +8,12 @@ from .models import *
 from .enums import *
 from .db import db
 
-
 app = FastAPI()
 manager = ConnectionManager()
 
 origins = [
     "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:3000",
+    "http://localhost:3000"
 ]
 
 app.add_middleware(
@@ -34,9 +26,9 @@ app.add_middleware(
 
 #REGISTER
 @app.post("/user/", status_code=201)
-async def register_user(email: EmailStr = Form(...),
-                        username: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
-                        password: str = Form(..., min_length=8, max_length=20, regex="^[A-Za-z0-9]*$")):
+def register_user(email: EmailStr = Form(...),
+                  username: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
+                  password: str = Form(..., min_length=8, max_length=20, regex="^[A-Za-z0-9]*$")):
     with db_session:
         hashed_password = get_password_hash(password)
         user = User(username=username, email=email, password=hashed_password)
@@ -50,7 +42,7 @@ async def register_user(email: EmailStr = Form(...),
 
 #LOGIN
 @app.post("/login/", status_code=201, response_model=Token)
-async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
+def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(db.User, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -66,12 +58,12 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
 
 #CHANGE PROFILE AND PASSWORD
 @app.put("/user/", response_model=User)
-async def change_profile(email: Optional[EmailStr] = Form(None),
-                         username: Optional[str] = Form(None, min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
-                         full_name: Optional[str] = Form(None, min_length=5, max_length=30, regex="^[A-Z a-z0-9]*$"),
-                         new_password: Optional[str] = Form(None, min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),
-                         password: str = Form(...),
-                         user: User = Depends(get_current_active_user)):
+def change_profile(email: Optional[EmailStr] = Form(None),
+                   username: Optional[str] = Form(None, min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
+                   full_name: Optional[str] = Form(None, min_length=5, max_length=30, regex="^[A-Z a-z0-9]*$"),
+                   new_password: Optional[str] = Form(None, min_length=8, max_length=20, regex="^[A-Za-z0-9]*$"),
+                   password: str = Form(...),
+                   user: User = Depends(get_current_active_user)):
     with db_session:
         if username or email or full_name or new_password:
             if not verify_password(password, user.password):
@@ -88,10 +80,10 @@ async def change_profile(email: Optional[EmailStr] = Form(None),
 
 #CREATE GAME
 @app.post("/game/", status_code=201, response_model=Game)
-async def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
-                      player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
-                      password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
-                      user: User = Depends(get_current_active_user)):
+def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
+                player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
+                password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
+                user: User = Depends(get_current_active_user)):
     if game_name in manager.games:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game name already exist")
 
@@ -109,9 +101,9 @@ def get_game(game_name: str, user: User = Depends(get_current_active_user)):
 
 #JOIN GAME
 @app.put("/game/", response_model=Game)
-async def join_game(player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
-                    password: Optional[str] = Form(None),
-                    params = Depends(get_game)):
+def join_game(player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
+              password: Optional[str] = Form(None),
+              params = Depends(get_game)):
     game = params["game"]
     username = params["user"].username
     if game.exist(username):
@@ -128,7 +120,7 @@ async def join_game(player_name: str = Form(..., min_length=3, max_length=15, re
 
 #START GAME
 @app.put("/game/start/", response_model=Game)
-async def start_game(params = Depends(get_game)):
+def start_game(params = Depends(get_game)):
     game = params["game"]
     if game.status != 'CREATED':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
@@ -156,7 +148,7 @@ def get_player(player_name: str, params = Depends(get_game)):
 
 #CHOOSE DIRECTOR
 @app.put("/game/elections/nominate/", response_model=Game)
-async def choose_director(candidate_name:str, params = Depends(get_player)):
+def choose_director(candidate_name:str, params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
     if candidate_name not in game.players:
@@ -171,7 +163,7 @@ async def choose_director(candidate_name:str, params = Depends(get_player)):
 
 #VOTE
 @app.put("/game/elections/vote/", response_model=Game)
-async def vote(vote:Vote, params = Depends(get_player)):
+def vote(vote:Vote, params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
     if not game.elections.headmaster_candidate:
@@ -186,7 +178,7 @@ async def vote(vote:Vote, params = Depends(get_player)):
 
 #GET PROCLAMATIONS
 @app.get("/game/proclamations/")
-async def get_proclamations(params = Depends(get_player)):
+def get_proclamations(params = Depends(get_player)):
     game = params["game"]
     if params["player"].name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can get proclamations")
@@ -195,7 +187,7 @@ async def get_proclamations(params = Depends(get_player)):
 
 #DISCARD PROCLAMATION
 @app.put("/game/proclamations/discard/", response_model=Game)
-async def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
+def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game = params["game"]
     if params["player"].name not in [game.elections.minister, game.elections.headmaster]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
@@ -205,7 +197,7 @@ async def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
 
 #ENACT PROCLAMATION
 @app.put("/game/proclamations/enact/", response_model=Game)
-async def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
+def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game = params["game"]
     if params["player"].name != game.elections.headmaster:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
@@ -218,7 +210,7 @@ async def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
 
 #CAST SPELL
 @app.put("/game/spells")
-async def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(get_player)):
+def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(get_player)):
     game = params ["game"]
     if target_name and target_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target name not found")
@@ -238,12 +230,12 @@ async def cast_spell(spell: Spell, target_name: Optional[str] = None, params = D
 async def websocket_lobby(websocket: WebSocket):
     await manager.connect_lobby(websocket)
     try:
+        games = [game.dict() for game in manager.games.values() if game.status == 'CREATED']
         while True:
-            await websocket.receive_text()
-            games = [game.dict() for game in manager.games.values() if game.status == 'CREATED']
+            await asyncio.sleep(0.5)
             await manager.broadcast_json(games, manager.lobby_connections)
 
-    except WebSocketDisconnect:
+    except Exception:
         manager.disconnect_lobby(websocket)
 
 #GAME WEBSOCKET
@@ -252,7 +244,7 @@ async def websocket_game(websocket: WebSocket, game_name: str):
     await manager.connect_game(websocket, game_name)
     try:
         while True:
-            await websocket.receive_text()
+            await asyncio.sleep(0.5)
             game = manager.games.get(game_name).dict()
             connections = manager.game_connections.get(game_name)
             if game and connections:

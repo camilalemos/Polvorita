@@ -36,13 +36,13 @@ class Elections(BaseModel):
     headmaster_candidate: str = None
     minister: str = None
     headmaster: str = None
-    players: List[str] = None
+    players: Set[str] = None
     votes: Dict[str, Vote] = {}
     result: Vote = None
     rejected: int = 0
     minister_idx = 0
 
-    def init(self, players: List[str]):
+    def init(self, players: Set[str]):
         self.players = players
         self.minister_idx = random.choice(range(len(players)))
         self.minister_candidate = players[self.minister_idx]
@@ -124,7 +124,7 @@ class Game(BaseModel):
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
     elections: Elections = None
-    spells: List[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
+    spells: Set[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
     chat: List[str] = []
 
     def exist(self, username: str):

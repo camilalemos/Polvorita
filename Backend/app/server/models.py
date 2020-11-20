@@ -36,16 +36,14 @@ class Elections(BaseModel):
     headmaster_candidate: str = None
     minister: str = None
     headmaster: str = None
-    players: Set[str] = None
+    players: List[str] = None
     votes: Dict[str, Vote] = {}
     result: Vote = None
     rejected: int = 0
-    minister_idx = 0
 
-    def init(self, players: Set[str]):
-        self.players = players
-        self.minister_idx = random.choice(range(len(players)))
-        self.minister_candidate = players[self.minister_idx]
+    def init(self, players: List[str]):
+        self.players = random.sample(players, len(players))
+        self.minister_candidate = self.players[0]
 
     def nominate(self, nomination: Nomination, candidate: str):
         if nomination == 'MINISTER':
@@ -72,8 +70,8 @@ class Elections(BaseModel):
             self.minister = self.minister_candidate
             self.headmaster = self.headmaster_candidate
 
-        self.minister_idx = (self.minister_idx + 1) % len(self.players)
-        self.minister_candidate = self.players[self.minister_idx]
+        self.players.insert(len(self.players), self.players.pop(0))
+        self.minister_candidate = self.players[0]
         self.headmaster_candidate = None
         self.votes.clear()
 

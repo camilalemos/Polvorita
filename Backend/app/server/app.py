@@ -182,29 +182,26 @@ def get_proclamations(params = Depends(get_player)):
     game = params["game"]
     if params["player"].name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can get proclamations")
-
-    return game.proclamations.get_proclamations(3)
+    elif game.proclamations.hand:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Still have proclamations in hand")
+    
+    game.proclamations.get_proclamations(3)
+    return game.proclamations.hand
 
 #DISCARD PROCLAMATION
 @app.put("/game/proclamations/discard/", response_model=Game)
 def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
     game = params["game"]
-    if params["player"].name not in [game.elections.minister, game.elections.headmaster]:
+    player_name = params["player"].name
+    if player_name not in [game.elections.minister, game.elections.headmaster]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
+    elif loyalty not in game.proclamations.hand:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Proclamation not in hand")
 
-    game.proclamations.discard(loyalty)
-    return game
-
-#ENACT PROCLAMATION
-@app.put("/game/proclamations/enact/", response_model=Game)
-def enact_proclamation(loyalty: Loyalty, params = Depends(get_player)):
-    game = params["game"]
-    if params["player"].name != game.elections.headmaster:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can enact a proclamation")
-
-    game.proclamations.enact(loyalty)
-    if game.get_winner():
-        game.finish(manager)
+    if player_name == game.elections.minister and len(game.proclamations.hand) == 3:
+        game.proclamations.discard(loyalty)
+    elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
+        game.proclamations.discard(loyalty)
 
     return game
 

@@ -77,7 +77,8 @@ class Elections(BaseModel):
 
 class Proclamations(BaseModel):
     deck: List[Loyalty] = []
-    discarded_proclamations: List[Loyalty] = []
+    hand: List[Loyalty] = []
+    discarded: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
@@ -88,26 +89,25 @@ class Proclamations(BaseModel):
             self.deck.append('DEATH_EATERS')
         random.shuffle(self.deck)
 
-    def shuffle(self):
-        if len(self.deck) < 3:
-            self.deck.extend(self.discarded_proclamations)
-            random.shuffle(self.proclamations)
-
     def get_proclamations(self, num_proclamations: int):
-        self.shuffle()
-        result = []
+        if len(self.deck) < 3:
+            self.deck.extend(self.discarded)
+            random.shuffle(self.proclamations)
         for i in range(num_proclamations):
-            result.append(self.deck.pop())
-        return result
+            self.hand.append(self.deck.pop())
 
-    def enact(self, loyalty: Loyalty):
+    def enact(self):
+        loyalty = self.hand.pop()
         if loyalty == 'PHOENIX_ORDER':
             self.PO_enacted_proclamations += 1
         elif loyalty == 'DEATH_EATERS':
             self.DE_enacted_proclamations += 1
 
     def discard(self, loyalty: Loyalty):
-        self.discarded_proclamations.append(loyalty)
+        self.hand.remove(loyalty)
+        self.discarded.append(loyalty)
+        if len(self.hand) == 1:
+            self.enact()
 
 class Game(BaseModel):
     name: str

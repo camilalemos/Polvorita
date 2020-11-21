@@ -449,7 +449,7 @@ def test_put_start_game():
     assert response_0.json()['proclamations'] == {
         "DE_enacted_proclamations": 0,
         "PO_enacted_proclamations": 0,
-        "discarded_proclamations": [],
+        "discarded": [],
         "deck": response_0.json()["proclamations"]["deck"]
     }
     assert response_0.json()['elections'] == {
@@ -743,76 +743,15 @@ def test_put_discard_proclamation_minister():
     headers = get_header(old_candidates["minister_user"])
     response = client.put(f"/game/proclamations/discard/?loyalty=PHOENIX_ORDER&player_name={old_candidates['minister']}&game_name=Juego_0", headers=headers)
     assert response.status_code == 200
-    assert response.json()['proclamations']['discarded_proclamations'] == ['PHOENIX_ORDER']
+    assert response.json()['proclamations']['discarded'] == ['PHOENIX_ORDER']
 
 def test_put_discard_proclamation_headmaster():
     old_candidates = get_candidates(started_Juego_0)
     headers = get_header(old_candidates["headmaster_user"])
     response = client.put(f"/game/proclamations/discard/?loyalty=DEATH_EATERS&player_name={old_candidates['headmaster']}&game_name=Juego_0", headers=headers)
     assert response.status_code == 200
-    assert response.json()['proclamations']['discarded_proclamations'] == ['PHOENIX_ORDER', 'DEATH_EATERS']
+    assert response.json()['proclamations']['discarded'] == ['PHOENIX_ORDER', 'DEATH_EATERS']
 
-#ENACT PROCLAMATION
-def test_put_enact_proclamation_game_not_found():
-    old_candidates = get_candidates(started_Juego_0)
-    headers = get_header(old_candidates["minister_user"])
-    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name=none", headers=headers)
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Game not found"}
-
-def test_put_enact_proclamation_game_not_started():
-    old_candidates = get_candidates(started_Juego_0)
-    headers = get_header(old_candidates["minister_user"])
-    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name=Juego_3", headers=headers)
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Game not started"}
-
-def test_put_enact_proclamation_player_not_found():
-    old_candidates = get_candidates(started_Juego_0)
-    headers = get_header(old_candidates["minister_user"])
-    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name=none&game_name=Juego_0", headers=headers)
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Player not found"}
-
-def test_put_enact_proclamation_unauthorized():
-    old_candidates = get_candidates(started_Juego_0)
-    headers = get_header("Admin_5")
-    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name=Juego_0", headers=headers)
-    assert response.status_code == 401
-    assert response.json() == {"detail": "Unauthorized"}
-
-def test_put_enact_proclamation_not_valid_loyaly():
-    old_candidates = get_candidates(started_Juego_0)
-    headers = get_header(old_candidates["minister_user"])
-    response = client.put(f"/game/proclamations/enact/?loyalty=SARASA&player_name={old_candidates['minister']}&game_name=Juego_0", headers=headers)
-    assert response.status_code == 422
-
-def test_put_enact_proclamation_not_headmaster():
-    old_candidates = get_candidates(started_Juego_0)
-    headers = get_header(old_candidates["minister_user"])
-    response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['minister']}&game_name=Juego_0", headers=headers)
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Only headmaster can enact a proclamation"}
-
-def test_put_enact_proclamation_DE_win():
-    old_candidates = get_candidates(started_Juego_0)
-    headers = get_header(old_candidates["headmaster_user"])
-    for i in range(6):
-        response = client.put(f"/game/proclamations/enact/?loyalty=DEATH_EATERS&player_name={old_candidates['headmaster']}&game_name=Juego_0", headers=headers)
-        assert response.status_code == 200
-        assert response.json()['proclamations']['DE_enacted_proclamations'] == i+1
-    assert response.json()['status'] == 'FINISHED'
-    assert response.json()['winner'] == 'DEATH_EATERS'
-
-def test_put_enact_proclamation_PO_win():
-    candidates = get_candidates(started_Juego_1)
-    headers = get_header(candidates["headmaster_user"])
-    for i in range(5):
-        response = client.put(f"/game/proclamations/enact/?loyalty=PHOENIX_ORDER&player_name={candidates['headmaster']}&game_name=Juego_1", headers=headers)
-        assert response.status_code == 200
-        assert response.json()['proclamations']['PO_enacted_proclamations'] == i+1
-    assert response.json()['status'] == 'FINISHED'
-    assert response.json()['winner'] == 'PHOENIX_ORDER'
 """
 #CAST SPELL ADIVINATION
 def test_put_cast_spell_adivination_game_not_found():

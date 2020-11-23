@@ -133,9 +133,6 @@ class Game(BaseModel):
         users = [player.user_name for player in self.players.values()]
         return username in users
 
-    def get_username(self, player_name):
-        return self.players[player_name].user_name
-
     def create_player(self, player_name: str, username: str):
         self.players[player_name] = Player(name=player_name, user_name=username)
         self.num_players += 1

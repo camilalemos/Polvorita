@@ -325,7 +325,7 @@ def test_post_create_game():
             "proclamations": None,
             "elections": None,
             "spells": response.json()['spells'],
-            "chat": []
+            "chat": ["system: Player_0 has joined the room!"]
         }
 
 def test_post_create_game_with_existing_name():
@@ -338,6 +338,43 @@ def test_post_create_game_with_existing_name():
     response = client.post("/game/", headers=headers, data=data)
     assert response.status_code == 403
     assert response.json() == {'detail': 'Game name already exist'}
+
+#SEND MESSAGE
+def test_post_send_message_game_not_found():
+    headers = get_header("Admin_0")
+    data = {
+        "msg": "HOLA"
+    }
+    response = client.post("/game/chat/?player_name=Player_0&game_name=none", headers=headers, data=data)
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Game not found'}
+
+def test_post_send_message_player_not_found():
+    headers = get_header("Admin_0")
+    data = {
+        "msg": "HOLA"
+    }
+    response = client.post("/game/chat/?player_name=none&game_name=Juego_0", headers=headers, data=data)
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Player not found'}
+
+def test_post_send_message_unauthorized():
+    headers = get_header("Admin_1")
+    data = {
+        "msg": "HOLA"
+    }
+    response = client.post("/game/chat/?player_name=Player_0&game_name=Juego_0", headers=headers, data=data)
+    assert response.status_code == 401
+    assert response.json() == {'detail': 'Unauthorized'}
+
+def test_post_send_message():
+    headers = get_header("Admin_0")
+    data = {
+        "msg": "HOLA"
+    }
+    response = client.post("/game/chat/?player_name=Player_0&game_name=Juego_0", headers=headers, data=data)
+    assert response.status_code == 200
+    assert "Player_0: HOLA" in response.json()
 
 #JOIN GAME
 def test_put_join_game_with_malformed_player_name():

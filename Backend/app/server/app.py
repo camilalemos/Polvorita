@@ -135,12 +135,26 @@ def start_game(params = Depends(get_game)):
 def get_player(player_name: str, params = Depends(get_game)):
     game = params["game"]
     player = game.players.get(player_name)
-    if game.status != 'STARTED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
-    elif not player:
+    if not player:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found")
     elif not player.is_alive:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Player is not alive")
+
+    return {"player": player, "game": game, "user": params["user"]}
+
+#SEND MESSAGE
+@app.post("/game/chat/", response_model=List[str])
+def send_message(msg: str, params = Depends(get_player)):
+    game = params["game"]
+    player_name = params["player"].name
+    game.send_message(msg, player_name)
+    return game.chat
+
+def check_params(params = Depends(get_player)):
+    game = params["game"]
+    player = params["player"]
+    if game.status != 'STARTED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
     elif player.user_name != params["user"].username:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
@@ -148,7 +162,7 @@ def get_player(player_name: str, params = Depends(get_game)):
 
 #CHOOSE DIRECTOR
 @app.put("/game/elections/nominate/", response_model=Game)
-def choose_director(candidate_name:str, params = Depends(get_player)):
+def choose_director(candidate_name:str, params = Depends(check_params)):
     game = params["game"]
     player_name = params["player"].name
     if candidate_name not in game.players:
@@ -163,7 +177,7 @@ def choose_director(candidate_name:str, params = Depends(get_player)):
 
 #VOTE
 @app.put("/game/elections/vote/", response_model=Game)
-def vote(vote:Vote, params = Depends(get_player)):
+def vote(vote:Vote, params = Depends(check_params)):
     game = params["game"]
     player_name = params["player"].name
     if not game.elections.headmaster_candidate:
@@ -177,8 +191,8 @@ def vote(vote:Vote, params = Depends(get_player)):
     return game
 
 #GET PROCLAMATIONS
-@app.get("/game/proclamations/")
-def get_proclamations(params = Depends(get_player)):
+@app.get("/game/proclamations/", response_model=List[Loyalty])
+def get_proclamations(params = Depends(check_params)):
     game = params["game"]
     if params["player"].name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can get proclamations")
@@ -190,7 +204,7 @@ def get_proclamations(params = Depends(get_player)):
 
 #DISCARD PROCLAMATION
 @app.put("/game/proclamations/discard/", response_model=Game)
-def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
+def discard_proclamation(loyalty: Loyalty, params = Depends(check_params)):
     game = params["game"]
     player_name = params["player"].name
     if player_name not in [game.elections.minister, game.elections.headmaster]:
@@ -207,7 +221,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(get_player)):
 
 #CAST SPELL
 @app.put("/game/spells")
-def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(get_player)):
+def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(check_params)):
     game = params ["game"]
     if target_name and target_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target name not found")

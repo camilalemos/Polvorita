@@ -196,6 +196,9 @@ class Game(BaseModel):
 
         return self.winner
 
+    def send_message(self, msg: str, player_name: str):
+        self.chat.append(f"{player_name}: {msg}")
+
     def finish(self, manager):
         self.status = 'FINISHED'
         manager.delete_game(self.name)

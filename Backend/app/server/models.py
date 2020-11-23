@@ -88,13 +88,17 @@ class Proclamations(BaseModel):
         for i in range(11):
             self.deck.append('DEATH_EATERS')
         random.shuffle(self.deck)
+        print(self.deck)
 
-    def get_proclamations(self, num_proclamations: int):
+    def shuffle(self):
         if len(self.deck) < 3:
             self.deck.extend(self.discarded)
             random.shuffle(self.proclamations)
+
+    def get_proclamations(self, num_proclamations: int):
+        self.shuffle()
         for i in range(num_proclamations):
-            self.hand.append(self.deck.pop())
+            self.hand.append(self.deck.pop(0))
 
     def enact(self):
         loyalty = self.hand.pop()
@@ -175,9 +179,7 @@ class Game(BaseModel):
         self.spells.remove(spell)
         if spell == 'ADIVINATION':
             self.proclamations.shuffle()
-            return [self.proclamations.deck[0],
-                    self.proclamations.deck[1],
-                    self.proclamations.deck[2]]
+            return self.proclamations.deck[:3]
         elif spell == 'AVADA_KEDAVRA':
             self.players[target].kill()
             return self

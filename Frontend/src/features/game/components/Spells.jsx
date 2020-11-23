@@ -98,7 +98,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
             <div display= 'flex' style= {{width: 'min-content'}}>
                 <Hand open={openHand} onClose={() => setOpenHand(false)} threeCards={newCards} />
             </div>
-            <PopUp open={openModal} onClose={() => setOpenModal(false)} players={players} 
+            <PopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
             castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      
 
         </div>    

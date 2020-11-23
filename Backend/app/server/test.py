@@ -27,17 +27,6 @@ def get_candidates(game):
             "headmaster": headmaster_candidate}
 
 #REGISTER
-def test_post_register():
-    for i in range(num_players + 1):
-        data = {
-            "username": f"Admin_{i}",
-            "email": f"Admin_{i}@admin.com",
-            "password": "Admin123"
-        }
-        response = client.post("/user/", data=data)
-        assert response.status_code == 201
-        assert response.json() == i+1
-
 def test_post_register_with_malformed_username():
     data = {
         "username": "Admin?",
@@ -69,6 +58,17 @@ def test_post_register_with_malformed_email():
               'type': 'value_error.email'}]
     }
 
+def test_post_register():
+    for i in range(num_players + 1):
+        data = {
+            "username": f"Admin_{i}",
+            "email": f"Admin_{i}@admin.com",
+            "password": "Admin123"
+        }
+        response = client.post("/user/", data=data)
+        assert response.status_code == 201
+        assert response.json() == i+1
+
 def test_post_register_with_existing_username():
     data = {
         "username": "Admin_0", 
@@ -94,22 +94,6 @@ def test_post_register_with_existing_email():
     }
 
 #LOGIN
-def test_post_login_with_username():
-    data = {
-        "username": "Admin_0", 
-        "password": "Admin123",
-    }
-    response = client.post("/login/", data=data)
-    assert response.status_code == 201
-
-def test_post_login_with_email():
-    data = {
-        "username": "Admin_0@admin.com",
-        "password": "Admin123",
-    }
-    response = client.post("/login/", data=data)
-    assert response.status_code == 201
-
 def test_post_login_wrong_password():
     data = {
         "username": "Admin_0",
@@ -142,6 +126,22 @@ def test_post_login_wrong_email():
     assert response.json() == {
         "detail": "Incorrect credentials"
     }
+
+def test_post_login_with_username():
+    data = {
+        "username": "Admin_0", 
+        "password": "Admin123",
+    }
+    response = client.post("/login/", data=data)
+    assert response.status_code == 201
+
+def test_post_login_with_email():
+    data = {
+        "username": "Admin_0@admin.com",
+        "password": "Admin123",
+    }
+    response = client.post("/login/", data=data)
+    assert response.status_code == 201
 
 #CHANGE PROFILE
 def test_put_change_profile_with_malformed_username():

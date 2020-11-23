@@ -1,7 +1,7 @@
 import {
-    CAST_ADIVINATION,
-    CAST_ADIVINATION_FAIL,
-	CAST_ADIVINATION_SUCCESS,
+	CAST_SPELL,
+	CAST_SPELL_FAIL,
+	CAST_SPELL_SUCCESS,
 } from '../../../constants/actionTypes/SpellsActions';
 
 const initialState= {
@@ -12,19 +12,19 @@ const initialState= {
 
 export default (state = initialState, action) => {
 	switch (action.type) {
-		case CAST_ADIVINATION:
+		case CAST_SPELL:
 			return {
 				...state,
 				status: 'loading'
 			}
-		case CAST_ADIVINATION_FAIL:
+		case CAST_SPELL_FAIL:
 			return {
 				...state,
 				status: 'failed',
 				errorMsg: action.payload.errorMsg
 				
 			}
-		case CAST_ADIVINATION_SUCCESS:
+		case CAST_SPELL_SUCCESS:
 			return {
 				...state, 
 				status: 'success',

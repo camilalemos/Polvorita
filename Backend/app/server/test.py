@@ -734,15 +734,78 @@ def test_put_discard_proclamation():
     elif response.status_code == 403:
         assert response.json() == {"detail": "Proclamation not in hand"}
 
-"""
+
 #CAST SPELL ADIVINATION
-def test_put_cast_spell_adivination_game_not_found():
+def test_put_cast_spell_game_not_found():
     candidates = get_candidates(started_games[0])
     headers = get_header(candidates["minister_user"])
     response = client.put(f"/game/spells/?spell=ADIVINATION&player_name={candidates['minister']}&game_name=none", headers=headers)
     assert response.status_code == 404
     assert response.json() == {"detail": "Game not found"}
 
+def test_put_cast_spell_player_not_found():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["minister_user"])
+    response = client.put(f"/game/spells/?spell=ADIVINATION&player_name=none&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Player not found"}
+
+def test_put_cast_spell_unauthorized():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["headmaster_user"])
+    response = client.put(f"/game/spells/?spell=ADIVINATION&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Unauthorized"}
+
+def test_put_cast_spell_game_not_started():
+    headers = get_header("Admin_0")
+    response = client.put(f"/game/spells/?spell=ADIVINATION&player_name=Player_0&game_name=Juego_{num_games-1}", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Game not started"}
+
+def test_put_cast_spell_target_not_found():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["minister_user"])
+    response = client.put(f"/game/spells/?spell=ADIVINATION&target_name=none&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Target name not found"}
+
+def test_put_cast_spell_on_yourself():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["minister_user"])
+    response = client.put(f"/game/spells/?spell=ADIVINATION&target_name={candidates['minister']}&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Can not cast a spell on yourself"}
+
+def test_put_cast_spell_not_minister():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["headmaster_user"])
+    response = client.put(f"/game/spells/?spell=ADIVINATION&target_name={candidates['minister']}&player_name={candidates['headmaster']}&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Only minister can cast a spell"}
+
+def test_put_cast_spell_adivination():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["minister_user"])
+    response = client.put(f"/game/spells/?spell=ADIVINATION&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 200
+    assert len(response.json()) == 3
+
+def test_put_cast_spell_adivination_not_available():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["minister_user"])
+    response = client.put(f"/game/spells/?spell=ADIVINATION&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Spell is not available"}
+
+def test_put_cast_spell_avada_kedavra():
+    candidates = get_candidates(started_games[0])
+    headers = get_header(candidates["minister_user"])
+    response = client.put(f"/game/spells/?spell=AVADA_KEDAVRA&target_name={candidates['headmaster']}&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
+    assert response.status_code == 200
+    assert response.json()['players'][candidates['headmaster']]['is_alive'] == False
+
+"""
 def test_websocket():
     for i in range(10):
         with client.websocket_connect("/lobby/") as websocket:

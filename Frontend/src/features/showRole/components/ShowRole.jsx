@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import '../../../App.css'
 
 const ShowRole = ({ user , gameInfo }) => {
 
@@ -17,9 +18,9 @@ const ShowRole = ({ user , gameInfo }) => {
     const handleSelectImgLoyalty = (playerLoyalty) => {
         
         if ( playerLoyalty === "PHOENIX_ORDER") {
-            return (require('../../../constants/images/LoyaltyOF.jpg'));
+            return (require('../../../constants/images/LoyaltyPO.png'));
         } else {
-            return (require('../../../constants/images/LoyaltyM.jpg'));
+            return (require('../../../constants/images/LoyaltyDE.png'));
         }
     };
 
@@ -27,54 +28,54 @@ const ShowRole = ({ user , gameInfo }) => {
 
         const snapeSelectLoyalty = (snapeLoyalty) => {
             if (snapeLoyalty === "PHOENIX_ORDER") {
-                return (require('../../../constants/images/Roles/RoleSNAPEOF.jpg'));
+                return (require('../../../constants/images/Roles/RoleSNAPEOF.png'));
             } else {
-                return (require('../../../constants/images/Roles/RoleSNAPEM.jpg'));
+                return (require('../../../constants/images/Roles/RoleSNAPEM.png'));
             }
         }
 
         switch (playerRole) {
             case "BELLATRIX":
-                return (require('../../../constants/images/Roles/RoleBELLATRIX.jpg'));
+                return (require('../../../constants/images/Roles/RoleBELLATRIX.png'));
 
             case "DOLORES":
-                return (require('../../../constants/images/Roles/RoleDOLORES.jpg'));
+                return (require('../../../constants/images/Roles/RoleDOLORES.png'));
 
             case "DRACO":
-                return (require('../../../constants/images/Roles/RoleDRACO.jpg'));
+                return (require('../../../constants/images/Roles/RoleDRACO.png'));
 
             case "DUMBLEDORE":
-                return (require('../../../constants/images/Roles/RoleDUMBLEDORE.jpg'));
+                return (require('../../../constants/images/Roles/RoleDUMBLEDORE.png'));
 
             case "FRED":
-                return (require('../../../constants/images/Roles/RoleFRED.jpg'));
+                return (require('../../../constants/images/Roles/RoleFRED.png'));
 
             case "GEORGE":
-                return (require('../../../constants/images/Roles/RoleGEORGE.jpg'));
+                return (require('../../../constants/images/Roles/RoleGEORGE.png'));
 
             case "HARRY":
-                return (require('../../../constants/images/Roles/RoleHARRY.jpg'));
+                return (require('../../../constants/images/Roles/RoleHARRY.png'));
 
             case "HERMIONE":
-                return (require('../../../constants/images/Roles/RoleHERMIONE.jpg'));
+                return (require('../../../constants/images/Roles/RoleHERMIONE.png'));
 
             case "LUCIUS":
-                return (require('../../../constants/images/Roles/RoleLUCIUS.jpg'));
+                return (require('../../../constants/images/Roles/RoleLUCIUS.png'));
 
             case "NEVILLE":
-                return (require('../../../constants/images/Roles/RoleNEVILLE.jpg'));
+                return (require('../../../constants/images/Roles/RoleNEVILLE.png'));
 
             case "RON":
-                return (require('../../../constants/images/Roles/RoleRON.jpg'));
+                return (require('../../../constants/images/Roles/RoleRON.png'));
 
             case "SIRIUS":
-                return (require('../../../constants/images/Roles/RoleSIRIUS.jpg'));
+                return (require('../../../constants/images/Roles/RoleSIRIUS.png'));
             
             case "SNAPE":
                 return (snapeSelectLoyalty(userLoyalty));
             
             case "VOLDEMORT":
-                return (require('../../../constants/images/Roles/RoleVOLDEMORT.jpg'));
+                return (require('../../../constants/images/Roles/RoleVOLDEMORT.png'));
             default:
                 return("Image Not Found")
         }

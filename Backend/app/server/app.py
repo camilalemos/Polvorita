@@ -188,6 +188,7 @@ def vote(vote:Vote, params = Depends(check_game)):
     game.elections.vote(player_name, vote)
     if game.get_winner():
         game.finish(manager)
+
     return game
 
 #GET PROCLAMATIONS
@@ -217,17 +218,23 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
     elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
         game.proclamations.discard(loyalty)
 
+    if game.get_winner():
+        game.finish(manager)
+
     return game
 
 #CAST SPELL
 @app.put("/game/spells")
 def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(check_game)):
     game = params ["game"]
+    player_name = params["player"].name
     if target_name and target_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target name not found")
+    elif target_name == player_name:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Can not cast a spell on yourself")
     elif spell not in game.spells:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
-    elif params["player"].name != game.elections.minister:
+    elif player_name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
 
     result = game.cast_spell(spell, target_name)

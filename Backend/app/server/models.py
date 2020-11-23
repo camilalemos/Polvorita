@@ -139,10 +139,12 @@ class Game(BaseModel):
     def create_player(self, player_name: str, username: str):
         self.players[player_name] = Player(name=player_name, user_name=username)
         self.num_players += 1
+        self.send_message(f"{player_name} has joined the room!", "system")
 
     def delete_player(self, player_name: str):
         self.players.pop(player_name)
         self.num_players -= 1
+        self.send_message(f"{player_name} has left the room!", "system")
 
     def assign_roles(self):
         to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']
@@ -174,6 +176,7 @@ class Game(BaseModel):
         self.assign_roles()
         self.elections = Elections()
         self.elections.init(list(self.players))
+        self.send_message("Game started!", "system")
 
     def cast_spell(self, spell: Spell, target: str):
         self.spells.remove(spell)

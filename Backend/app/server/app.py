@@ -177,7 +177,7 @@ def choose_director(candidate_name:str, params = Depends(check_game)):
 
 #VOTE
 @app.put("/game/elections/vote/", response_model=Game)
-def vote(vote:Vote, params = Depends(check_game)):
+def vote(vote:Vote, params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
     if not game.elections.headmaster_candidate:
@@ -185,7 +185,6 @@ def vote(vote:Vote, params = Depends(check_game)):
     elif player_name in game.elections.votes:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
-    game.elections.vote(player_name, vote)
     if game.get_winner():
         game.finish(manager)
 
@@ -220,6 +219,23 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
 
     if game.get_winner():
         game.finish(manager)
+
+    return game
+
+#EXPELLIARMUS
+@app.put("/game/proclamations/expelliarmus/", response_model=Game)
+def use_expelliarmus(card1: Loyalty, card2: Loyalty, expelliarmus: Optional[bool] = None, params = Depends(get_player)):
+    game = params["game"]
+    if params["player"].name not in [game.elections.minister, game.elections.headmaster]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can use Expelliarmus")
+    elif game.proclamations.DE_enacted_proclamations < 5:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Expelliarmus cannot be used") 
+    elif expelliarmus and params["player"].name == game.elections.minister:
+        game.proclamations.expelliarmus = expelliarmus
+
+    if game.proclamations.expelliarmus: 
+        game.proclamations.expelliarmus(card1, card2)
+        game.proclamations.expelliarmus = False
 
     return game
 

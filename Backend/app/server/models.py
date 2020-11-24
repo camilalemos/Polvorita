@@ -79,6 +79,7 @@ class Proclamations(BaseModel):
     deck: List[Loyalty] = []
     hand: List[Loyalty] = []
     discarded: List[Loyalty] = []
+    expelliarmus: bool = False
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
@@ -93,7 +94,7 @@ class Proclamations(BaseModel):
     def shuffle(self):
         if len(self.deck) < 3:
             self.deck.extend(self.discarded)
-            random.shuffle(self.proclamations)
+            random.shuffle(self.deck)
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()
@@ -110,8 +111,12 @@ class Proclamations(BaseModel):
     def discard(self, loyalty: Loyalty):
         self.hand.remove(loyalty)
         self.discarded.append(loyalty)
-        if len(self.hand) == 1:
+        if (not self.expelliarmus and len(self.hand) == 1):
             self.enact()
+
+    def expelliarmus(self,card1: Loyalty, card2: Loyalty):
+        self.discard(card1)
+        self.discard(card2)
 
 class Game(BaseModel):
     name: str

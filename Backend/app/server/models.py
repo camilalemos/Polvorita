@@ -123,7 +123,6 @@ class Game(BaseModel):
     voldemort: str = None
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
-    players_investigated: List[str] = []
     elections: Elections = None
     spells: Set[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
     chat: List[str] = []
@@ -184,13 +183,8 @@ class Game(BaseModel):
         elif spell == 'AVADA_KEDAVRA':
             self.players[target].kill()
             return self
-        elif spell == 'CRUCIO':
-            if target in self.players_investigated:
-                return 'the target has been investigated'
-            else:
-                self.players_investigated.append(target)
-                return self.players[target].loyalty
-            
+        elif spell == 'CRUCIO':         
+            return self.players[target].loyalty         
         elif spell == 'IMPERIUS':
             self.elections.nominate('MINISTER', target)
             self.elections.headmaster_candidate = None

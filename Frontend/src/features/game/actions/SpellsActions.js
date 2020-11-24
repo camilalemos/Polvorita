@@ -31,7 +31,7 @@ const _castSpell = async (spell, targetName, gameName, playerName, dispatch, get
         });
         console.log("URL " + uri);
         console.log(response.data , "RESPONSE");
-        dispatch({type: CAST_SPELL_SUCCESS, payload: {threeCards: response.data}})
+        dispatch({type: CAST_SPELL_SUCCESS, payload: {cards: response.data}})
         
     } catch (error){
         console.log(error, "ERROR")

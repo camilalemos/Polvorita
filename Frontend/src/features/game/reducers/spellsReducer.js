@@ -7,7 +7,7 @@ import {
 const initialState= {
 	status: 'unknow',
 	errorMsg: 'unknow',
-	threeCards: {}
+	cards: {}
 }
 
 export default (state = initialState, action) => {
@@ -28,7 +28,7 @@ export default (state = initialState, action) => {
 			return {
 				...state, 
 				status: 'success',
-				threeCards: action.payload.threeCards
+				cards: action.payload.cards
 			}
 		default:
 			return {...state};

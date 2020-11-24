@@ -5,7 +5,7 @@ import Hand from './Hand.jsx'
 import { makeStyles } from '@material-ui/core/styles';
 import PopUp from './popUp.jsx'
 
-const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
+const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
 
     
     const [players, setPlayers] = useState([]);
@@ -17,13 +17,14 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
     const [proclamationsDEcount, setProclamationsDECount] = useState('');
     const [spells, setSpells] = useState([])
     const [newCards, setNewCards] = useState(null)
+    const [crucioCard, setCrucioCard] = useState('DEATH_EATERS')
     const [spell, setSpell] = useState('')
     const [numPlayers, setNumPlayers] = useState('')
     
     const handleClick = () => {
         if(spell === 'ADIVINATION') setOpenHand(true)
         else setOpenModal(true)
-        if(newCards === null ){
+        if(newCards === null && spell!== 'CRUCIO'){
             castSpell(spell, '',gameInfo.name, currentPlayer.name)             
         }
 
@@ -31,8 +32,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
 
     const handleSpells = (spells) => {
         if (proclamationsDEcount == 0){
-            setSpell (spells[0])
-            console.log(spell, "SPELL")
+            setSpell (spells[2])
         }
         if (proclamationsDEcount == 1) {
             setSpell (spells[1])
@@ -68,17 +68,27 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
         setSpells(gameInfo.spells)
         handleSpells(spells)
     }, [gameInfo, setProclamationsDECount, setSpells])
-    console.log(spells, "SPELLS")
     //console.log("CURRENT PLAYER " + JSON.stringify(currentPlayer))
     //console.log("MINISTER " + JSON.stringify(minister))
     //console.log("DE PROC " + proclamationsDEcount)
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
+            setNewCards("DEATH_EATERS")
+            setOpenHand(true)
+            
+          
         }
-        if (status === 'success' && spell !== 'AVADA_KEDAVRA') {
-            setNewCards(threeCards) 
+        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell !== 'CRUCIO') {
+            setNewCards(cards)
+            console.log("HERE1") 
         }
+        if (status === 'success' && spell === 'CRUCIO') {
+            console.log("HERE2")
+            console.log(crucioCard + " NEW CARD")
+            setOpenHand(true)
+        }
+        console.log("HERE3")
     },  [status])
 
 
@@ -96,7 +106,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
                 }
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
-                <Hand open={openHand} onClose={() => setOpenHand(false)} threeCards={newCards} />
+                <Hand open={openHand} onClose={() => setOpenHand(false)} cards={crucioCard} />
             </div>
             <PopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
             castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      

@@ -15,7 +15,7 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
     const [ DEenactedProclamations, setDEenactedProclamations ] = useState();
     const [ discardedProclamations, setDiscardedProclamations ] = useState([])
 
-    console.log(gameInfo)
+    //console.log(gameInfo)
 
     useEffect(() => {
         if (gameInfo){

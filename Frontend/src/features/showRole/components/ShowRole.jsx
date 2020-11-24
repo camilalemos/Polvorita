@@ -1,6 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import '../../../App.css'
 
+export const handleSelectImgLoyalty = (playerLoyalty) => {
+
+    let imageLoyalty
+    
+    switch (playerLoyalty) {
+        case "PHOENIX_ORDER":
+            imageLoyalty = (require('../../../constants/images/LoyaltyPO.png'));
+            break;
+        case "DEATH_EATERS":
+            imageLoyalty = (require('../../../constants/images/LoyaltyDE.png'));
+            break;
+        default:
+            imageLoyalty = (require('../../../constants/images/LoyaltyDefault.png'));
+            break;
+    }
+    return imageLoyalty;
+};
+
+
 export const handelSelectImgRole = (playerRole, playerLoyalty) => {
     
     let imageRole
@@ -78,24 +97,7 @@ const ShowRole = ({ user , gameInfo }) => {
 		}
 	},[gameInfo])
     
-    const handleSelectImgLoyalty = (playerLoyalty) => {
-
-        let imageLoyalty
-        
-        switch (playerLoyalty) {
-            case "PHOENIX_ORDER":
-                imageLoyalty = (require('../../../constants/images/LoyaltyPO.png'));
-                break;
-            case "DEATH_EATERS":
-                imageLoyalty = (require('../../../constants/images/LoyaltyDE.png'));
-                break;
-            default:
-                imageLoyalty = (require('../../../constants/images/LoyaltyDefault.png'));
-                break;
-        }
-        return imageLoyalty;
-    };
-
+    
 
     return (
 

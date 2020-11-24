@@ -187,7 +187,6 @@ class Game(BaseModel):
             return self.players[target].loyalty         
         elif spell == 'IMPERIUS':
             self.elections.nominate('MINISTER', target)
-            self.elections.headmaster_candidate = None
             return target
     def get_winner(self):
         if self.proclamations.PO_enacted_proclamations == 5:

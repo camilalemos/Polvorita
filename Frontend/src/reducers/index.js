@@ -10,7 +10,7 @@ import createGame from '../features/createGameForm/reducers/createGameReducer';
 import getUserInfo from '../features/changeProfile/reducers/changeProfile';
 import enactProclamation from '../features/game/reducers/enactproclamationReducer'
 import playerActionsReducer from '../features/game/reducers/playerActionsReducer'
-import chat from '../features/chat/reducers/chat'
+import chat from '../features/chat/reducers/chatReducer'
 
 
 const rootReducer = combineReducers({

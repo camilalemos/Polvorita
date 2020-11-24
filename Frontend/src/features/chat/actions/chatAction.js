@@ -7,19 +7,23 @@ import {
   import axios from 'axios'
   import api from '../../../configs/api'
 
-  export const sendMessage = (message, playerName, gameName) => (dispatch, getState) => _sendMessage(message, playerName, gameName, dispatch, getState);
-  const _sendMessage = async (message, playerName, gameName, dispatch, getState) => {
+  export const sendMessage = (playerName, gameName, message) => (dispatch, getState) => _sendMessage(playerName, gameName, message, dispatch, getState);
+  const _sendMessage = async (playerName, gameName, message, dispatch, getState) => {
   
     try {
 
         dispatch({type:  SEND_MESSAGE});
 
         let {access_token} = {...getState().login}
-        console.log(`${api.url}/game/chat?player_name=${playerName}&game_name=${gameName}`, "URL");
+        console.log(`${api.url}/game/chat/?player_name=${playerName}&game_name=${gameName}`, "URL");
+        console.log(message, "MESSAGE")
 
         const response = await axios({
-            method: 'put',
-            url: `${api.url}/game/chat?player_name=${playerName}&game_name=${gameName}`,
+            method: 'post',
+            url: `${api.url}/game/chat/?player_name=${playerName}&game_name=${gameName}`,
+            data: {
+                msg: message
+            },
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`
@@ -30,6 +34,9 @@ import {
         
     } catch (error){
         console.log(error, "ERROR")
-        dispatch({type: SEND_MESSAGE_FAIL});
+        if (error.response.status === 401) dispatch({type: SEND_MESSAGE_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 403) dispatch({type: SEND_MESSAGE_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 400) dispatch({type: SEND_MESSAGE_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 422) dispatch({type: SEND_MESSAGE_FAIL, payload: {errorMsg: error.response.data.detail[0].msg }});
     }
 };

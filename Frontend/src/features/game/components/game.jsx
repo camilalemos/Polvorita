@@ -3,7 +3,7 @@ import Board from '../containers/BoardContainers';
 import ShowRoleContainers from '../../../features/showRole/containers/ShowRoleContainers';
 import { useParams } from 'react-router-dom';
 import PlayersActions from '../containers/PlayerActionsContainers'
-import Chat from '../../chat/components/Chat'
+import Chat from '../../chat/containers/ChatContainer'
 
 export default function Game () {
 

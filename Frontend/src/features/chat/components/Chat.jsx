@@ -33,21 +33,29 @@ const useStyles = makeStyles({
   }
 });
 
-const Chat = function ({ gameInfo, sendMessage }) {
+const Chat = function ({ gameInfo, sendMessage, status, errorMsg}) {
   
     const classes = useStyles();
     const [messages, setMessages] = useState(null)
     const [newMessage, setNewMessage] = useState('')
     const [currentPlayer, setCurrentPlayer] = useState(null)
+    const [admin, setAdmin] = useState('admin1')
+    const [juego, setJuego] = useState('juego')
+
 
     const handleSend = () => {
         console.log("SENDING " + newMessage)
+        sendMessage( admin, juego, newMessage )
     }
 
     useEffect(() => {
         setMessages(gameInfo.chat)
         //console.log("SETTING UP")
     },[gameInfo.chat])
+
+    useEffect(() => {
+        if (status === 'failed') console.log(errorMsg)
+    },[status])
     //if (messages !== undefined && messages !==null) console.log(messages[0] + " MESSAGES")
     
    // console.log(gameInfo.chat + " CHATINFO")

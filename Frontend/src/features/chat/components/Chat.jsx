@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -10,7 +10,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
 import Fab from '@material-ui/core/Fab';
 import SendIcon from '@material-ui/icons/Send';
 
@@ -34,10 +33,21 @@ const useStyles = makeStyles({
   }
 });
 
-const Chat = () => {
-  const classes = useStyles();
+const Chat = function ({ gameInfo }) {
+  
+    const classes = useStyles();
+    const [messages, setMessages] = useState(null)
 
-  return (
+    useEffect(() => {
+        setMessages(gameInfo.chat)
+        console.log("SETTING UP")
+    },[gameInfo.chat])
+    if (messages !== undefined && messages !==null) console.log(messages[0] + " MESSAGES")
+    
+   // console.log(gameInfo.chat + " CHATINFO")
+
+
+    return (
       <div>
         <Grid container>
             <Grid item xs={12} >
@@ -48,36 +58,7 @@ const Chat = () => {
             <Grid item xs={3} className={classes.borderRight500}>
                 <List>
                     <ListItem button key="RemySharp">
-                        <ListItemIcon>
-                        <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                        </ListItemIcon>
-                        <ListItemText primary="John Wick"></ListItemText>
-                    </ListItem>
-                </List>
-                <Divider />
-                <Grid item xs={12} style={{padding: '10px'}}>
-                    <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
-                </Grid>
-                <Divider />
-                <List>
-                    <ListItem button key="RemySharp">
-                        <ListItemIcon>
-                            <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                        </ListItemIcon>
-                        <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
-                        <ListItemText secondary="online" align="right"></ListItemText>
-                    </ListItem>
-                    <ListItem button key="Alice">
-                        <ListItemIcon>
-                            <Avatar alt="Alice" src="https://material-ui.com/static/images/avatar/3.jpg" />
-                        </ListItemIcon>
-                        <ListItemText primary="Alice">Alice</ListItemText>
-                    </ListItem>
-                    <ListItem button key="CindyBaker">
-                        <ListItemIcon>
-                            <Avatar alt="Cindy Baker" src="https://material-ui.com/static/images/avatar/2.jpg" />
-                        </ListItemIcon>
-                        <ListItemText primary="Cindy Baker">Cindy Baker</ListItemText>
+                        <ListItemText></ListItemText>
                     </ListItem>
                 </List>
             </Grid>
@@ -86,35 +67,13 @@ const Chat = () => {
                     <ListItem key="1">
                         <Grid container>
                             <Grid item xs={12}>
-                                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <ListItemText align="right" secondary="09:30"></ListItemText>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                    <ListItem key="2">
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <ListItemText align="left" primary="Hey, Iam Good! What about you ?"></ListItemText>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <ListItemText align="left" secondary="09:31"></ListItemText>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                    <ListItem key="3">
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <ListItemText align="right" primary="Cool. i am good, let's catch up!"></ListItemText>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <ListItemText align="right" secondary="10:30"></ListItemText>
+                                {messages !== undefined && messages !==null &&
+                                <ListItemText align="right" primary={messages[0]}></ListItemText>
+                                }
                             </Grid>
                         </Grid>
                     </ListItem>
                 </List>
-                <Divider />
                 <Grid container style={{padding: '20px'}}>
                     <Grid item xs={11}>
                         <TextField id="outlined-basic-email" label="Type Something" fullWidth />

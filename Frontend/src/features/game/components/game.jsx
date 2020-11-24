@@ -3,6 +3,7 @@ import Board from '../containers/BoardContainers';
 import ShowRoleContainers from '../../../features/showRole/containers/ShowRoleContainers';
 import { useParams } from 'react-router-dom';
 import PlayersActions from '../containers/PlayerActionsContainers'
+import Chat from '../../chat/components/Chat'
 
 export default function Game () {
 
@@ -42,7 +43,9 @@ export default function Game () {
                 <Board gameInfo={ gameInfo }/>
             </div>
             <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
-                <div>{/* status */}</div>
+                <div>
+                <Chat gameInfo={ gameInfo }/>
+                </div>
                 <ol>{/* TODO */}</ol>
             </div>
         </div>

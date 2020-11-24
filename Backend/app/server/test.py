@@ -734,7 +734,6 @@ def test_put_discard_proclamation():
     elif response.status_code == 403:
         assert response.json() == {"detail": "Proclamation not in hand"}
 
-
 #CAST SPELL ADIVINATION
 def test_put_cast_spell_game_not_found():
     candidates = get_candidates(started_games[0])

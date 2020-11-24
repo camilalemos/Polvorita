@@ -261,12 +261,11 @@ async def websocket_lobby(websocket: WebSocket):
 async def websocket_game(websocket: WebSocket, game_name: str):
     await manager.connect_game(websocket, game_name)
     try:
+        game = manager.games.get(game_name).dict()
+        connections = manager.game_connections.get(game_name)
         while True:
             await asyncio.sleep(0.5)
-            game = manager.games.get(game_name).dict()
-            connections = manager.game_connections.get(game_name)
-            if game and connections:
-                await manager.broadcast_json(game, connections)
+            await manager.broadcast_json(game, connections)
 
     except Exception:
         manager.disconnect_game(websocket, game_name)

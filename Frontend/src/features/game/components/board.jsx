@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function  Board( {gameInfo, enactproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
+export default function Board( {gameInfo, enactproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
     
     const classes = useStyles();
     const [ ministerName, setMinisterName ] = useState('');

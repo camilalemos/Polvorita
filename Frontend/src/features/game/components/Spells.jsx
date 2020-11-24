@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import { Fireplace, SettingsVoiceOutlined } from '@material-ui/icons';
 import Hand from './Hand.jsx'
-import { makeStyles } from '@material-ui/core/styles';
 import PopUp from './popUp.jsx'
 
 const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
 
-    
     const [players, setPlayers] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [isMinister, setIsMinister] = useState(false);
@@ -26,13 +23,12 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
         if(newCards === null ){
             castSpell(spell, '',gameInfo.name, currentPlayer.name)             
         }
-
     }
 
     const handleSpells = (spells) => {
         if (proclamationsDEcount == 0){
             setSpell (spells[0])
-            console.log(spell, "SPELL")
+            //console.log(spell, "SPELL")
         }
         if (proclamationsDEcount == 1) {
             setSpell (spells[1])
@@ -46,7 +42,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
     }
 
     useEffect(() => {
-        if (gameInfo.length !==0 ) {
+        if (gameInfo.length !== 0 ) {
             setPlayers(Object.values(gameInfo.players));
         }
     }, [gameInfo, setPlayers, setMinister])
@@ -57,7 +53,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
 
 
     useEffect(() => {
-        if(currentPlayer && gameInfo.length !==0){
+        if(currentPlayer && gameInfo.length !== 0){
             setMinister(gameInfo.elections.minister)
             if(minister === currentPlayer.name ) setIsMinister(true);
         }
@@ -72,6 +68,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
     //console.log("CURRENT PLAYER " + JSON.stringify(currentPlayer))
     //console.log("MINISTER " + JSON.stringify(minister))
     //console.log("DE PROC " + proclamationsDEcount)
+
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
@@ -80,7 +77,6 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
             setNewCards(threeCards) 
         }
     },  [status])
-
 
     return (
         <div>
@@ -100,10 +96,8 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
             </div>
             <PopUp open={openModal} onClose={() => setOpenModal(false)} players={players} 
             castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      
-
         </div>    
     )
-
 }
 
 export default Spells;

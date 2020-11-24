@@ -7,6 +7,7 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
     const classes = useStyles();
     const [ ministerName, setMinisterName ] = useState('');
     const [ headmasterName, setHeadmasterName ] = useState('');
+    const [ numPlayers, setNumPlayers ] = useState(10);
     const [ gameName, setGameName] = useState('');
     const [ deck, setDeck] = useState([]);
     const [ numProclamations, setNumProclamations] = useState();
@@ -22,6 +23,7 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
             setMinisterName(gameInfo.elections?.minister);
             setHeadmasterName(gameInfo.elections?.headmaster)
             setGameName(gameInfo.name);
+            setNumPlayers(gameInfo.num_players);
         }
     }, [gameInfo,setMinisterName])
 
@@ -98,7 +100,7 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
             setOpen(false)
             setValueProclamation(value)
             discardproclamation(value,ministerName,gameName)
-            console.log(discardproclamation)
+            //console.log(discardproclamation)
 
             //console.log(valueProclamation)
         };
@@ -132,10 +134,32 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
         );
     }
 
+    const imgdeathEatersBoard = ( numplayers ) => {
+        let imgBoardDE
+        switch (numplayers) {
+            case 5:
+            case 6: 
+                imgBoardDE = require('../../../constants/images/TableroDE1.png');
+                break;
+            case 7:
+            case 8:
+                imgBoardDE = require('../../../constants/images/TableroDE2.png');
+                break;
+            case 9:
+            case 10:
+                imgBoardDE = require('../../../constants/images/TableroDE3.png');
+                break;
+            default:
+                imgBoardDE = require('../../../constants/images/TableroDE1.png');
+                break;
+        }
+        return imgBoardDE;
+    }
+
     return (
         <div className={classes.root}> 
             <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%', justifyContent:'space-between'}} disable>
-                <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroDE1.png')})`,}} />
+                <div className ={classes.imageSrc} style={{ backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`,}} />
                 <div className={classes.imageBackdrop}>
                     {ShowSquare(valueProclamation)}
                     {ShowSquare()}

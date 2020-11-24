@@ -33,16 +33,22 @@ const useStyles = makeStyles({
   }
 });
 
-const Chat = function ({ gameInfo }) {
+const Chat = function ({ gameInfo, sendMessage }) {
   
     const classes = useStyles();
     const [messages, setMessages] = useState(null)
+    const [newMessage, setNewMessage] = useState('')
+    const [currentPlayer, setCurrentPlayer] = useState(null)
+
+    const handleSend = () => {
+        console.log("SENDING " + newMessage)
+    }
 
     useEffect(() => {
         setMessages(gameInfo.chat)
-        console.log("SETTING UP")
+        //console.log("SETTING UP")
     },[gameInfo.chat])
-    if (messages !== undefined && messages !==null) console.log(messages[0] + " MESSAGES")
+    //if (messages !== undefined && messages !==null) console.log(messages[0] + " MESSAGES")
     
    // console.log(gameInfo.chat + " CHATINFO")
 
@@ -76,10 +82,13 @@ const Chat = function ({ gameInfo }) {
                 </List>
                 <Grid container style={{padding: '20px'}}>
                     <Grid item xs={11}>
-                        <TextField id="outlined-basic-email" label="Type Something" fullWidth />
+                        <TextField id="outlined-basic-email" label="Type Something" fullWidth 
+                            onChange={(value) => (setNewMessage(value.target.value))}
+                            onKeyPress={(e) => {if (e.key === 'Enter') handleSend()}}
+                        />
                     </Grid>
                     <Grid xs={1} align="right">
-                        <Fab color="primary" aria-label="add"><SendIcon /></Fab>
+                        <Fab color="primary" aria-label="add"><SendIcon onClick={handleSend}/></Fab>
                     </Grid>
                 </Grid>
             </Grid>

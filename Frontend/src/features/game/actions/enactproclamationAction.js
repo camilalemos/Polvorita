@@ -9,8 +9,8 @@ import {
 import axios from 'axios';
 import api from '../../../configs/api';
 
-export const enacproclamation = ( loyalty, playerName, gameName) => (dispatch, getState) => _enacproclamation(loyalty, playerName, gameName, dispatch, getState);
-const _enacproclamation = async ( loyalty, playerName, gameName, dispatch, getState) => {
+export const enactproclamation = ( loyalty, playerName, gameName) => (dispatch, getState) => _enactproclamation(loyalty, playerName, gameName, dispatch, getState);
+const _enactproclamation = async ( loyalty, playerName, gameName, dispatch, getState) => {
 
     try {
 
@@ -20,7 +20,7 @@ const _enacproclamation = async ( loyalty, playerName, gameName, dispatch, getSt
         
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game/proclamations/enact?game_name=${gameName}&player_name:${playerName}&loyalty${loyalty}`,
+            url: `${api.url}/game/proclamations/enact?game_name=${gameName}&player_name=${playerName}&loyalty=${loyalty}`,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`
@@ -39,7 +39,6 @@ export const getProclamationsInfo = (playerName, gameName) => (dispatch, getStat
 const _getProclamationsInfo = async (playerName, gameName, dispatch, getState) => {
 
 	try {
-        console.log(playerName, gameName, 'isajdis')
         dispatch({type: GET_PROCLAMATIONS});
         
         let {access_token} = {...getState().login}
@@ -55,5 +54,6 @@ const _getProclamationsInfo = async (playerName, gameName, dispatch, getState) =
         dispatch({type:  GET_PROCLAMATIONS_SUCCESS, payload: {proclamationsInfo:  response.data}})
     } catch (error) {
         console.log(error, "ERROR")
+        dispatch({type: GET_PROCLAMATIONS_FAIL});
 	}
 };

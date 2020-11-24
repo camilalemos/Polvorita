@@ -16,11 +16,9 @@ def get_header(username):
     return {"Authorization" : f'Bearer {token}'}
 
 def get_candidates(game):
-    minister_idx = game["elections"]["minister_idx"]
-    minister_candidate = list(game["players"])[minister_idx]
+    minister_candidate = game["elections"]["players"][0]
     minister_username = game["players"][minister_candidate]["user_name"]
-    headmaster_idx = (minister_idx + 1) % game["num_players"]
-    headmaster_candidate = list(game["players"])[headmaster_idx]
+    headmaster_candidate = game["elections"]["players"][1]
     headmaster_username = game["players"][headmaster_candidate]["user_name"]
     return {"minister_user": minister_username,
             "headmaster_user": headmaster_username,
@@ -463,7 +461,6 @@ def test_put_start_game():
         "votes": {},
         "result": None,
         "rejected": 0,
-        "minister_idx": response_0.json()["elections"]["minister_idx"]
     }
 
 def test_put_start_game_already_started():

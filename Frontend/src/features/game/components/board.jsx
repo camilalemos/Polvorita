@@ -2,29 +2,34 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function  Board( {gameInfo, enacproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo}) {
+export default function  Board( {gameInfo, enactproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo}) {
     
     const classes = useStyles();
-    const [ playerName, setPlayerName ] = useState('');
+    const [ ministerName, setMinisterName ] = useState('');
+    const [ headmasterName, setHeadmasterName ] = useState('');
     const [ gameName, setGameName] = useState('');
     const [ deck, setDeck] = useState([]);
     const [ numProclamations, setNumProclamations] = useState();
     const [ valueProclamation, setValueProclamation ] = useState('');
+    const [ POenactedProclamations, setPOenactedProclamations ] = useState();
+    const [ DEencatedProclamations, setDEenactedProclamations ] = useState();
+    const [ discardedProclamations, setDiscardedProclamations ] = useState([])
 
     console.log(gameInfo)
 
     useEffect(() => {
         if (gameInfo){
-            setPlayerName(gameInfo.elections?.minister); 
+            setMinisterName(gameInfo.elections?.minister);
+            setHeadmasterName(gameInfo.elections?.headmaster)
             setGameName(gameInfo.name);
         }
-    }, [gameInfo,setPlayerName])
+    }, [gameInfo,setMinisterName])
 
     useEffect(() => {
-        if (playerName) {
-            getProclamationsInfo(playerName,gameName) 
+        if (ministerName) {
+            getProclamationsInfo(ministerName,gameName) 
         }
-    },[playerName])
+    },[ministerName])
 
     useEffect(() => {
         if (statusGetProclamation === 'success')
@@ -91,6 +96,9 @@ export default function  Board( {gameInfo, enacproclamation, statusGetProclamati
         const handleClose = (value) => {
             setOpen(false)
             setValueProclamation(value)
+            enactproclamation(value,headmasterName,gameName)
+            console.log(enactproclamation)
+
             //console.log(valueProclamation)
         };
 

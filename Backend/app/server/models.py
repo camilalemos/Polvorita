@@ -181,6 +181,11 @@ class Game(BaseModel):
         elif spell == 'AVADA_KEDAVRA':
             self.players[target].kill()
             return self
+        elif spell == 'CRUCIO':         
+            return self.players[target].loyalty         
+        elif spell == 'IMPERIUS':
+            self.elections.nominate('MINISTER', target)
+            return self
 
     def get_winner(self):
         if self.proclamations.PO_enacted_proclamations == 5:

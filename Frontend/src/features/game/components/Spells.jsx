@@ -23,7 +23,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     const handleClick = () => {
         if(spell === 'ADIVINATION') setOpenHand(true)
         else setOpenModal(true)
-        if(newCards === null && spell!== 'CRUCIO'){
+        if(newCards === null && spell === 'ADIVINATION'){
             castSpell(spell, '',gameInfo.name, currentPlayer.name)             
         }
 
@@ -79,20 +79,16 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
             
           
         }
-        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell !== 'CRUCIO') {
+        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell !== 'CRUCIO' !== 'IMPERIUS') {
             setNewCards(cards)
-            console.log("HERE1") 
         }
-        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell === 'CRUCIO') {
+        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell === 'CRUCIO' && spell !== 'IMPERIUS') {
             console.log(cards, "CRUCIO")
-            let axus = cards
-            setNewCards(axus)
+            //let axus = cards
+            setNewCards(cards)
             console.log(newCards, "CRUCIO")
             setOpenHand(true)
-            console.log("HERE1") 
         }
-
-        console.log("HERE3")
     },  [status])
 
     const isTheMinister = (gameinfo) => {
@@ -107,7 +103,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
         <div>
             <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
                 {
-                gameInfo !== undefined && currentPlayer !== undefined && currentPlayer !== null && isMinister &&
+                spells !== undefined && spells.length > 0 && gameInfo !== undefined && currentPlayer !== undefined && currentPlayer !== null && isMinister &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={handleClick}>
                         {spell}
                     </Button>

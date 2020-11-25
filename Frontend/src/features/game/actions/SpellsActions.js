@@ -20,7 +20,7 @@ const _castSpell = async (spell, targetName, gameName, playerName, dispatch, get
         else {
             uri = `${api.url}/game/spells?spell=${spell}&player_name=${playerName}&game_name=${gameName}`
         }
-       
+
         const response = await axios({
             method: 'put',
             url: uri,

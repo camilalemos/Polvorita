@@ -27,9 +27,9 @@ export default function popUp({ open, onClose, players, currentPlayer, castSpell
         >
             <DialogTitle id="alert-dialog-slide-title">Choose your target</DialogTitle>
             <div style={{flex:1, display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
-                {players.map((player) => {
+                    {players.map((player) => {
                     return (
-                        player.is_alive && currentPlayer !== undefined && 
+                        player.is_alive && currentPlayer !== null && currentPlayer !== undefined && 
                         player.name !== currentPlayer.name &&
                         <Button onClick={() => handleClick(player)} >{player.name}</Button>
                         

@@ -51,7 +51,9 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     }, [gameInfo, setPlayers, setMinister])
 
     useEffect(() => {
-        setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
+        if (gameInfo.length !== 0) {
+            setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
+        }
     }, [user, currentPlayer, players])
 
 
@@ -93,17 +95,24 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
         console.log("HERE3")
     },  [status])
 
-
+    const isTheMinister = (gameinfo) => {
+        let current = players.filter(player => player.user_name === user.username)[0]
+        let isthat = false;
+        if (current !== undefined && gameinfo && current.name === gameInfo.elections.minister){
+            isthat = true;
+        }
+        return isthat
+    }
     return (
         <div>
             <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
                 {
-                isMinister &&
+                gameInfo !== undefined && currentPlayer !== undefined && currentPlayer !== null && isMinister &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={handleClick}>
                         {spell}
                     </Button>
                 } 
-                {!isMinister && spells !== undefined &&
+                {gameInfo !== undefined && currentPlayer !== undefined && currentPlayer !== null && !isMinister && spells !== undefined &&
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}> The Magic Minister {minister} has obtained {spell}</a>
                 }
             </div>

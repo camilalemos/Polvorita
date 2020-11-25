@@ -5,14 +5,12 @@ import { useParams } from 'react-router-dom';
 import PlayersActions from '../containers/PlayerActionsContainers'
 import Spells from '../containers/SpellsContainers'
 import PlayerList from '../containers/ListPlayersContainers'
-import WinPopUp from './winPopUp.jsx'
 
 export default function Game () {
 
     const { game } = useParams();
 
     const [gameInfo, setGameInfo] = useState([]);
-    const [gameStatusFinish, setGameStatusFinish ] = useState(false);
 
     useEffect(() => {
 
@@ -36,11 +34,6 @@ export default function Game () {
 		};
     });
 
-    useEffect(() => {
-        if ( gameInfo.length !== 0 && gameInfo.status === 'FINISHED')
-            setGameStatusFinish(true)
-    })
-
     return (
         <div style={{display:'flex', flex:1, flexDirection:'row', height:'100%'}} >
             <div className="game" style={{display:'flex', flex:1, flexDirection:'column', borderRight:'solid', borderRightWidth:1}}>
@@ -59,7 +52,6 @@ export default function Game () {
             </div>
             <div className="game-board" style={{display:'flex', flex:2.5}}>
                 <Board gameInfo={ gameInfo }/>
-                <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo= { gameInfo}/>
             </div>
             <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
                 <div>{/* status */}</div>

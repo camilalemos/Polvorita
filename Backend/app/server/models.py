@@ -88,14 +88,11 @@ class Proclamations(BaseModel):
         for i in range(11):
             self.deck.append('DEATH_EATERS')
         random.shuffle(self.deck)
-        print(self.deck)
 
     def shuffle(self):
         if len(self.deck) < 3:
             self.deck.extend(self.discarded)
-
             random.shuffle(self.deck)
-
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()

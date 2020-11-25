@@ -238,10 +238,8 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
     elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
         game.proclamations.discard(loyalty)
 
-
     if game.get_winner():
         game.finish(manager)
-
 
     return game
 

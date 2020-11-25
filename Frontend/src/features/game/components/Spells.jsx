@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import { Fireplace, SettingsVoiceOutlined } from '@material-ui/icons';
 import HandSnackbar from './HandSnackbar.jsx'
-import { makeStyles } from '@material-ui/core/styles';
 import TargetsPopUp from './TargetsPopUp.jsx'
 
 const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
@@ -18,7 +16,9 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     const [spells, setSpells] = useState([])
     const [newCards, setNewCards] = useState(null)
     const [spell, setSpell] = useState('')
-    const [numPlayers, setNumPlayers] = useState('')
+    const [aviableSpell, setAviableSpell] = useState('')
+
+    //const [numPlayers, setNumPlayers] = useState('')
     
     console.log(gameInfo, "GAME INFO")
     const handleClick = () => {
@@ -30,7 +30,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     }
 
     const handleSpells = (spells) => {
-        if (proclamationsDEcount == 0){
+       /* if (proclamationsDEcount == 0){
             setSpell (spells[0])
         }
         if (proclamationsDEcount == 1) {
@@ -41,6 +41,35 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
         }
         if (proclamationsDEcount == 3) {
             setSpell (spells[3])
+        }*/
+        switch (spells[0]) {
+            case 'ADIVINATION':
+                if (proclamationsDEcount === 0) {
+                    setSpell (spells[0])
+                    setAviableSpell(true)
+                }
+                break;
+            case 'AVADA_KEDAVRA':
+                if (proclamationsDEcount === 2) {
+                    setSpell (spells[0])
+                    setAviableSpell(true)
+                }
+                break;
+            case 'CRUCIO':
+                if (proclamationsDEcount == 3) {
+                    setSpell (spells[0])
+                    setAviableSpell(true)
+                }
+                break;
+            case 'IMPERIUS':
+                if (proclamationsDEcount == 4) {
+                    setSpell (spells[0])
+                    setAviableSpell(true)
+                }
+                break;
+            default:
+                console.log("nothing to do")
+                break;
         }
     }
 
@@ -64,12 +93,15 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
                 setMinister(gameInfo.elections.minister)
             }
         }
-    },[gameInfo.elections, currentPlayer])
+    },[gameInfo.elections, currentPlayer, setIsMinister, setMinister])
 
     useEffect(() => {
-        setProclamationsDECount(gameInfo.proclamations?.DE_enacted_proclamations)
-        setSpells(gameInfo.spells)
-        handleSpells(spells)
+        if(gameInfo.length !== 0) {
+            setProclamationsDECount(gameInfo.proclamations?.DE_enacted_proclamations)
+            setSpells(gameInfo.spells)
+            handleSpells(spells)
+        }
+        
     }, [gameInfo, setProclamationsDECount, setSpells])
     //console.log("CURRENT PLAYER " + JSON.stringify(currentPlayer))
     //console.log("MINISTER " + JSON.stringify(minister))
@@ -91,12 +123,12 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
         <div>
             <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
                 {
-                currentPlayer !== null && currentPlayer.is_alive && spells !== undefined && spells.length > 0 && isMinister &&
+                aviableSpell && currentPlayer !== null && currentPlayer.is_alive && spells !== undefined && spells.length > 0 && isMinister &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={handleClick}>
                         {spell}
                     </Button>
                 } 
-                {!isMinister && spells !== undefined &&
+                {!aviableSpell && !isMinister && spells !== undefined && minister !== undefined &&  minister !== null &&
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}> The Magic Minister {minister} has obtained {spell}</a>
                 }
             </div>

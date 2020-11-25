@@ -15,7 +15,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
     const [spells, setSpells] = useState([])
     const [newCards, setNewCards] = useState(null)
     const [spell, setSpell] = useState('')
-    const [numPlayers, setNumPlayers] = useState('')
+    //const [numPlayers, setNumPlayers] = useState('')
     
     const handleClick = () => {
         if(spell === 'ADIVINATION') setOpenHand(true)
@@ -26,17 +26,17 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
     }
 
     const handleSpells = (spells) => {
-        if (proclamationsDEcount == 0){
+        if (proclamationsDEcount === 0){
             setSpell (spells[0])
             //console.log(spell, "SPELL")
         }
-        if (proclamationsDEcount == 1) {
+        if (proclamationsDEcount === 1) {
             setSpell (spells[1])
         }
-        if (proclamationsDEcount == 2) {
+        if (proclamationsDEcount === 2) {
             setSpell (spells[2])
         }
-        if (proclamationsDEcount == 3) {
+        if (proclamationsDEcount === 3) {
             setSpell (spells[3])
         }
     }
@@ -64,7 +64,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, threeCards}) => {
         setSpells(gameInfo.spells)
         handleSpells(spells)
     }, [gameInfo, setProclamationsDECount, setSpells])
-    console.log(spells, "SPELLS")
+    //console.log(spells, "SPELLS")
     //console.log("CURRENT PLAYER " + JSON.stringify(currentPlayer))
     //console.log("MINISTER " + JSON.stringify(minister))
     //console.log("DE PROC " + proclamationsDEcount)

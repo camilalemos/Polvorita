@@ -2,14 +2,14 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function Board( {gameInfo, enactproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
+export default function Board( {gameInfo, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
     
     const classes = useStyles();
     const [ ministerName, setMinisterName ] = useState('');
     const [ headmasterName, setHeadmasterName ] = useState('');
     const [ numPlayers, setNumPlayers ] = useState(10);
     const [ gameName, setGameName] = useState('');
-    const [ deck, setDeck] = useState([]);
+    const [ hand, setHand] = useState([]);
     const [ numProclamations, setNumProclamations] = useState();
     const [ valueProclamation, setValueProclamation ] = useState('');
     const [ POenactedProclamations, setPOenactedProclamations ] = useState();
@@ -35,12 +35,12 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
 
     useEffect(() => {
         if (statusGetProclamation === 'success')
-            setDeck(proclamationsInfo);
+            setHand(gameInfo.proclamations?.hand);
     }, [statusGetProclamation])
 
     useEffect(() => {
         setNumProclamations(Object((gameInfo.proclamations)?.deck).length);
-        setDiscardedProclamations(Object((gameInfo.proclamations)?.discarded_proclamations).length)
+        setDiscardedProclamations(Object((gameInfo.proclamations)?.discarded).length)
     }, )
 
     function ShowSquare(proclamation){
@@ -51,29 +51,6 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
             </button>
         );
     }
-
-    /*function ShowBoards(proclamation, loyalt){
-        
-        const [ phoenixOrderBoard, setPhoenixOrderBoard ] = useState([null,null,null,null,null])
-        const [ deathEatersBoard, setDeathEatersBoard ] = useState([null,null,null,null,null,null])
-        
-        if (loyalt === 'OF') {
-            setPhoenixOrderBoard[0] = proclamation;
-            return (
-                <button className = "square" >
-                    {assignImgProclamation(proclamation)}
-                </button>
-            );    
-        } else if (loyalt === 'DE'){
-            setDeathEatersBoard[0] = proclamation;
-
-            return (
-                <button className = "square" >
-                    {assignImgProclamation(proclamation)}
-                </button>
-            );
-        }
-    }*/
 
     const assignImgProclamation = (proclamations) => {
 
@@ -100,9 +77,6 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
             setOpen(false)
             setValueProclamation(value)
             discardproclamation(value,ministerName,gameName)
-            //console.log(discardproclamation)
-
-            //console.log(valueProclamation)
         };
 
         return (
@@ -170,7 +144,7 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
                 </div>
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
-                {Deck(deck,numProclamations)}
+                {Deck(hand,numProclamations)}
             </div>
                 <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%',}} disable>
                     <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroPO1.png')})`,}}/>

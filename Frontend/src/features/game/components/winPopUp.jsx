@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -11,12 +11,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function SelectDirectorCandidate({ open, onClose, gameInfo }) {
     
-    const [ winner, setWinner] = useState('');
-
-    useEffect (() => {
-        setWinner(gameInfo.winner)
-    })
-
     return (
         <div>
         <Dialog
@@ -26,7 +20,7 @@ export default function SelectDirectorCandidate({ open, onClose, gameInfo }) {
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
         >
-            <DialogTitle id="alert-dialog-slide-title">{winner}</DialogTitle>
+            <DialogTitle id="alert-dialog-slide-title">{gameInfo.winner}</DialogTitle>
             <div style={{flex:1, display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
                 Are The Winners
             </div>

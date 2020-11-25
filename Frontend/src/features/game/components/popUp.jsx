@@ -29,7 +29,8 @@ export default function popUp({ open, onClose, players, currentPlayer, castSpell
             <div style={{flex:1, display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
                 {players.map((player) => {
                     return (
-                        currentPlayer !== undefined && player.name !== currentPlayer.name &&
+                        player.is_alive && currentPlayer !== undefined && 
+                        player.name !== currentPlayer.name &&
                         <Button onClick={() => handleClick(player)} >{player.name}</Button>
                         
                     )

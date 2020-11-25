@@ -44,7 +44,9 @@ export default function Game () {
                 <Board gameInfo={ gameInfo }/>
             </div>
             <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
-                <div>{/* status */}</div>
+                <div> 
+                    
+                </div>
                 <ol>{/* TODO */}</ol>
             </div>
         </div>

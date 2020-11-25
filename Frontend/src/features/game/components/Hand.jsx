@@ -35,10 +35,8 @@ export default function Hand({ open, onClose, cards }) {
         <div>
             <Snackbar open={open} display= 'flex'>
                 <div>
-                {console.log("HERE PRRO " + cards)}
-                    {cards !== null &&
+                    {cards !== null && cards.length > 3 && 
                         <button onClick={ onClose}>
-                        {console.log("HERE PRRO")}
                         {handleSelectImgLoyalty(cards)}
                         </button>
                     }

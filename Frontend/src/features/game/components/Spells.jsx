@@ -17,7 +17,6 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     const [proclamationsDEcount, setProclamationsDECount] = useState('');
     const [spells, setSpells] = useState([])
     const [newCards, setNewCards] = useState(null)
-    const [crucioCard, setCrucioCard] = useState('DEATH_EATERS')
     const [spell, setSpell] = useState('')
     const [numPlayers, setNumPlayers] = useState('')
     
@@ -32,7 +31,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
 
     const handleSpells = (spells) => {
         if (proclamationsDEcount == 0){
-            setSpell (spells[2])
+            setSpell (spells[0])
         }
         if (proclamationsDEcount == 1) {
             setSpell (spells[1])
@@ -74,7 +73,6 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
-            setNewCards("DEATH_EATERS")
             setOpenHand(true)
             
           
@@ -83,11 +81,15 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
             setNewCards(cards)
             console.log("HERE1") 
         }
-        if (status === 'success' && spell === 'CRUCIO') {
-            console.log("HERE2")
-            console.log(crucioCard + " NEW CARD")
+        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell === 'CRUCIO') {
+            console.log(cards, "CRUCIO")
+            let axus = cards
+            setNewCards(axus)
+            console.log(newCards, "CRUCIO")
             setOpenHand(true)
+            console.log("HERE1") 
         }
+
         console.log("HERE3")
     },  [status])
 
@@ -106,7 +108,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
                 }
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
-                <Hand open={openHand} onClose={() => setOpenHand(false)} cards={crucioCard} />
+                <Hand open={openHand} onClose={() => setOpenHand(false)} cards={newCards} />
             </div>
             <PopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
             castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      

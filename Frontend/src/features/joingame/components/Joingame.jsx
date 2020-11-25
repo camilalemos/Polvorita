@@ -57,14 +57,6 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 		setOpenModal(true)
 	}
 
-	const isJoing = (currentGame) => {
-
-		let fil = Object.values(currentGame.players).filter(players => players.user_name === user.username)
-		if (fil.length) return false;
-		return true;
-
-	}
-
   return (
     <div style={{display: 'flex', flexDirection:'column', padding:40}}>
 		<div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
@@ -92,7 +84,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 						{currentGame.password === null ?
 						<LockOpenIcon/> : <LockIcon/>} 
 					</ListItemIcon>
-					{isJoing(currentGame) && <Button onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
+					{currentGame.owner !== user.username && currentGame.num_players !== currentGame.max_players && <Button onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
 					</div>
 				</div>
 				<div style={{  height:.5 , backgroundColor:'lightgrey', display:'flex', marginBottom:20, marginTop:10}} />

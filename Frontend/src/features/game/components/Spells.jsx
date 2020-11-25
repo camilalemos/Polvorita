@@ -59,10 +59,12 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
 
     useEffect(() => {
         if(currentPlayer && gameInfo.length !==0){
-            setMinister(gameInfo.elections.minister)
-            if(minister === currentPlayer.name ) setIsMinister(true);
+            if(gameInfo.elections.minister === currentPlayer.name ){
+                setIsMinister(true);
+                setMinister(gameInfo.elections.minister)
+            }
         }
-    },[setIsMinister, gameInfo, currentPlayer])
+    },[gameInfo.elections, currentPlayer])
 
     useEffect(() => {
         setProclamationsDECount(gameInfo.proclamations?.DE_enacted_proclamations)
@@ -89,12 +91,12 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
         <div>
             <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
                 {
-                spells !== undefined && spells.length > 0 && gameInfo !== undefined && currentPlayer !== undefined && currentPlayer !== null && isMinister &&
+                currentPlayer !== null && currentPlayer.is_alive && spells !== undefined && spells.length > 0 && isMinister &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={handleClick}>
                         {spell}
                     </Button>
                 } 
-                {gameInfo !== undefined && currentPlayer !== undefined && currentPlayer !== null && !isMinister && spells !== undefined &&
+                {!isMinister && spells !== undefined &&
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}> The Magic Minister {minister} has obtained {spell}</a>
                 }
             </div>

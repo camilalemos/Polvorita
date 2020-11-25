@@ -10,15 +10,11 @@ import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import { withSnackbar } from 'notistack';
 
-
-
-
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
 const CreateGameForm = function ({ createGame, status, statusCode, open, onClose, enqueueSnackbar }) {
-
 
     const [gameName, setGameName] = useState('');
     const [playerName, setPlayerName] = useState('');
@@ -27,7 +23,6 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
     const [gameNameError, setGameNameError] = useState(false);
     const [gamePasswordError, setGamePasswordError] = useState(false);
     const history = useHistory();
-
 
     const notEmpty = () => {
         let result = true;
@@ -38,7 +33,6 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         return result;
     }
 
-    
     const handleContinue = () => {
         if (!gameName) {
             setGameNameError(true);
@@ -51,7 +45,6 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         }
     }
 
-    
     const validated = (gameName, playerName, gamePassword) => {
         let isAllowed = true;
         const expression = /^([A-Z_a-z0-9])*$/

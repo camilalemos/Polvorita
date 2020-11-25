@@ -5,7 +5,6 @@ import TargetsPopUp from './TargetsPopUp.jsx'
 
 const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
 
-    
     const [players, setPlayers] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [isMinister, setIsMinister] = useState(false);
@@ -16,7 +15,9 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     const [spells, setSpells] = useState([])
     const [newCards, setNewCards] = useState(null)
     const [spell, setSpell] = useState('')
+
     const [aviableSpell, setAviableSpell] = useState('')
+
 
     //const [numPlayers, setNumPlayers] = useState('')
     
@@ -30,18 +31,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     }
 
     const handleSpells = (spells) => {
-       /* if (proclamationsDEcount == 0){
-            setSpell (spells[0])
-        }
-        if (proclamationsDEcount == 1) {
-            setSpell (spells[1])
-        }
-        if (proclamationsDEcount == 2) {
-            setSpell (spells[2])
-        }
-        if (proclamationsDEcount == 3) {
-            setSpell (spells[3])
-        }*/
+
         switch (spells[0]) {
             case 'ADIVINATION':
                 if (proclamationsDEcount === 0) {
@@ -74,7 +64,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     }
 
     useEffect(() => {
-        if (gameInfo.length !==0 ) {
+        if (gameInfo.length !== 0 ) {
             setPlayers(Object.values(gameInfo.players));
         }
     }, [gameInfo, setPlayers, setMinister])
@@ -92,6 +82,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
                 setIsMinister(true);
                 setMinister(gameInfo.elections.minister)
             }
+
         }
     },[gameInfo.elections, currentPlayer, setIsMinister, setMinister])
 
@@ -103,9 +94,12 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
         }
         
     }, [gameInfo, setProclamationsDECount, setSpells])
+
+
     //console.log("CURRENT PLAYER " + JSON.stringify(currentPlayer))
     //console.log("MINISTER " + JSON.stringify(minister))
     //console.log("DE PROC " + proclamationsDEcount)
+
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
@@ -137,10 +131,8 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
             </div>
             <TargetsPopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
             castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      
-
         </div>    
     )
-
 }
 
 export default Spells;

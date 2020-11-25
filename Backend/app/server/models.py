@@ -88,7 +88,6 @@ class Proclamations(BaseModel):
         for i in range(11):
             self.deck.append('DEATH_EATERS')
         random.shuffle(self.deck)
-        print(self.deck)
 
     def shuffle(self):
         if len(self.deck) < 3:
@@ -142,6 +141,8 @@ class Game(BaseModel):
         self.players.pop(player_name)
         self.num_players -= 1
         self.send_message(f"{player_name} has left the room!", "system")
+        if self.num_players:
+            self.owner = random.choice(list(self.players.values())).user_name
 
     def assign_roles(self):
         to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']

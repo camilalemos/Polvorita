@@ -774,7 +774,7 @@ def test_put_cast_spell_on_yourself():
     headers = get_header(candidates["minister_user"])
     response = client.put(f"/game/spells/?spell=ADIVINATION&target_name={candidates['minister']}&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
     assert response.status_code == 403
-    assert response.json() == {"detail": "Can not cast a spell on yourself"}
+    assert response.json() == {"detail": "Cannot cast a spell on yourself"}
 
 def test_put_cast_spell_not_minister():
     candidates = get_candidates(started_games[0])

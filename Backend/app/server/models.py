@@ -93,7 +93,9 @@ class Proclamations(BaseModel):
     def shuffle(self):
         if len(self.deck) < 3:
             self.deck.extend(self.discarded)
-            random.shuffle(self.proclamations)
+
+            random.shuffle(self.deck)
+
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()
@@ -133,16 +135,17 @@ class Game(BaseModel):
         users = [player.user_name for player in self.players.values()]
         return username in users
 
-    def get_username(self, player_name):
-        return self.players[player_name].user_name
-
     def create_player(self, player_name: str, username: str):
         self.players[player_name] = Player(name=player_name, user_name=username)
         self.num_players += 1
+        self.send_message(f"{player_name} has joined the room!", "system")
 
     def delete_player(self, player_name: str):
         self.players.pop(player_name)
         self.num_players -= 1
+        self.send_message(f"{player_name} has left the room!", "system")
+        if self.num_players:
+            self.owner = random.choice(list(self.players.values())).user_name
 
     def assign_roles(self):
         to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']
@@ -174,6 +177,7 @@ class Game(BaseModel):
         self.assign_roles()
         self.elections = Elections()
         self.elections.init(list(self.players))
+        self.send_message("Game started!", "system")
 
     def cast_spell(self, spell: Spell, target: str):
         self.spells.remove(spell)
@@ -182,6 +186,11 @@ class Game(BaseModel):
             return self.proclamations.deck[:3]
         elif spell == 'AVADA_KEDAVRA':
             self.players[target].kill()
+            return self
+        elif spell == 'CRUCIO':         
+            return self.players[target].loyalty         
+        elif spell == 'IMPERIUS':
+            self.elections.nominate('MINISTER', target)
             return self
 
     def get_winner(self):
@@ -195,6 +204,9 @@ class Game(BaseModel):
             self.winner = 'DEATH_EATERS'
 
         return self.winner
+
+    def send_message(self, msg: str, player_name: str):
+        self.chat.append(f"{player_name}: {msg}")
 
     def finish(self, manager):
         self.status = 'FINISHED'

@@ -92,7 +92,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 						{currentGame.password === null ?
 						<LockOpenIcon/> : <LockIcon/>} 
 					</ListItemIcon>
-					{isJoing(currentGame) && <Button onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
+					{isJoing(currentGame) && currentGame.num_players < currentGame.max_players && <Button onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
 					</div>
 				</div>
 				<div style={{  height:.5 , backgroundColor:'lightgrey', display:'flex', marginBottom:20, marginTop:10}} />

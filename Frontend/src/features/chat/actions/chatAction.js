@@ -18,12 +18,14 @@ import {
         console.log(`${api.url}/game/chat/?player_name=${playerName}&game_name=${gameName}`, "URL");
         console.log(message, "MESSAGE")
 
+        let bodyFormData = new FormData();
+
+        bodyFormData.append('msg', message);
+
         const response = await axios({
             method: 'post',
             url: `${api.url}/game/chat/?player_name=${playerName}&game_name=${gameName}`,
-            data: {
-                msg: message
-            },
+            data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`

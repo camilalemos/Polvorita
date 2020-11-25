@@ -6,7 +6,8 @@ import Chat from "../components/Chat";
 function mapStateToProps(state) {
     return {
         status: state.chat.status,
-        errorMsg: state.chat.errorMsg
+        errorMsg: state.chat.errorMsg,
+        user: state.login.user
     };
 }
 

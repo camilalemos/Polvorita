@@ -33,20 +33,36 @@ const useStyles = makeStyles({
   }
 });
 
-const Chat = function ({ gameInfo, sendMessage, status, errorMsg}) {
+const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
   
+    const [players, setPlayers] = useState([]);
     const classes = useStyles();
-    const [messages, setMessages] = useState(null)
+    const [messages, setMessages] = useState([])
     const [newMessage, setNewMessage] = useState('')
     const [currentPlayer, setCurrentPlayer] = useState(null)
     const [admin, setAdmin] = useState('admin1')
     const [juego, setJuego] = useState('juego')
-
+    const [remiter, setRemiter] = useState('')
 
     const handleSend = () => {
         console.log("SENDING " + newMessage)
-        sendMessage( admin, juego, newMessage )
+        if(currentPlayer && gameInfo){
+            sendMessage( currentPlayer.name, gameInfo.name, newMessage )
+        }
     }
+
+    useEffect(() => {
+        if (gameInfo.length !==0 ) {
+            setPlayers(Object.values(gameInfo.players));
+        }
+    }, [gameInfo, setPlayers])
+
+    useEffect(() => {
+        if (gameInfo.length !== 0) {
+            setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
+        }
+    }, [user, currentPlayer, players])
+
 
     useEffect(() => {
         setMessages(gameInfo.chat)
@@ -55,11 +71,19 @@ const Chat = function ({ gameInfo, sendMessage, status, errorMsg}) {
 
     useEffect(() => {
         if (status === 'failed') console.log(errorMsg)
+        if(status === 'success') setNewMessage('')
     },[status])
     //if (messages !== undefined && messages !==null) console.log(messages[0] + " MESSAGES")
     
-   // console.log(gameInfo.chat + " CHATINFO")
-
+    //console.log(gameInfo.chat + " CHATINFO")
+    const assingMessage = (message) => {
+        let aux =  message.split(':')
+        return aux[1]
+    }
+    const assignRemiter = (message) => {
+        let aux =  message.split(':')
+        return aux[0]
+    }
 
     return (
       <div>
@@ -70,20 +94,18 @@ const Chat = function ({ gameInfo, sendMessage, status, errorMsg}) {
         </Grid>
         <Grid container component={Paper} className={classes.chatSection}>
             <Grid item xs={3} className={classes.borderRight500}>
-                <List>
-                    <ListItem button key="RemySharp">
-                        <ListItemText></ListItemText>
-                    </ListItem>
-                </List>
+                {messages !== undefined && messages.map((message)=> (
+                    <ListItemText align="right" primary={assignRemiter(message)}></ListItemText>
+                ))}
             </Grid>
             <Grid item xs={9}>
                 <List className={classes.messageArea}>
-                    <ListItem key="1">
+                    <ListItem key="Message">
                         <Grid container>
                             <Grid item xs={12}>
-                                {messages !== undefined && messages !==null &&
-                                <ListItemText align="right" primary={messages[0]}></ListItemText>
-                                }
+                                {messages !== undefined && messages.map((message)=> (
+                                     <ListItemText align="right" primary={assingMessage(message)}></ListItemText>
+                                ))}
                             </Grid>
                         </Grid>
                     </ListItem>
@@ -91,6 +113,8 @@ const Chat = function ({ gameInfo, sendMessage, status, errorMsg}) {
                 <Grid container style={{padding: '20px'}}>
                     <Grid item xs={11}>
                         <TextField id="outlined-basic-email" label="Type Something" fullWidth 
+                            value={newMessage}
+                            id="New Message" 
                             onChange={(value) => (setNewMessage(value.target.value))}
                             onKeyPress={(e) => {if (e.key === 'Enter') handleSend()}}
                         />

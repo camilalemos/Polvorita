@@ -1,4 +1,68 @@
 import React, {useEffect, useState} from 'react';
+import '../../../App.css'
+
+export const handelSelectImgRole = (playerRole, playerLoyalty) => {
+    
+    let imageRole
+
+    const snapeSelectLoyalty = (snapeLoyalty) => {
+        if (snapeLoyalty === "PHOENIX_ORDER") {
+            imageRole =  (require('../../../constants/images/Roles/RoleSNAPEOF.png'));
+        } else {
+            imageRole = (require('../../../constants/images/Roles/RoleSNAPEM.png'));
+        }
+        return imageRole;
+    }
+
+    switch (playerRole) {
+        case "BELLATRIX":
+            imageRole = (require('../../../constants/images/Roles/RoleBELLATRIX.png'));
+            break;                
+        case "DOLORES":
+            imageRole = (require('../../../constants/images/Roles/RoleDOLORES.png'));
+            break;
+        case "DRACO":
+            imageRole = (require('../../../constants/images/Roles/RoleDRACO.png'));
+            break;
+        case "DUMBLEDORE":
+            imageRole = (require('../../../constants/images/Roles/RoleDUMBLEDORE.png'));
+            break;
+        case "FRED":
+            imageRole = (require('../../../constants/images/Roles/RoleFRED.png'));
+            break;
+        case "GEORGE":
+            imageRole = (require('../../../constants/images/Roles/RoleGEORGE.png'));
+            break;
+        case "HARRY":
+            imageRole = (require('../../../constants/images/Roles/RoleHARRY.png'));
+            break;
+        case "HERMIONE":
+            imageRole = (require('../../../constants/images/Roles/RoleHERMIONE.png'));
+            break;
+        case "LUCIUS":
+            imageRole = (require('../../../constants/images/Roles/RoleLUCIUS.png'));
+            break;
+        case "NEVILLE":
+            imageRole = (require('../../../constants/images/Roles/RoleNEVILLE.png'));
+            break;
+        case "RON":
+            imageRole = (require('../../../constants/images/Roles/RoleRON.png'));
+            break;
+        case "SIRIUS":
+            imageRole = (require('../../../constants/images/Roles/RoleSIRIUS.png'));
+            break;            
+        case "SNAPE":
+            imageRole = (snapeSelectLoyalty(playerLoyalty));
+            break;            
+        case "VOLDEMORT":
+            imageRole = (require('../../../constants/images/Roles/RoleVOLDEMORT.png'));
+            break;
+        default:
+            imageRole = (require('../../../constants/images/Roles/RoleDefault.png'));
+            break;
+    }
+    return imageRole;
+}
 
 const ShowRole = ({ user , gameInfo }) => {
 
@@ -15,85 +79,34 @@ const ShowRole = ({ user , gameInfo }) => {
 	},[gameInfo])
     
     const handleSelectImgLoyalty = (playerLoyalty) => {
+
+        let imageLoyalty
         
-        if ( playerLoyalty === "PHOENIX_ORDER") {
-            return (require('../../../constants/images/LoyaltyOF.jpg'));
-        } else {
-            return (require('../../../constants/images/LoyaltyM.jpg'));
+        switch (playerLoyalty) {
+            case "PHOENIX_ORDER":
+                imageLoyalty = (require('../../../constants/images/LoyaltyPO.png'));
+                break;
+            case "DEATH_EATERS":
+                imageLoyalty = (require('../../../constants/images/LoyaltyDE.png'));
+                break;
+            default:
+                imageLoyalty = (require('../../../constants/images/LoyaltyDefault.png'));
+                break;
         }
+        return imageLoyalty;
     };
 
-    const handelSelectImgRole = (playerRole) => {
-
-        const snapeSelectLoyalty = (snapeLoyalty) => {
-            if (snapeLoyalty === "PHOENIX_ORDER") {
-                return (require('../../../constants/images/Roles/RoleSNAPEOF.jpg'));
-            } else {
-                return (require('../../../constants/images/Roles/RoleSNAPEM.jpg'));
-            }
-        }
-
-        switch (playerRole) {
-            case "BELLATRIX":
-                return (require('../../../constants/images/Roles/RoleBELLATRIX.jpg'));
-
-            case "DOLORES":
-                return (require('../../../constants/images/Roles/RoleDOLORES.jpg'));
-
-            case "DRACO":
-                return (require('../../../constants/images/Roles/RoleDRACO.jpg'));
-
-            case "DUMBLEDORE":
-                return (require('../../../constants/images/Roles/RoleDUMBLEDORE.jpg'));
-
-            case "FRED":
-                return (require('../../../constants/images/Roles/RoleFRED.jpg'));
-
-            case "GEORGE":
-                return (require('../../../constants/images/Roles/RoleGEORGE.jpg'));
-
-            case "HARRY":
-                return (require('../../../constants/images/Roles/RoleHARRY.jpg'));
-
-            case "HERMIONE":
-                return (require('../../../constants/images/Roles/RoleHERMIONE.jpg'));
-
-            case "LUCIUS":
-                return (require('../../../constants/images/Roles/RoleLUCIUS.jpg'));
-
-            case "NEVILLE":
-                return (require('../../../constants/images/Roles/RoleNEVILLE.jpg'));
-
-            case "RON":
-                return (require('../../../constants/images/Roles/RoleRON.jpg'));
-
-            case "SIRIUS":
-                return (require('../../../constants/images/Roles/RoleSIRIUS.jpg'));
-            
-            case "SNAPE":
-                return (snapeSelectLoyalty(userLoyalty));
-            
-            case "VOLDEMORT":
-                return (require('../../../constants/images/Roles/RoleVOLDEMORT.jpg'));
-            default:
-                return("Image Not Found")
-        }
-    }
-
     return (
-
         <div style={{display: 'flex', flexDirection:'column', padding:20}}>
             <div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between'}}>
-
-            <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
-                <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center' , fontSize:30 }}>Role: {userRole}</p>
-                <img  src={handelSelectImgRole(userRole)} alt= "Role" style={{display: 'flex', width: '200px', height: '270'}}/>
-            </div>  
-            <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
-                <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center', fontSize:30 }}>Loyalty: {userLoyalty}</p>
-                <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270'}}/>
-            </div>  
-
+                <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                    <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center' , fontSize:30 }}>Role: {userRole}</p>
+                    <img  src={handelSelectImgRole(userRole, userLoyalty)} alt= "Role" style={{display: 'flex', width: '200px', height: '270'}}/>
+                </div>  
+                <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                    <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center', fontSize:30 }}>Loyalty: {userLoyalty}</p>
+                    <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270'}}/>
+                </div>  
             </div>
         </div>
     );

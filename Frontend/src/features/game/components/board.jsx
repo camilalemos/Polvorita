@@ -2,17 +2,18 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function  Board( {gameInfo, enactproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo}) {
+export default function Board( {gameInfo, enactproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
     
     const classes = useStyles();
     const [ ministerName, setMinisterName ] = useState('');
     const [ headmasterName, setHeadmasterName ] = useState('');
+    const [ numPlayers, setNumPlayers ] = useState(10);
     const [ gameName, setGameName] = useState('');
     const [ deck, setDeck] = useState([]);
     const [ numProclamations, setNumProclamations] = useState();
     const [ valueProclamation, setValueProclamation ] = useState('');
     const [ POenactedProclamations, setPOenactedProclamations ] = useState();
-    const [ DEencatedProclamations, setDEenactedProclamations ] = useState();
+    const [ DEenactedProclamations, setDEenactedProclamations ] = useState();
     const [ discardedProclamations, setDiscardedProclamations ] = useState([])
 
     console.log(gameInfo)
@@ -22,6 +23,7 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
             setMinisterName(gameInfo.elections?.minister);
             setHeadmasterName(gameInfo.elections?.headmaster)
             setGameName(gameInfo.name);
+            setNumPlayers(gameInfo.num_players);
         }
     }, [gameInfo,setMinisterName])
 
@@ -37,7 +39,8 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
     }, [statusGetProclamation])
 
     useEffect(() => {
-        setNumProclamations(Object((gameInfo.proclamations)?.proclamations).length);
+        setNumProclamations(Object((gameInfo.proclamations)?.deck).length);
+        setDiscardedProclamations(Object((gameInfo.proclamations)?.discarded_proclamations).length)
     }, )
 
     function ShowSquare(proclamation){
@@ -49,7 +52,7 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
         );
     }
 
-    function ShowBoards(proclamation, loyalt){
+    /*function ShowBoards(proclamation, loyalt){
         
         const [ phoenixOrderBoard, setPhoenixOrderBoard ] = useState([null,null,null,null,null])
         const [ deathEatersBoard, setDeathEatersBoard ] = useState([null,null,null,null,null,null])
@@ -70,16 +73,16 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
                 </button>
             );
         }
-    }
+    }*/
 
     const assignImgProclamation = (proclamations) => {
 
         if (proclamations === "PHOENIX_ORDER") {
             return (
-                <img src={require('../../../constants/images/ProclamacionF.jpg')} alt= "Proclamacion Orden Fenix" style={{width: "150px", height: "190px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationOP.png')} alt= "Proclamation Phoenix Order" style={{width: "150px", height: "190px"}}></img>)
         } else if (proclamations === "DEATH_EATERS" ){
             return (
-                <img src={require('../../../constants/images/ProclamacionM.jpg')} alt= "Proclamacion Mortifagos" style={{width: "150px", height: "190px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationDE.png')} alt= "Proclamation Death Eater" style={{width: "150px", height: "190px"}}></img>)
         } else {
             return null;
         }
@@ -96,8 +99,8 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
         const handleClose = (value) => {
             setOpen(false)
             setValueProclamation(value)
-            enactproclamation(value,headmasterName,gameName)
-            console.log(enactproclamation)
+            discardproclamation(value,ministerName,gameName)
+            //console.log(discardproclamation)
 
             //console.log(valueProclamation)
         };
@@ -106,7 +109,7 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
             <div>
                 <button style={{ cursor: 'pointer' }} onClick={handleClick}>
                     Proclamations: {numProclamationsInDeck}
-                <img src= {require('../../../constants/images/Proclamacion.jpg')} alt= "Proclamacion" style={{width: "150px", height: "190px"}}></img>
+                <img src= {require('../../../constants/images/Proclamation.png')} alt= "Proclamation" style={{width: "150px", height: "190px"}}></img>
                 </button>
                 <Snackbar open={open} display= 'flex'>
                     <div>
@@ -121,31 +124,66 @@ export default function  Board( {gameInfo, enactproclamation, statusGetProclamat
         );
     }
 
+    const discardDeck = (numDiscardProclamations) => {
+
+        return (
+            <div>
+                Discarded: {numDiscardProclamations}
+                <img src= {require('../../../constants/images/Discard.png')} alt= "Proclamacion" style={{width: "150px", height: "190px"}}></img>
+            </div>
+        );
+    }
+
+    const imgdeathEatersBoard = ( numplayers ) => {
+        let imgBoardDE
+        switch (numplayers) {
+            case 5:
+            case 6: 
+                imgBoardDE = require('../../../constants/images/TableroDE1.png');
+                break;
+            case 7:
+            case 8:
+                imgBoardDE = require('../../../constants/images/TableroDE2.png');
+                break;
+            case 9:
+            case 10:
+                imgBoardDE = require('../../../constants/images/TableroDE3.png');
+                break;
+            default:
+                imgBoardDE = require('../../../constants/images/TableroDE1.png');
+                break;
+        }
+        return imgBoardDE;
+    }
+
     return (
         <div className={classes.root}> 
             <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%', justifyContent:'space-between'}} disable>
-                <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroM1.png')})`,}} />
+                <div className ={classes.imageSrc} style={{ backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`,}} />
                 <div className={classes.imageBackdrop}>
-                {ShowSquare(valueProclamation)}
-                {ShowSquare()}
-                {ShowSquare()}
-                {ShowSquare()}
-                {ShowSquare()}
-                {ShowSquare()}
+                    {ShowSquare(valueProclamation)}
+                    {ShowSquare()}
+                    {ShowSquare()}
+                    {ShowSquare()}
+                    {ShowSquare()}
+                    {ShowSquare()}
                 </div>
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
                 {Deck(deck,numProclamations)}
             </div>
                 <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%',}} disable>
-                <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroOF.png')})`,}}/>
-                <div className={classes.imageBackdrop}>
-                {ShowSquare()}
-                {ShowSquare()}
-                {ShowSquare()}
-                {ShowSquare()}
-                {ShowSquare()}
+                    <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroPO1.png')})`,}}/>
+                    <div className={classes.imageBackdrop}>
+                        {ShowSquare()}
+                        {ShowSquare()}
+                        {ShowSquare()}
+                        {ShowSquare()}
+                        {ShowSquare()}
                 </div>
+            </div>
+            <div display= 'flex' style= {{width: 'min-content'}}>
+                {discardDeck(discardedProclamations)}
             </div>
         </div>
     )

@@ -17,7 +17,9 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
     const [voted, setVoted] = useState(false);
     const [voteChoice, setVoteChoice] = useState('')
     const [dataResults, setDataResults] = useState(false);
-    console.log(gameInfo, "GAME INFO"); 
+    
+    //console.log(gameInfo, "GAME INFO"); 
+    
     useEffect(() => {
         if(gameInfo.length !== 0 && Object.keys(gameInfo.elections.votes).length === 5) getResults(gameInfo.name);
     },[gameInfo])

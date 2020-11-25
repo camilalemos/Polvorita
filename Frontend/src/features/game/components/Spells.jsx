@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { Fireplace, SettingsVoiceOutlined } from '@material-ui/icons';
-import Hand from './Hand.jsx'
+import HandSnackbar from './HandSnackbar.jsx'
 import { makeStyles } from '@material-ui/core/styles';
-import PopUp from './popUp.jsx'
+import TargetsPopUp from './TargetsPopUp.jsx'
 
 const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
 
@@ -20,13 +20,13 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     const [spell, setSpell] = useState('')
     const [numPlayers, setNumPlayers] = useState('')
     
+    console.log(gameInfo, "GAME INFO")
     const handleClick = () => {
         if(spell === 'ADIVINATION') setOpenHand(true)
         else setOpenModal(true)
         if(newCards === null && spell === 'ADIVINATION'){
             castSpell(spell, '',gameInfo.name, currentPlayer.name)             
         }
-
     }
 
     const handleSpells = (spells) => {
@@ -75,30 +75,16 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
-            setOpenHand(true)
-            
-          
         }
         if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell !== 'CRUCIO' !== 'IMPERIUS') {
             setNewCards(cards)
         }
         if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell === 'CRUCIO' && spell !== 'IMPERIUS') {
-            console.log(cards, "CRUCIO")
-            //let axus = cards
             setNewCards(cards)
-            console.log(newCards, "CRUCIO")
             setOpenHand(true)
         }
     },  [status])
 
-    const isTheMinister = (gameinfo) => {
-        let current = players.filter(player => player.user_name === user.username)[0]
-        let isthat = false;
-        if (current !== undefined && gameinfo && current.name === gameInfo.elections.minister){
-            isthat = true;
-        }
-        return isthat
-    }
     return (
         <div>
             <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
@@ -113,9 +99,9 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
                 }
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
-                <Hand open={openHand} onClose={() => setOpenHand(false)} cards={newCards} />
+                <HandSnackbar open={openHand} onClose={() => setOpenHand(false)} cards={newCards} />
             </div>
-            <PopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
+            <TargetsPopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
             castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      
 
         </div>    

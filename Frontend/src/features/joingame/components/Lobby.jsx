@@ -70,7 +70,7 @@ const Lobby = function ({ user, startGame, statusStart }) {
 				<Button style={{ backgroundColor:'lightblue', marginRight: 20 }} size='small' onClick={() => history.goBack()}>
 					BACK
 				</Button>
-				{gameInfo.num_players >= 5 && gameInfo.num_players <= gameInfo.max_players && gameInfo.owner === user.username && <Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => startGame(game)}>
+				{gameInfo.num_players >= gameInfo.min_players && gameInfo.owner === user.username && <Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => startGame(game)}>
 					START GAME
 				</Button>}
 			</div>

@@ -95,7 +95,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
 
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
-            {gameInfo && 
+            {gameInfo !== null && 
                 <>
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Minister: {minister ? minister : 'Not selected'}</a>
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Director: {director ? director : 'Not selected'}</a>
@@ -106,7 +106,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
                     Choose director
                 </Button>
             }
-            {voting && !voted && !dataResults && gameInfo.elections.headmaster_candidate &&
+            {voting && !voted && !dataResults && gameInfo.elections !== null &&
                 <>
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Candidate to director is: {gameInfo.elections.headmaster_candidate}</a>
                     <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >

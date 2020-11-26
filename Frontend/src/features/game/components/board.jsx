@@ -52,29 +52,6 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
         );
     }
 
-    /*function ShowBoards(proclamation, loyalt){
-        
-        const [ phoenixOrderBoard, setPhoenixOrderBoard ] = useState([null,null,null,null,null])
-        const [ deathEatersBoard, setDeathEatersBoard ] = useState([null,null,null,null,null,null])
-        
-        if (loyalt === 'OF') {
-            setPhoenixOrderBoard[0] = proclamation;
-            return (
-                <button className = "square" >
-                    {assignImgProclamation(proclamation)}
-                </button>
-            );    
-        } else if (loyalt === 'DE'){
-            setDeathEatersBoard[0] = proclamation;
-
-            return (
-                <button className = "square" >
-                    {assignImgProclamation(proclamation)}
-                </button>
-            );
-        }
-    }*/
-
     const assignImgProclamation = (proclamations) => {
 
         if (proclamations === "PHOENIX_ORDER") {

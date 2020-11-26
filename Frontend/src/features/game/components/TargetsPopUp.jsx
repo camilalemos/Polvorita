@@ -9,7 +9,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function popUp({ open, onClose, players, castSpell}) {
+export default function popUp({ open, onClose, players, currentPlayer, castSpell}) {
 
     const handleClick = (player) => {
         castSpell(player.name)
@@ -27,9 +27,12 @@ export default function popUp({ open, onClose, players, castSpell}) {
         >
             <DialogTitle id="alert-dialog-slide-title">Choose your target</DialogTitle>
             <div style={{flex:1, display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
-                {players.map((player) => {
+                    {players.map((player) => {
                     return (
+                        player.is_alive && currentPlayer !== null && currentPlayer !== undefined && 
+                        player.name !== currentPlayer.name &&
                         <Button onClick={() => handleClick(player)} >{player.name}</Button>
+                        
                     )
                 })}
             </div>

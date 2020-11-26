@@ -9,7 +9,7 @@ function mapStateToProps(state) {
         status: state.SpellsReducer.status,
         user: state.login.user,
         errorMsg: state.SpellsReducer.errorMsg,
-        threeCards: state.SpellsReducer.threeCards
+        cards: state.SpellsReducer.cards
     };
 }
 

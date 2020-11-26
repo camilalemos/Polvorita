@@ -1,6 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import '../../../App.css'
 
+export const handleSelectImgLoyalty = (playerLoyalty) => {
+
+    let imageLoyalty
+    
+    switch (playerLoyalty) {
+        case "PHOENIX_ORDER":
+            imageLoyalty = (require('../../../constants/images/LoyaltyPO.png'));
+            break;
+        case "DEATH_EATERS":
+            imageLoyalty = (require('../../../constants/images/LoyaltyDE.png'));
+            break;
+        default:
+            imageLoyalty = (require('../../../constants/images/LoyaltyDefault.png'));
+            break;
+    }
+    return imageLoyalty;
+};
+
+
 export const handelSelectImgRole = (playerRole, playerLoyalty) => {
     
     let imageRole
@@ -78,35 +97,22 @@ const ShowRole = ({ user , gameInfo }) => {
 		}
 	},[gameInfo])
     
-    const handleSelectImgLoyalty = (playerLoyalty) => {
-
-        let imageLoyalty
-        
-        switch (playerLoyalty) {
-            case "PHOENIX_ORDER":
-                imageLoyalty = (require('../../../constants/images/LoyaltyPO.png'));
-                break;
-            case "DEATH_EATERS":
-                imageLoyalty = (require('../../../constants/images/LoyaltyDE.png'));
-                break;
-            default:
-                imageLoyalty = (require('../../../constants/images/LoyaltyDefault.png'));
-                break;
-        }
-        return imageLoyalty;
-    };
+    
 
     return (
+
         <div style={{display: 'flex', flexDirection:'column', padding:20}}>
             <div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between'}}>
-                <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
-                    <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center' , fontSize:30 }}>Role: {userRole}</p>
-                    <img  src={handelSelectImgRole(userRole, userLoyalty)} alt= "Role" style={{display: 'flex', width: '200px', height: '270'}}/>
-                </div>  
-                <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
-                    <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center', fontSize:30 }}>Loyalty: {userLoyalty}</p>
-                    <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270'}}/>
-                </div>  
+
+            <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center' , fontSize:30 }}>Role: {userRole}</p>
+                <img  src={handelSelectImgRole(userRole, userLoyalty)} alt= "Role" style={{display: 'flex', width: '200px', height: '270'}}/>
+            </div>  
+            <div style= {{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                <p style={{ flex: 1, textAlign: 'center', verticalAlign:'center', fontSize:30 }}>Loyalty: {userLoyalty}</p>
+                <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270'}}/>
+            </div>  
+
             </div>
         </div>
     );

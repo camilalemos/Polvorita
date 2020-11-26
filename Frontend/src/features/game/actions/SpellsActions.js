@@ -1,7 +1,7 @@
 import {
-    CAST_ADIVINATION,
-    CAST_ADIVINATION_FAIL,
-	CAST_ADIVINATION_SUCCESS,
+    CAST_SPELL,
+    CAST_SPELL_FAIL,
+	CAST_SPELL_SUCCESS,
 } from '../../../constants/actionTypes/SpellsActions';
 import axios from 'axios';
 import api from '../../../configs/api';
@@ -11,7 +11,7 @@ const _castSpell = async (spell, targetName, gameName, playerName, dispatch, get
 
     try {
 
-        dispatch({type: CAST_ADIVINATION});
+        dispatch({type: CAST_SPELL});
         let uri
         let {access_token} = {...getState().login}
         if (targetName !== ''){
@@ -20,7 +20,7 @@ const _castSpell = async (spell, targetName, gameName, playerName, dispatch, get
         else {
             uri = `${api.url}/game/spells?spell=${spell}&player_name=${playerName}&game_name=${gameName}`
         }
-       
+
         const response = await axios({
             method: 'put',
             url: uri,
@@ -31,13 +31,13 @@ const _castSpell = async (spell, targetName, gameName, playerName, dispatch, get
         });
         console.log("URL " + uri);
         console.log(response.data , "RESPONSE");
-        dispatch({type: CAST_ADIVINATION_SUCCESS, payload: {threeCards: response.data}})
+        dispatch({type: CAST_SPELL_SUCCESS, payload: {cards: response.data}})
         
     } catch (error){
         console.log(error, "ERROR")
-        if (error.response.status === 401) dispatch({type: CAST_ADIVINATION_FAIL, payload: {errorMsg: error.response.data.detail }});
-        if (error.response.status === 403) dispatch({type: CAST_ADIVINATION_FAIL, payload: {errorMsg: error.response.data.detail }});
-        if (error.response.status === 422) dispatch({type: CAST_ADIVINATION_FAIL, payload: {errorMsg: error.response.data.detail[0].msg }});
+        if (error.response.status === 401) dispatch({type: CAST_SPELL_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 403) dispatch({type: CAST_SPELL_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 422) dispatch({type: CAST_SPELL_FAIL, payload: {errorMsg: error.response.data.detail[0].msg }});
         	
     }
 };

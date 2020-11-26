@@ -66,7 +66,7 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
                 assignImgProclamation(proclamation)
                 //console.log(proclamation)
             ))
-            console.log(poArrayAux)
+            //console.log(poArrayAux)
         } 
         else if ( loyalty === "DEATH_EATERS") {
             deArrayAux.fill("DEATH_EATERS", 0,enactedproclamations);

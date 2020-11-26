@@ -20,7 +20,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
 
     //const [numPlayers, setNumPlayers] = useState('')
     
-    console.log(gameInfo, "GAME INFO")
+    //console.log(gameInfo, "GAME INFO")
     const handleClick = () => {
         if(spell === 'ADIVINATION') setOpenHand(true)
         else setOpenModal(true)
@@ -44,25 +44,25 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
         }*/
         switch (spells[0]) {
             case 'ADIVINATION':
-                if (proclamationsDEcount === 1) {
+                if (proclamationsDEcount === 3) {
                     setSpell (spells[0])
                     setAviableSpell(true)
                 }
                 break;
             case 'AVADA_KEDAVRA':
-                if (proclamationsDEcount === 2) {
+                if (proclamationsDEcount === 4) {
                     setSpell (spells[0])
                     setAviableSpell(true)
                 }
                 break;
             case 'CRUCIO':
-                if (proclamationsDEcount == 3) {
+                if (proclamationsDEcount === 5) {
                     setSpell (spells[0])
                     setAviableSpell(true)
                 }
                 break;
             case 'IMPERIUS':
-                if (proclamationsDEcount == 4) {
+                if (proclamationsDEcount === 6) {
                     setSpell (spells[0])
                     setAviableSpell(true)
                 }

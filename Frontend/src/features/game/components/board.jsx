@@ -2,19 +2,21 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function Board( {gameInfo, enactproclamation, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
+export default function Board( {gameInfo, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
     
     const classes = useStyles();
     const [ ministerName, setMinisterName ] = useState('');
     const [ headmasterName, setHeadmasterName ] = useState('');
-    const [ numPlayers, setNumPlayers ] = useState(10);
+    const [ numPlayers, setNumPlayers ] = useState();
     const [ gameName, setGameName] = useState('');
-    const [ deck, setDeck] = useState([]);
+    const [ hand, setHand] = useState([]);
     const [ numProclamations, setNumProclamations] = useState();
     const [ valueProclamation, setValueProclamation ] = useState('');
     const [ POenactedProclamations, setPOenactedProclamations ] = useState();
     const [ DEenactedProclamations, setDEenactedProclamations ] = useState();
     const [ discardedProclamations, setDiscardedProclamations ] = useState([])
+    const [open, setOpen] = useState(false);
+    const [openSnackDirector, setOpenSnackDirector] =useState(false);
 
     console.log(gameInfo)
 
@@ -34,22 +36,46 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
     },[ministerName])
 
     useEffect(() => {
-        if (statusGetProclamation === 'success')
-            setDeck(proclamationsInfo);
-    }, [statusGetProclamation])
+        if(gameInfo.length !== 0 ){
+            setHand(gameInfo.proclamations?.hand);
+        }
+    }, [gameInfo.proclamations?.hand])
 
     useEffect(() => {
         setNumProclamations(Object((gameInfo.proclamations)?.deck).length);
-        setDiscardedProclamations(Object((gameInfo.proclamations)?.discarded_proclamations).length)
+        setDiscardedProclamations(Object((gameInfo.proclamations)?.discarded).length)
     }, )
 
-    function ShowSquare(proclamation){
+    useEffect(() => {
+        if (gameInfo.length !== 0 ){
+            setPOenactedProclamations(gameInfo.proclamations?.PO_enacted_proclamations);
+            setDEenactedProclamations(gameInfo.proclamations?.DE_enacted_proclamations);
+        }
+    }, [gameInfo])
 
-        return (
-            <button className = "square" >
-                {assignImgProclamation(proclamation)}
-            </button>
-        );
+
+    function ShowSquare(enactedproclamations, loyalty){
+
+        const poArrayAux  = new Array(5).fill(null);
+        const deArrayAux  = new Array(6).fill(null);
+        let result;
+
+        if ( loyalty === "PHOENIX_ORDER") {
+            poArrayAux.fill("PHOENIX_ORDER", 0,enactedproclamations);
+            result = poArrayAux.map((proclamation) => (
+                assignImgProclamation(proclamation)
+                //console.log(proclamation)
+            ))
+            console.log(poArrayAux)
+        } 
+        else if ( loyalty === "DEATH_EATERS") {
+            deArrayAux.fill("DEATH_EATERS", 0,enactedproclamations);
+            result = deArrayAux.map((proclamation) => (
+            assignImgProclamation(proclamation)
+            ))
+            //console.log(deArrayAux)
+        }
+        return result;
     }
 
     const assignImgProclamation = (proclamations) => {
@@ -67,8 +93,6 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
 
     const Deck = (proclamations, numProclamationsInDeck,) => {
 
-        const [open, setOpen] = useState(false);
-
         const handleClick = () => {
             setOpen(true);
         };
@@ -77,10 +101,13 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
             setOpen(false)
             setValueProclamation(value)
             discardproclamation(value,ministerName,gameName)
-            //console.log(discardproclamation)
-
-            //console.log(valueProclamation)
+            setOpenSnackDirector(true)
         };
+
+        const handleCloseHeadMaster = (value) => {
+            setOpenSnackDirector(false)
+            discardproclamation(value,headmasterName,gameName)
+        }
 
         return (
             <div>
@@ -92,6 +119,15 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
                     <div>
                         {proclamations.map((threeproclamations) => (
                         <button onClick={ () => handleClose(threeproclamations)}>
+                        {assignImgProclamation(threeproclamations)}
+                        </button>
+                        ))}
+                    </div>
+                </Snackbar>
+                <Snackbar open={openSnackDirector} display= 'flex'>
+                    <div>
+                        {proclamations.map((threeproclamations) => (
+                        <button onClick={ () => handleCloseHeadMaster(threeproclamations)}>
                         {assignImgProclamation(threeproclamations)}
                         </button>
                         ))}
@@ -138,25 +174,16 @@ export default function Board( {gameInfo, enactproclamation, statusGetProclamati
             <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%', justifyContent:'space-between'}} disable>
                 <div className ={classes.imageSrc} style={{ backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`,}} />
                 <div className={classes.imageBackdrop}>
-                    {ShowSquare(valueProclamation)}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
-                    {ShowSquare()}
+                    {ShowSquare(DEenactedProclamations, "DEATH_EATERS")}
                 </div>
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>
-                {Deck(deck,numProclamations)}
+                {Deck(hand,numProclamations)}
             </div>
                 <div focusRipple  className={classes.image} focusVisibleClassName={classes.focusVisible} style={{width: '70%',}} disable>
                     <div className ={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroPO1.png')})`,}}/>
                     <div className={classes.imageBackdrop}>
-                        {ShowSquare()}
-                        {ShowSquare()}
-                        {ShowSquare()}
-                        {ShowSquare()}
-                        {ShowSquare()}
+                        {ShowSquare(POenactedProclamations, "PHOENIX_ORDER")}
                 </div>
             </div>
             <div display= 'flex' style= {{width: 'min-content'}}>

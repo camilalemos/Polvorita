@@ -93,6 +93,7 @@ class Proclamations(BaseModel):
         if len(self.deck) < 3:
             self.deck.extend(self.discarded)
             random.shuffle(self.deck)
+            self.discarded.clear()
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()

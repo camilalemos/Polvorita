@@ -151,6 +151,7 @@ class Game(BaseModel):
         self.proclamations.init()
         self.assign_loyalties()
         self.assign_roles()
+        self.assign_spells()
         self.elections = Elections()
         self.elections.init(list(self.players))
         self.send_message("Game started!", "system")

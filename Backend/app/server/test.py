@@ -324,7 +324,7 @@ def test_post_create_game():
             },
             "proclamations": None,
             "elections": None,
-            "spells": response.json()['spells'],
+            "spells": [],
             "chat": ["system: Player_0 has joined the room!"]
         }
 

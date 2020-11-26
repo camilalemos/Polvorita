@@ -111,12 +111,14 @@ class Proclamations(BaseModel):
     def discard(self, loyalty: Loyalty):
         self.hand.remove(loyalty)
         self.discarded.append(loyalty)
-        if (not self.expelliarmus and len(self.hand) == 1):
+        if len(self.hand) == 1:
             self.enact()
 
     def expelliarmus(self,card1: Loyalty, card2: Loyalty):
-        self.discard(card1)
-        self.discard(card2)
+        self.hand.remove(card1)
+        self.hand.remove(card2)
+        self.discarded.append(card1)
+        self.discarded.append(card2)
 
 class Game(BaseModel):
     name: str

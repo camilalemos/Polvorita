@@ -187,16 +187,17 @@ class Game(BaseModel):
             self.spells = ['NONE_SPELL', 'CRUCIO', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
 
     def cast_spell(self, target: str):
+        result = self
         spell = self.spells[self.proclamations.DE_enacted_proclamations]
         if spell == 'DIVINATION':
             self.proclamations.shuffle()
-            return self.proclamations.deck[:3]
+            result = self.proclamations.deck[:3]
         elif spell == 'AVADA_KEDAVRA':
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.players[target].kill()
         elif spell == 'CRUCIO':
-            return self.players[target].loyalty
+            result = self.players[target].loyalty
         elif spell == 'IMPERIO':
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
@@ -205,7 +206,7 @@ class Game(BaseModel):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
         self.spells[self.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
-        return self
+        return result
 
     def check_win(self):
         if self.proclamations.PO_enacted_proclamations == 5:

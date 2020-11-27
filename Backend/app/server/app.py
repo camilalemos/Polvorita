@@ -148,7 +148,7 @@ def quit_game(params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
     if game.status == 'STARTED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot left a started game")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot quit a started game")
 
     game.delete_player(player_name)
     if not game.num_players:

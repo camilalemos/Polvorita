@@ -180,25 +180,32 @@ class Game(BaseModel):
 
     def assign_spells(self):
         if self.num_players in range(5, 7):
-            self.spells = ['DIVINATION', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+            self.spells = ['NON_SPELL', 'NON_SPELL', 'NON_SPELL', 'DIVINATION', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
         elif self.num_players in range(7, 9):
-            self.spells = ['CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+            self.spells = ['NON_SPELL', 'NON_SPELL', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
         elif self.num_players in range(9, 11):
-            self.spells = ['CRUCIO', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+            self.spells = ['NON_SPELL', 'CRUCIO', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
 
-    def cast_spell(self, spell: Spell, target: str):
-        self.spells.remove(spell)
+    def cast_spell(self, target: str):
+        spell = self.spells[self.proclamations.DE_enacted_proclamations]
         if spell == 'DIVINATION':
             self.proclamations.shuffle()
             return self.proclamations.deck[:3]
         elif spell == 'AVADA_KEDAVRA':
+            if not target:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.players[target].kill()
-            return self
-        elif spell == 'CRUCIO':         
-            return self.players[target].loyalty         
+        elif spell == 'CRUCIO':
+            return self.players[target].loyalty
         elif spell == 'IMPERIO':
+            if not target:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.elections.nominate('MINISTER', target)
-            return self
+        elif spell == 'NON_SPELL':
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
+
+        self.spells[self.proclamations.DE_enacted_proclamations] = 'NON_SPELL'
+        return self
 
     def get_winner(self):
         if self.proclamations.PO_enacted_proclamations == 5:

@@ -245,7 +245,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
 
 #CAST SPELL
 @app.put("/game/spells/")
-def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(check_game)):
+def cast_spell(target_name: Optional[str] = None, params = Depends(check_game)):
     game = params ["game"]
     player_name = params["player"].name
     if target_name and target_name not in game.players:
@@ -254,10 +254,8 @@ def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast a spell on yourself")
     elif player_name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
-    elif spell not in game.spells:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
-    result = game.cast_spell(spell, target_name)
+    result = game.cast_spell(target_name)
     if game.get_winner():
         game.finish()
 

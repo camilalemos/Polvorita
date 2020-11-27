@@ -11,7 +11,7 @@ class User(db.Entity):
     email = Required(str, unique=True)
     password = Required(str)
     full_name = Optional(str)
-    disabled = Required(bool)        
+    disabled = Required(bool)
 
     def update(self, email, username, full_name, new_password):
         if email:

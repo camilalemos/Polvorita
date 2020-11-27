@@ -207,7 +207,7 @@ def vote(vote:Vote, params = Depends(check_game)):
 
     game.elections.vote(player_name, vote)
     if game.get_winner():
-        game.finish(manager)
+        game.finish()
 
     return game
 
@@ -239,7 +239,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
         game.proclamations.discard(loyalty)
 
     if game.get_winner():
-        game.finish(manager)
+        game.finish()
 
     return game
 
@@ -259,7 +259,7 @@ def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends
 
     result = game.cast_spell(spell, target_name)
     if game.get_winner():
-        game.finish(manager)
+        game.finish()
 
     return result
 

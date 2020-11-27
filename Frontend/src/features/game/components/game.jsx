@@ -20,7 +20,7 @@ export default function Game () {
     console.log(ws, "WS");
     useEffect(() => {
 
-	    ws.current = new WebSocket(`ws://190.190.133.175:8000/game/${game}`);
+	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
 
 		// ws.onopen = () => {
 		// ws.send(JSON.stringify({event: 'game:subscribe'}));
@@ -69,10 +69,7 @@ export default function Game () {
                 <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo= { gameInfo}/>
             </div>
             <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
-                <div>
                 <Chat gameInfo={ gameInfo }/>
-                </div>
-                <ol>{/* TODO */}</ol>
             </div>
         </div>
     );

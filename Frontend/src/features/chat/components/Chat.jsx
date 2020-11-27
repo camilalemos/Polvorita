@@ -2,13 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Fab from '@material-ui/core/Fab';
 import SendIcon from '@material-ui/icons/Send';
@@ -42,9 +39,7 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
     const [messages, setMessages] = useState([])
     const [newMessage, setNewMessage] = useState('')
     const [currentPlayer, setCurrentPlayer] = useState(null)
-    const [admin, setAdmin] = useState('admin1')
-    const [juego, setJuego] = useState('juego')
-    const [remiter, setRemiter] = useState('')
+
 
     const handleSend = () => {
         console.log("SENDING " + newMessage)
@@ -100,18 +95,13 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
             </Grid>
         </Grid>
         <Grid container component={Paper} className={classes.chatSection}>
-            <Grid item xs={3} className={classes.borderRight500}>
-                {messages !== undefined && messages.map((message)=> (
-                    <ListItemText align="right" primary={splitMessage(message, "sender")}></ListItemText>
-                ))}
-            </Grid>
-            <Grid item xs={9}>
+            <Grid style={{flexgrow: '0'}}>
                 <List className={classes.messageArea}>
                     <ListItem key="Message">
                         <Grid container>
                             <Grid item xs={12}>
                                 {messages !== undefined && messages.map((message)=> (
-                                     <ListItemText align="right" primary={splitMessage(message, "message")}></ListItemText>
+                                     <ListItemText align="left" primary={message}></ListItemText>
                                 ))}
                             </Grid>
                         </Grid>

@@ -22,7 +22,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 
 	useEffect(() => {
 
-		const ws = new WebSocket('ws://190.190.133.175:8000/lobby/');
+		const ws = new WebSocket('ws://localhost:8000/lobby/');
 
 		ws.onopen = () => {
 		ws.send(JSON.stringify({event: 'lobby:subscribe'}));

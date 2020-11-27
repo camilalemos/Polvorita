@@ -180,11 +180,11 @@ class Game(BaseModel):
 
     def assign_spells(self):
         if self.num_players in range(5, 7):
-            self.spells = ['NON_SPELL', 'NON_SPELL', 'NON_SPELL', 'DIVINATION', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+            self.spells = ['NONE_SPELL', 'NONE_SPELL', 'NONE_SPELL', 'DIVINATION', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
         elif self.num_players in range(7, 9):
-            self.spells = ['NON_SPELL', 'NON_SPELL', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+            self.spells = ['NONE_SPELL', 'NONE_SPELL', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
         elif self.num_players in range(9, 11):
-            self.spells = ['NON_SPELL', 'CRUCIO', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+            self.spells = ['NONE_SPELL', 'CRUCIO', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
 
     def cast_spell(self, target: str):
         spell = self.spells[self.proclamations.DE_enacted_proclamations]
@@ -201,13 +201,13 @@ class Game(BaseModel):
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.elections.nominate('MINISTER', target)
-        elif spell == 'NON_SPELL':
+        elif spell == 'NONE_SPELL':
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
-        self.spells[self.proclamations.DE_enacted_proclamations] = 'NON_SPELL'
+        self.spells[self.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
         return self
 
-    def get_winner(self):
+    def check_win(self):
         if self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
         elif self.proclamations.DE_enacted_proclamations == 6:
@@ -217,7 +217,8 @@ class Game(BaseModel):
         elif self.elections.headmaster == self.voldemort and self.proclamations.DE_enacted_proclamations >= 3:
             self.winner = 'DEATH_EATERS'
 
-        return self.winner
+        if self.winner:
+            self.status = 'FINISHED'
 
     def send_message(self, msg: str, player_name: str):
         self.chat.append(f"{player_name}: {msg}")

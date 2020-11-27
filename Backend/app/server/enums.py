@@ -42,4 +42,4 @@ class Spell(str, Enum):
     crucio = 'CRUCIO'
     adivination = 'DIVINATION'
     imperius = 'IMPERIO'
-    non_spell = 'NON_SPELL'
+    non_spell = 'NONE_SPELL'

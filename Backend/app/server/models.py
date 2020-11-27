@@ -139,10 +139,10 @@ class Game(BaseModel):
         self.send_message(f"{player_name} has joined the room!", "system")
 
     def delete_player(self, player_name: str):
-        self.players.pop(player_name)
+        player = self.players.pop(player_name)
         self.num_players -= 1
         self.send_message(f"{player_name} has left the room!", "system")
-        if self.num_players:
+        if player.user_name == self.owner and self.num_players:
             self.owner = random.choice(list(self.players.values())).user_name
 
     def start(self):
@@ -215,6 +215,5 @@ class Game(BaseModel):
     def send_message(self, msg: str, player_name: str):
         self.chat.append(f"{player_name}: {msg}")
 
-    def finish(self, manager):
+    def finish(self):
         self.status = 'FINISHED'
-        manager.delete_game(self.name)

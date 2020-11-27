@@ -25,9 +25,11 @@ const useStyles = makeStyles({
       backgroundColor: '#e0e0e0'
   },
   borderRight500: {
-      borderRight: '1px solid #e0e0e0'
+      borderRight: '1px solid #e0e0e0',
+      
   },
   messageArea: {
+    width: '100%',
     height: '70vh',
     overflowY: 'auto'
   }
@@ -76,13 +78,18 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
     //if (messages !== undefined && messages !==null) console.log(messages[0] + " MESSAGES")
     
     //console.log(gameInfo.chat + " CHATINFO")
-    const assingMessage = (message) => {
-        let aux =  message.split(':')
-        return aux[1]
-    }
-    const assignRemiter = (message) => {
-        let aux =  message.split(':')
-        return aux[0]
+   
+    const splitMessage = (message, type) => {
+        let result =  message.split(':')
+        if (type === 'sender') {   
+            result =  message.split(':')
+            result = result[0]
+        }
+        else {
+            result =  message.split(':')
+            result = result[1]
+        }
+        return result
     }
 
     return (
@@ -95,7 +102,7 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
         <Grid container component={Paper} className={classes.chatSection}>
             <Grid item xs={3} className={classes.borderRight500}>
                 {messages !== undefined && messages.map((message)=> (
-                    <ListItemText align="right" primary={assignRemiter(message)}></ListItemText>
+                    <ListItemText align="right" primary={splitMessage(message, "sender")}></ListItemText>
                 ))}
             </Grid>
             <Grid item xs={9}>
@@ -104,7 +111,7 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
                         <Grid container>
                             <Grid item xs={12}>
                                 {messages !== undefined && messages.map((message)=> (
-                                     <ListItemText align="right" primary={assingMessage(message)}></ListItemText>
+                                     <ListItemText align="right" primary={splitMessage(message, "message")}></ListItemText>
                                 ))}
                             </Grid>
                         </Grid>

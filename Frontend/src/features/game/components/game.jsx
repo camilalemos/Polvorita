@@ -69,10 +69,7 @@ export default function Game () {
                 <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo= { gameInfo}/>
             </div>
             <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
-                <div>
                 <Chat gameInfo={ gameInfo }/>
-                </div>
-                <ol>{/* TODO */}</ol>
             </div>
         </div>
     );

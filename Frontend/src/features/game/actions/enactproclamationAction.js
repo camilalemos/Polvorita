@@ -19,7 +19,7 @@ const _getProclamationsInfo = async (playerName, gameName, dispatch, getState) =
 
         const response = await axios({
             method: 'get',
-            url: `${api.url}/game/proclamations?game_name=${gameName}&player_name=${playerName}`,
+            url: `${api.url}/game/proclamations/?game_name=${gameName}&player_name=${playerName}`,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`
@@ -43,7 +43,7 @@ const _discardproclamation = async ( loyalty, playerName, gameName, dispatch, ge
         
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game/proclamations/discard?game_name=${gameName}&player_name=${playerName}&loyalty=${loyalty}`,
+            url: `${api.url}/game/proclamations/discard/?game_name=${gameName}&player_name=${playerName}&loyalty=${loyalty}`,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`

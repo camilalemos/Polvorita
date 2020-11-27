@@ -3,9 +3,11 @@ import Board from '../containers/BoardContainers';
 import ShowRoleContainers from '../../../features/showRole/containers/ShowRoleContainers';
 import { useParams } from 'react-router-dom';
 import PlayersActions from '../containers/PlayerActionsContainers'
+import Chat from '../../chat/containers/ChatContainer'
 import Spells from '../containers/SpellsContainers'
 import PlayerList from '../containers/ListPlayersContainers'
 import WinPopUp from './winPopUp.jsx'
+
 
 export default function Game () {
 
@@ -67,7 +69,9 @@ export default function Game () {
                 <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo= { gameInfo}/>
             </div>
             <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
-                <div>{/* status */}</div>
+                <div>
+                <Chat gameInfo={ gameInfo }/>
+                </div>
                 <ol>{/* TODO */}</ol>
             </div>
         </div>

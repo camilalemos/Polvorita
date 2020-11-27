@@ -18,7 +18,7 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
     const [open, setOpen] = useState(false);
     const [openSnackDirector, setOpenSnackDirector] =useState(false);
 
-    console.log(gameInfo)
+    //console.log(gameInfo)
 
     useEffect(() => {
         if (gameInfo){

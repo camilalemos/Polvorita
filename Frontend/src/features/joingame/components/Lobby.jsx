@@ -21,7 +21,7 @@ const Lobby = function ({ user, startGame, statusStart }) {
 
 		ws.current.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
-        // console.log(gameInfo)
+        console.log(gameInfo)
         };
         
         ws.current.onerror = function(err) {
@@ -38,8 +38,8 @@ const Lobby = function ({ user, startGame, statusStart }) {
     });
 
 	useEffect(() => {
-		if (statusStart === 'success') history.push(`/game/${game}`)
-	}, [statusStart])
+		if (gameInfo.status === 'STARTED') history.push(`/game/${game}`)
+	}, [gameInfo.status])
 	
 	useEffect(() => {
 		if(gameInfo.players){

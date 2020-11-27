@@ -206,9 +206,7 @@ def vote(vote:Vote, params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
-    if game.get_winner():
-        game.finish()
-
+    game.check_win()
     return game
 
 #GET PROCLAMATIONS
@@ -238,9 +236,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
     elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
         game.proclamations.discard(loyalty)
 
-    if game.get_winner():
-        game.finish()
-
+    game.check_win()
     return game
 
 #CAST SPELL
@@ -256,9 +252,7 @@ def cast_spell(target_name: Optional[str] = None, params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
 
     result = game.cast_spell(target_name)
-    if game.get_winner():
-        game.finish()
-
+    game.check_win()
     return result
 
 #LOBBY WEBSOCKET

@@ -423,7 +423,7 @@ def test_put_join_game_with_existing_player_name():
     assert response.json() == {'detail': 'Player name already exist in this game'}
 
 def test_put_join_game():
-    for i in range(num_games-1):
+    for i in range(num_games):
         for j in range(1, num_players):
             headers = get_header(f"Admin_{j}")
             data = {
@@ -443,6 +443,30 @@ def test_put_join_game_full():
     response = client.put("/game/?game_name=Juego_0", headers=headers, data=data)
     assert response.status_code == 403
     assert response.json() == {'detail': 'Game full'}
+
+#QUIT GAME
+def test_delete_quit_game_not_found():
+    headers = get_header("Admin_0")
+    response = client.delete("/game/?player_name=Player_0&game_name=none", headers=headers)
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Game not found'}
+
+def test_delete_quit_game_player_not_found():
+    headers = get_header("Admin_0")
+    response = client.delete("/game/?player_name=none&game_name=Juego_0", headers=headers)
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Player not found'}
+
+def test_delete_quit_game_unauthorized():
+    headers = get_header("Admin_0")
+    response = client.delete("/game/?player_name=Player_1&game_name=Juego_0", headers=headers)
+    assert response.status_code == 401
+    assert response.json() == {'detail': 'Unauthorized'}
+
+def test_delete_quit_game_unauthorized():
+    headers = get_header(f"Admin_{num_players-1}")
+    response = client.delete(f"/game/?player_name=Player_{num_players-1}&game_name=Juego_{num_games-1}", headers=headers)
+    assert response.status_code == 200
 
 #START GAME
 def test_put_start_game_not_found():
@@ -497,6 +521,13 @@ def test_put_start_game_already_started():
     response = client.put(f"/game/start/?game_name={started_games[0]['name']}", headers=headers)
     assert response.status_code == 403
     assert response.json() == {"detail": "Game already started"}
+
+#QUIT GAME
+def test_delete_quit_game_started():
+    headers = get_header("Admin_0")
+    response = client.delete("/game/?player_name=Player_0&game_name=Juego_0", headers=headers)
+    assert response.status_code == 403
+    assert response.json() == {'detail': 'Cannot quit a started game'}
 
 #CHOOSE DIRECTOR
 def test_put_choose_director_game_not_found():
@@ -782,15 +813,15 @@ def test_put_cast_spell_not_minister():
     response = client.put(f"/game/spells/?spell=DIVINATION&target_name={candidates['minister']}&player_name={candidates['headmaster']}&game_name={started_games[0]['name']}", headers=headers)
     assert response.status_code == 403
     assert response.json() == {"detail": "Only minister can cast a spell"}
-
-def test_put_cast_spell_adivination():
+"""
+def test_put_cast_spell_divination():
     candidates = get_candidates(started_games[0])
     headers = get_header(candidates["minister_user"])
     response = client.put(f"/game/spells/?spell=DIVINATION&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
     assert response.status_code == 200
     assert len(response.json()) == 3
 
-def test_put_cast_spell_adivination_not_available():
+def test_put_cast_spell_divination_not_available():
     candidates = get_candidates(started_games[0])
     headers = get_header(candidates["minister_user"])
     response = client.put(f"/game/spells/?spell=DIVINATION&player_name={candidates['minister']}&game_name={started_games[0]['name']}", headers=headers)
@@ -804,7 +835,6 @@ def test_put_cast_spell_avada_kedavra():
     assert response.status_code == 200
     assert response.json()['players'][candidates['headmaster']]['is_alive'] == False
 
-"""
 def test_websocket():
     for i in range(10):
         with client.websocket_connect("/lobby/") as websocket:

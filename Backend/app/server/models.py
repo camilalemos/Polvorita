@@ -77,7 +77,8 @@ class Elections(BaseModel):
 
 class Proclamations(BaseModel):
     deck: List[Loyalty] = []
-    discarded_proclamations: List[Loyalty] = []
+    hand: List[Loyalty] = []
+    discarded: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
@@ -90,24 +91,27 @@ class Proclamations(BaseModel):
 
     def shuffle(self):
         if len(self.deck) < 3:
-            self.deck.extend(self.discarded_proclamations)
-            random.shuffle(self.proclamations)
+            self.deck.extend(self.discarded)
+            random.shuffle(self.deck)
+            self.discarded.clear()
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()
-        result = []
         for i in range(num_proclamations):
-            result.append(self.deck.pop())
-        return result
+            self.hand.append(self.deck.pop(0))
 
-    def enact(self, loyalty: Loyalty):
+    def enact(self):
+        loyalty = self.hand.pop()
         if loyalty == 'PHOENIX_ORDER':
             self.PO_enacted_proclamations += 1
         elif loyalty == 'DEATH_EATERS':
             self.DE_enacted_proclamations += 1
 
     def discard(self, loyalty: Loyalty):
-        self.discarded_proclamations.append(loyalty)
+        self.hand.remove(loyalty)
+        self.discarded.append(loyalty)
+        if len(self.hand) == 1:
+            self.enact()
 
 class Game(BaseModel):
     name: str
@@ -122,23 +126,44 @@ class Game(BaseModel):
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
     elections: Elections = None
-    spells: Set[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
+    spells: List[Spell] = []
     chat: List[str] = []
 
     def exist(self, username: str):
         users = [player.user_name for player in self.players.values()]
         return username in users
 
-    def get_username(self, player_name):
-        return self.players[player_name].user_name
-
     def create_player(self, player_name: str, username: str):
         self.players[player_name] = Player(name=player_name, user_name=username)
         self.num_players += 1
+        self.send_message(f"{player_name} has joined the room!", "system")
 
     def delete_player(self, player_name: str):
-        self.players.pop(player_name)
+        player = self.players.pop(player_name)
         self.num_players -= 1
+        self.send_message(f"{player_name} has left the room!", "system")
+        if player.user_name == self.owner and self.num_players:
+            self.owner = random.choice(list(self.players.values())).user_name
+
+    def start(self):
+        self.status = 'STARTED'
+        self.proclamations = Proclamations()
+        self.proclamations.init()
+        self.assign_loyalties()
+        self.assign_roles()
+        self.assign_spells()
+        self.elections = Elections()
+        self.elections.init(list(self.players))
+        self.send_message("Game started!", "system")
+
+    def assign_loyalties(self):
+        num_death_eaters = math.ceil(self.num_players / 2)-1
+        num_phoenix_order = self.num_players - num_death_eaters
+        to_assign = random.sample(list(self.players.values()), self.num_players)
+        for i in range(num_phoenix_order):
+            to_assign.pop().loyalty = 'PHOENIX_ORDER'
+        for i in range(num_death_eaters):
+            to_assign.pop().loyalty = 'DEATH_EATERS'
 
     def assign_roles(self):
         to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']
@@ -153,33 +178,26 @@ class Game(BaseModel):
         while to_assign_death_eaters:
             to_assign_death_eaters.pop().role = DE_roles.pop()
 
-    def assign_loyalties(self):
-        num_death_eaters = math.ceil(self.num_players / 2)-1
-        num_phoenix_order = self.num_players - num_death_eaters
-        to_assign = random.sample(list(self.players.values()), self.num_players)
-        for i in range(num_phoenix_order):
-            to_assign.pop().loyalty = 'PHOENIX_ORDER'
-        for i in range(num_death_eaters):
-            to_assign.pop().loyalty = 'DEATH_EATERS'
-
-    def start(self):
-        self.status = 'STARTED'
-        self.proclamations = Proclamations()
-        self.proclamations.init()
-        self.assign_loyalties()
-        self.assign_roles()
-        self.elections = Elections()
-        self.elections.init(list(self.players))
+    def assign_spells(self):
+        if self.num_players in range(5, 7):
+            self.spells = ['DIVINATION', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+        elif self.num_players in range(7, 9):
+            self.spells = ['CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+        elif self.num_players in range(9, 11):
+            self.spells = ['CRUCIO', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
 
     def cast_spell(self, spell: Spell, target: str):
         self.spells.remove(spell)
-        if spell == 'ADIVINATION':
+        if spell == 'DIVINATION':
             self.proclamations.shuffle()
-            return [self.proclamations.deck[0],
-                    self.proclamations.deck[1],
-                    self.proclamations.deck[2]]
+            return self.proclamations.deck[:3]
         elif spell == 'AVADA_KEDAVRA':
             self.players[target].kill()
+            return self
+        elif spell == 'CRUCIO':         
+            return self.players[target].loyalty         
+        elif spell == 'IMPERIO':
+            self.elections.nominate('MINISTER', target)
             return self
 
     def get_winner(self):
@@ -194,6 +212,8 @@ class Game(BaseModel):
 
         return self.winner
 
-    def finish(self, manager):
+    def send_message(self, msg: str, player_name: str):
+        self.chat.append(f"{player_name}: {msg}")
+
+    def finish(self):
         self.status = 'FINISHED'
-        manager.delete_game(self.name)

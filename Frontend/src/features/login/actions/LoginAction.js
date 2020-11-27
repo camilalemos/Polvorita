@@ -88,7 +88,7 @@ const _getLoginData = async (dispatch, getState) => {
 
         const response = await axios({
             method: 'PUT',
-            url: `${api.url}/user`,
+            url: `${api.url}/user/`,
             data: bodyFormData,
             headers: { 'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}` }

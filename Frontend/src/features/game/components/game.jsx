@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import Board from '../containers/BoardContainers';
 import ShowRoleContainers from '../../../features/showRole/containers/ShowRoleContainers';
 import { useParams } from 'react-router-dom';
@@ -14,28 +14,33 @@ export default function Game () {
     const [gameInfo, setGameInfo] = useState([]);
     const [gameStatusFinish, setGameStatusFinish ] = useState(false);
 
+    const ws = useRef(null);
+    console.log(ws, "WS");
     useEffect(() => {
 
-		const ws = new WebSocket(`ws://localhost:8000/game/${game}`);
+	    ws.current = new WebSocket(`ws://190.190.133.175:8000/game/${game}`);
 
-		ws.onopen = () => {
-		ws.send(JSON.stringify({event: 'game:subscribe'}));
-		};
+		// ws.onopen = () => {
+		// ws.send(JSON.stringify({event: 'game:subscribe'}));
+		// };
 
-		ws.onmessage = (event) => {
+		ws.current.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
         // console.log(gameInfo)
-		};
+        };
+        
+        ws.current.onerror = function(err) {
+			console.log(err, "ERROR")
+		}
 
-		ws.onclose = () => {
-		ws.close();
-		};
+		// ws.onclose = () => {
+		// ws.close();
+		// };
 
 		return () => {
-		ws.close();
+		ws.current.close();
 		};
     });
-
     useEffect(() => {
         if ( gameInfo.length !== 0 && gameInfo.status === 'FINISHED')
             setGameStatusFinish(true)

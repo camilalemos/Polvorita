@@ -1,4 +1,4 @@
-import React,  {useEffect, useState} from 'react';
+import React,  {useEffect, useState, useRef} from 'react';
 import { useHistory, withRouter, useParams } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 
@@ -9,31 +9,37 @@ const Lobby = function ({ user, startGame, statusStart }) {
     const history = useHistory(); 
     const { game } = useParams();
 
+    const ws = useRef(null);
+    console.log(ws, "WS");
     useEffect(() => {
 
-		const ws = new WebSocket(`ws://localhost:8000/game/${game}`);
+	    ws.current = new WebSocket(`ws://190.190.133.175:8000/game/${game}`);
 
-		ws.onopen = () => {
-			ws.send(JSON.stringify({event: 'game:subscribe'}));
-		};
-		
-		ws.onmessage = (event) => {
-			setGameInfo(JSON.parse(event.data));
-	    	// console.log(gameInfo);	
-		};
-		
-		ws.onclose = () => {
-			ws.close();
-		};
+		// ws.onopen = () => {
+		// ws.send(JSON.stringify({event: 'game:subscribe'}));
+		// };
+
+		ws.current.onmessage = (event) => {
+        setGameInfo(JSON.parse(event.data));
+        console.log(gameInfo)
+        };
+        
+        ws.current.onerror = function(err) {
+			console.log(err, "ERROR")
+		}
+
+		// ws.onclose = () => {
+		// ws.close();
+		// };
 
 		return () => {
-			ws.close();
+		ws.current.close();
 		};
-	});
+    });
 
 	useEffect(() => {
-		if (statusStart === 'success') history.push(`/game/${game}`)
-	}, [statusStart])
+		if (gameInfo.status === 'STARTED') history.push(`/game/${game}`)
+	}, [gameInfo.status])
 	
 	useEffect(() => {
 		if(gameInfo.players){

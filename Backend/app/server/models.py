@@ -192,16 +192,20 @@ class Game(BaseModel):
         if spell == 'DIVINATION':
             self.proclamations.shuffle()
             result = self.proclamations.deck[:3]
+            self.send_message("The Minister of Magic has used the DIVINATION spell!", "system")
         elif spell == 'AVADA_KEDAVRA':
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.players[target].kill()
+            self.send_message(f"The Minister of Magic has used the AVADA KEDAVRA spell against {target}!", "system")
         elif spell == 'CRUCIO':
             result = self.players[target].loyalty
+            self.send_message(f"The Minister of Magic has used the CRUCIO spell against {target}!", "system")
         elif spell == 'IMPERIO':
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.elections.nominate('MINISTER', target)
+            self.send_message(f"The Minister of Magic has used the IMPERIO spell against {target}!", "system")
         elif spell == 'NONE_SPELL':
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
@@ -211,12 +215,16 @@ class Game(BaseModel):
     def check_win(self):
         if self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
+            self.send_message(f"The game is over, the Order of the Phoenix has enacted 5 proclamations and wins the match!", "system")
         elif self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
+            self.send_message(f"The game is over, the Death Eaters has enacted 6 proclamations and wins the match!", "system")
         elif not self.players[self.voldemort].is_alive:
             self.winner = 'PHOENIX_ORDER'
+            self.send_message(f"The game is over, Voldemort has been executed and the Order of the Phoenix wins the match!", "system")
         elif self.elections.headmaster == self.voldemort and self.proclamations.DE_enacted_proclamations >= 3:
             self.winner = 'DEATH_EATERS'
+            self.send_message(f"The game is over, Voldemort has been promoted to Headmaster and the Death Eaters wins the match!", "system")
 
         if self.winner:
             self.status = 'FINISHED'

@@ -11,67 +11,52 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
     const [isMinister, setIsMinister] = useState(false);
     const [openHand, setOpenHand] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-    const [minister, setMinister] = useState(null);
-    const [proclamationsDEcount, setProclamationsDECount] = useState('');
+    const [minister, setMinister] = useState('');
+    const [DEProclamationsCount, setDEProclamationsCount] = useState('');
     const [spells, setSpells] = useState([])
     const [newCards, setNewCards] = useState(null)
     const [spell, setSpell] = useState('')
     const [aviableSpell, setAviableSpell] = useState('')
+    const [previusDeProclamationsCount, setPreviusDeProclamationsCount] = useState(0)
+ 
 
-    //const [numPlayers, setNumPlayers] = useState('')
-    
-    //console.log(gameInfo, "GAME INFO")
     const handleClick = () => {
-        if(spell === 'ADIVINATION') setOpenHand(true)
-        else setOpenModal(true)
-        if(newCards === null && spell === 'ADIVINATION'){
-            castSpell(spell, '',gameInfo.name, currentPlayer.name)             
+        if (newCards === null && spell === 'DIVINATION') {
+            setOpenHand(true)
+            castSpell('', gameInfo.name, currentPlayer.name)
+                 
+        }else if (spell !== 'DIVINATION' && spell !== 'NONE_SPELL'){
+            setOpenModal(true)
         }
     }
 
     const handleSpells = (spells) => {
-       /* if (proclamationsDEcount == 0){
-            setSpell (spells[0])
-        }
-        if (proclamationsDEcount == 1) {
-            setSpell (spells[1])
-        }
-        if (proclamationsDEcount == 2) {
-            setSpell (spells[2])
-        }
-        if (proclamationsDEcount == 3) {
-            setSpell (spells[3])
-        }*/
-        switch (spells[0]) {
-            case 'ADIVINATION':
-                if (proclamationsDEcount === 3) {
-                    setSpell (spells[0])
-                    setAviableSpell(true)
-                }
-                break;
-            case 'AVADA_KEDAVRA':
-                if (proclamationsDEcount === 4) {
-                    setSpell (spells[0])
-                    setAviableSpell(true)
-                }
-                break;
+        if (spells.length > 0 && spells[DEProclamationsCount] !== 'NONE_SPELL' && 
+            previusDeProclamationsCount < DEProclamationsCount) {
+            setSpell (spells[DEProclamationsCount])
+            setAviableSpell(true)
+        }         
+    }
+    
+    const handleSucces = (spell) => {
+        switch (spell) {
             case 'CRUCIO':
-                if (proclamationsDEcount === 5) {
-                    setSpell (spells[0])
-                    setAviableSpell(true)
-                }
+                setNewCards(cards)
+                setOpenHand(true)
+                setAviableSpell(false)
+                setPreviusDeProclamationsCount(DEProclamationsCount)
                 break;
-            case 'IMPERIUS':
-                if (proclamationsDEcount === 6) {
-                    setSpell (spells[0])
-                    setAviableSpell(true)
-                }
+            case 'DIVINATION':
+                setNewCards(cards)
+                setAviableSpell(false)
+                setPreviusDeProclamationsCount(DEProclamationsCount)
                 break;
             default:
-                console.log("nothing to do")
+                setAviableSpell(false)
+                setPreviusDeProclamationsCount(DEProclamationsCount)
                 break;
         }
-    }
+    } 
 
     useEffect(() => {
         if (gameInfo.length !==0 ) {
@@ -87,48 +72,42 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
 
 
     useEffect(() => {
-        if(currentPlayer && gameInfo.length !==0){
-            if(gameInfo.elections.minister === currentPlayer.name ){
+        if (currentPlayer && gameInfo.length !==0) {
+            setMinister(gameInfo.elections.minister)
+            if (minister === currentPlayer.name ){
                 setIsMinister(true);
-                setMinister(gameInfo.elections.minister)
             }
         }
-    },[gameInfo.elections, currentPlayer, setIsMinister, setMinister])
+    },[gameInfo.elections, currentPlayer])
 
     useEffect(() => {
         if(gameInfo.length !== 0) {
-            setProclamationsDECount(gameInfo.proclamations?.DE_enacted_proclamations)
+            setDEProclamationsCount(gameInfo.proclamations?.DE_enacted_proclamations)
             setSpells(gameInfo.spells)
             handleSpells(spells)
         }
         
-    }, [gameInfo, setProclamationsDECount, setSpells])
-    //console.log("CURRENT PLAYER " + JSON.stringify(currentPlayer))
-    //console.log("MINISTER " + JSON.stringify(minister))
-    //console.log("DE PROC " + proclamationsDEcount)
+    }, [gameInfo.proclamations?.DE_enacted_proclamations, gameInfo.spells])
+  
+
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
         }
-        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell !== 'CRUCIO' !== 'IMPERIUS') {
-            setNewCards(cards)
-        }
-        if (status === 'success' && spell !== 'AVADA_KEDAVRA' && spell === 'CRUCIO' && spell !== 'IMPERIUS') {
-            setNewCards(cards)
-            setOpenHand(true)
+        if (status === 'success') {
+            handleSucces(spell)
         }
     },  [status])
 
     return (
         <div>
             <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
-                {
-                aviableSpell && currentPlayer !== null && currentPlayer.is_alive && spells !== undefined && spells.length > 0 && isMinister &&
+                {aviableSpell && currentPlayer && currentPlayer.is_alive && spells && spells.length > 0 && isMinister &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={handleClick}>
                         {spell}
                     </Button>
                 } 
-                {!aviableSpell && !isMinister && spells !== undefined && minister !== undefined &&  minister !== null &&
+                {aviableSpell && !isMinister && minister &&
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}> The Magic Minister {minister} has obtained {spell}</a>
                 }
             </div>
@@ -136,11 +115,9 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
                 <HandSnackbar open={openHand} onClose={() => setOpenHand(false)} cards={newCards} />
             </div>
             <TargetsPopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
-            castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      
-
+            castSpell={(targetName) => castSpell(targetName, gameInfo.name, currentPlayer.name)}/>         
         </div>    
     )
-
 }
 
 export default Spells;

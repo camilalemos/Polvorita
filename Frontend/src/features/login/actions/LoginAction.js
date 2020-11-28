@@ -5,7 +5,8 @@ import {
     GET_USER,
     GET_USER_SUCCESS,
     GET_USER_FAIL,
-    USER_DATA
+    USER_DATA,
+    LOGOUT_USER
 } from '../../../constants/actionTypes/login';
 
 import axios from 'axios';
@@ -101,4 +102,10 @@ const _getLoginData = async (dispatch, getState) => {
     console.log(error, "ERROR")
     }
 
+};
+
+export const logout = () => (dispatch) => _logout(dispatch);
+const _logout = (dispatch) => {
+    localStorage.removeItem(PROFILE_KEY);
+    dispatch({ type: LOGOUT_USER })
 };

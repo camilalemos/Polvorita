@@ -82,15 +82,26 @@ def change_profile(email: Optional[EmailStr] = Form(None),
 @app.post("/game/", status_code=201, response_model=Game)
 def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^[A-Z_a-z0-9]*$"),
                 player_name: str = Form(..., min_length=3, max_length=15, regex="^[A-Z_a-z0-9]*$"),
+                max_players: int = Form(...),
                 password: Optional[str] = Form(None, min_length=5, max_length=10, regex="^[A-Za-z0-9]*$"),
                 user: User = Depends(get_current_active_user)):
     if game_name in manager.games:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game name already exist")
+    elif max_players not in range(5, 11):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid max players")
 
-    game = Game(name=game_name, owner=user.username, password=password)
+    game = Game(name=game_name, owner=user.username, max_players=max_players, password=password)
     game.create_player(player_name, user.username)
     manager.create_game(game)
     return game
+
+#GET GAME
+@app.get("/game/")
+def get_game(own: bool, user: User = Depends(get_current_active_user)):
+    if own:
+        return [game.name for game in manager.games.values() if game.exist(user.username)]
+    else:
+        return [game for game in manager.games.values() if game.status == 'CREATED']
 
 def get_game(game_name: str, user: User = Depends(get_current_active_user)):
     game = manager.games.get(game_name)
@@ -206,6 +217,9 @@ def vote(vote:Vote, params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
+    if game.elections.check_for_chaos():
+            game.proclamations.get_proclamations(1)
+            game.proclamations.enact()
     game.check_win()
     return game
 

@@ -49,7 +49,6 @@ const _vote = async ( vote, playerName, gameName, dispatch, getState) => {
         dispatch({type: VOTE});
 
         let {access_token} = {...getState().login}
-        console.log(`${api.url}/game/elections/vote?vote=${vote}&player_name=${playerName}&game_name=${gameName}`, "URL");
 
         const response = await axios({
             method: 'put',
@@ -85,7 +84,6 @@ const _getResults = async (gameName, dispatch, getState) => {
             "Authorization" : `Bearer ${access_token}`
             }
         });
-        console.log(response , "RESPONSE");
         dispatch({type: GET_RESULTS_SUCCESS, payload: {results: response.data}})
         
     } catch (error){

@@ -11,8 +11,6 @@ export default function  Board( {gameInfo, enacproclamation, statusGetProclamati
     const [ numProclamations, setNumProclamations] = useState();
     const [ valueProclamation, setValueProclamation ] = useState('');
 
-    console.log(gameInfo)
-
     useEffect(() => {
         if (gameInfo){
             setPlayerName(gameInfo.elections?.minister); 

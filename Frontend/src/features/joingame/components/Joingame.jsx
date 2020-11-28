@@ -58,7 +58,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 	}
 
 	const isJoing = (currentGame) => {
-
+		console.log(user, "ISER");
 		let fil = Object.values(currentGame.players).filter(players => players.user_name === user.username)
 		if (fil.length) return false;
 		return true;

@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import SelectDirectorCandidate from './SelectDirectorCandidate';
 import { Fireplace, SettingsVoiceOutlined } from '@material-ui/icons';
 
-const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getResults, statusResults,results, statusResultsPut, putResults }) => {
+const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,results, putResults }) => {
 
     const [minister, setMinister] = useState('');
     const [director, setDirector] = useState('');
@@ -13,43 +13,25 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
     const [openModal, setOpenModal] = useState(false);
     const [candidatePlayers, setCandidatePlayers] = useState([]);
     const [voting, setVoting] = useState(false);
-    const [candidateToDirector, setCandidateToDirector] = useState(null);
     const [voted, setVoted] = useState(false);
     const [voteChoice, setVoteChoice] = useState('')
-    const [dataResults, setDataResults] = useState(false);
-    console.log(gameInfo, "GAME INFO"); 
-    useEffect(() => {
-        if(gameInfo.length !== 0 && Object.keys(gameInfo.elections.votes).length === 5) getResults(gameInfo.name);
-    },[gameInfo])
 
     useEffect(() => {
         if(statusResults === 'success' && results === 'LUMOS') {
-            setDataResults(false);
-            setVoting(false);
-            setVoted(false);
             putResults(gameInfo.name);
         }
         if(statusResults === 'success' && results === 'NOX') {
-            setDataResults(false)
-            setVoting(true);
-            setVoted(false);
             putResults(gameInfo.name);
         }
     },[statusResults, results])
 
     useEffect(() => {
-        if (gameInfo.length !== 0) {
-            let players = Object.keys(gameInfo.players);
-            setPlayers(Object.values(gameInfo.players));
-            let indexPlayerMinister = players.findIndex(names => names === gameInfo.elections.minister_candidate);
-            setMinister(indexPlayerMinister);
-        }
-    }, [gameInfo, setPlayers, setMinister])
+        if (gameInfo.length !== 0) setPlayers(Object.values(gameInfo.players));
+    }, [gameInfo, setPlayers])
 
     useEffect(() => {
         setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
     }, [user, currentPlayer, players])
-
 
     useEffect(() => {
         if(gameInfo.length !== 0 && currentPlayer ){
@@ -61,35 +43,38 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
 
     useEffect(() => {
         let array = [];
-        if(isCandidateMinister) {
+        if(isCandidateMinister && gameInfo && gameInfo.elections) {
             for(const player of players) {
-                if(player.name !== currentPlayer.name) array.push(player);
+                if(player.name !== currentPlayer.name && player.name !== gameInfo.elections.minister && player.name !== gameInfo.elections.headmaster) array.push(player);
             }
         }
         setCandidatePlayers(array);
-    },[setCandidatePlayers,players,currentPlayer])
+    },[setCandidatePlayers,players,currentPlayer, gameInfo])
 
     useEffect(() => {
         if(gameInfo.length !== 0) {
-            if (gameInfo.elections.headmaster_candidate !== candidateToDirector) {
-                setCandidateToDirector(gameInfo.elections.headmaster_candidate);
+            if (gameInfo.elections.headmaster_candidate !== null) {
                 setVoting(true);
+            } else {
+                setVoting(false);
             }
         }
-    },[gameInfo,setCandidateToDirector, setVoting])
+    },[gameInfo, setVoting])
 
     useEffect(() => {
-        if (statusVote === 'success' && gameInfo.elections?.headmaster_candidate){
-            setVoted(true);
-        } 
-    },[statusVote])
+
+        if(gameInfo && gameInfo.elections && currentPlayer) {
+            if (Object.keys(gameInfo.elections.votes).filter(player => player === currentPlayer.name).length) {
+                setVoted(true);
+                setVoteChoice(gameInfo.elections.votes[currentPlayer.name]);
+            }
+        }
+    },[gameInfo, currentPlayer])
 
     const handleVote = (type) => {  
         setVoteChoice(type);
         vote(type, currentPlayer.name, gameInfo.name)
     }   
-
-    // console.log(voting, "VOTING", voted, "VOTED", dataResults, "DATARESULT");
 
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
@@ -104,7 +89,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, statusVote, vote, getRe
                     Choose director
                 </Button>
             }
-            {voting && !voted && !dataResults && gameInfo.elections.headmaster_candidate &&
+            {voting && !voted &&
                 <>
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Candidate to director is: {gameInfo.elections.headmaster_candidate}</a>
                     <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >

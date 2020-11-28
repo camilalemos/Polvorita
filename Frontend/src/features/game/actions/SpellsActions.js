@@ -6,8 +6,8 @@ import {
 import axios from 'axios';
 import api from '../../../configs/api';
 
-export const castSpell = (spell, targetName, gameName, playerName) => (dispatch, getState) => _castSpell(spell, targetName, gameName, playerName, dispatch, getState);
-const _castSpell = async (spell, targetName, gameName, playerName, dispatch, getState) => {
+export const castSpell = (targetName, gameName, playerName) => (dispatch, getState) => _castSpell(targetName, gameName, playerName, dispatch, getState);
+const _castSpell = async (targetName, gameName, playerName, dispatch, getState) => {
 
     try {
 
@@ -15,10 +15,10 @@ const _castSpell = async (spell, targetName, gameName, playerName, dispatch, get
         let uri
         let {access_token} = {...getState().login}
         if (targetName !== ''){
-            uri = `${api.url}/game/spells/?spell=${spell}&target_name=${targetName}&player_name=${playerName}&game_name=${gameName}`
+            uri = `${api.url}/game/spells/?target_name=${targetName}&player_name=${playerName}&game_name=${gameName}`
         }
         else {
-            uri = `${api.url}/game/spells/?spell=${spell}&player_name=${playerName}&game_name=${gameName}`
+            uri = `${api.url}/game/spells/?player_name=${playerName}&game_name=${gameName}`
         }
 
         const response = await axios({

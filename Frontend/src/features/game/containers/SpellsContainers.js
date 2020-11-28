@@ -6,10 +6,10 @@ import {castSpell} from '../actions/SpellsActions'
 
 function mapStateToProps(state) {
     return {
-        status: state.SpellsReducer.status,
+        status: state.spellsReducer.status,
         user: state.login.user,
-        errorMsg: state.SpellsReducer.errorMsg,
-        cards: state.SpellsReducer.cards
+        errorMsg: state.spellsReducer.errorMsg,
+        cards: state.spellsReducer.cards
     };
 }
 

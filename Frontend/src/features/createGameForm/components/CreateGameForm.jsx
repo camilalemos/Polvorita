@@ -84,8 +84,8 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             enqueueSnackbar( 'Game Name must have 5 to 20 characters', { variant: 'error'});
             setGameNameError(true);
         }
-        if (playerName.length > 10 || playerName.length < 3){
-            enqueueSnackbar( 'Player Name must have 3 to 10 characters', { variant: 'error'});
+        if (playerName.length > 15 || playerName.length < 3){
+            enqueueSnackbar( 'Player Name must have 3 to 15 characters', { variant: 'error'});
             setPlayerNameError(true);
         }
         if (!hasWhiteSpace(gamePassword) && gamePassword.length > 0 && (gamePassword.length > 10 || gamePassword.length < 5)){

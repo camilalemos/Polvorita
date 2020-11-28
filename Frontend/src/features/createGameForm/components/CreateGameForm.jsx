@@ -53,8 +53,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             setMaxPlayersError(true);
         }
         if (notEmpty()) {
-            console.log(maxPlayers, "MAXPLAYERS")
-            createGame({ playerName, gameName, gamePassword, maxPlayers })
+            createGame({ playerName, gameName, maxPlayers, gamePassword })
         }
     }
 

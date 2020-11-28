@@ -19,8 +19,8 @@ const _createGame = async (dispatch, getState, data) => {
         bodyFormData.append('game_name', data.gameName);
         bodyFormData.append('player_name', data.playerName);
         bodyFormData.append('password', data.gamePassword);
-
-        const response = await axios({
+        // bodyFormData.append('max_players', data.maxPlayers);
+        await axios({
             method: 'post',
             url: `${api.url}/game/`,
             data: bodyFormData,

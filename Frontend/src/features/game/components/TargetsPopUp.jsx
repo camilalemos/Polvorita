@@ -13,6 +13,7 @@ export default function popUp({ open, onClose, players, currentPlayer, castSpell
 
     const handleClick = (player) => {
         castSpell(player.name)
+        //setAviableSpell(false)
         onClose()
     }
   
@@ -32,7 +33,6 @@ export default function popUp({ open, onClose, players, currentPlayer, castSpell
                         player.is_alive && currentPlayer !== null && currentPlayer !== undefined && 
                         player.name !== currentPlayer.name &&
                         <Button onClick={() => handleClick(player)} >{player.name}</Button>
-                        
                     )
                 })}
             </div>

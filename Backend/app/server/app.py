@@ -137,16 +137,36 @@ def get_player(player_name: str, params = Depends(get_game)):
     player = game.players.get(player_name)
     if not player:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found")
-    elif not player.is_alive:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Player is not alive")
     elif player.user_name != params["user"].username:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
     return {"player": player, "game": game}
 
+#QUIT GAME
+@app.delete("/game/")
+def quit_game(params = Depends(get_player)):
+    game = params["game"]
+    player_name = params["player"].name
+    if game.status == 'STARTED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot quit a started game")
+
+    game.delete_player(player_name)
+    if not game.num_players:
+        manager.delete_game(game.name)
+
+    return game
+
+def check_player(params = Depends(get_player)):
+    game = params["game"]
+    player = params["player"]
+    if not player.is_alive:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Player is not alive")
+
+    return params
+
 #SEND MESSAGE
 @app.post("/game/chat/", response_model=List[str])
-def send_message(msg: str = Form(...), params = Depends(get_player)):
+def send_message(msg: str = Form(...), params = Depends(check_player)):
     game = params["game"]
     player_name = params["player"].name
     game.send_message(msg, player_name)
@@ -177,7 +197,7 @@ def choose_director(candidate_name:str, params = Depends(check_game)):
 
 #VOTE
 @app.put("/game/elections/vote/", response_model=Game)
-def vote(vote:Vote, params = Depends(get_player)):
+def vote(vote:Vote, params = Depends(check_game)):
     game = params["game"]
     player_name = params["player"].name
     if not game.elections.headmaster_candidate:
@@ -189,10 +209,8 @@ def vote(vote:Vote, params = Depends(get_player)):
     if game.elections.check_for_chaos():
             game.proclamations.get_proclamations(1)
             game.proclamations.enact()
-
-    if game.get_winner():
-        game.finish(manager)
-
+            
+    game.check_win()
     return game
 
 #GET PROCLAMATIONS
@@ -222,29 +240,23 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
     elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
         game.proclamations.discard(loyalty)
 
-    if game.get_winner():
-        game.finish(manager)
-
+    game.check_win()
     return game
 
 #CAST SPELL
 @app.put("/game/spells/")
-def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(check_game)):
+def cast_spell(target_name: Optional[str] = None, params = Depends(check_game)):
     game = params ["game"]
     player_name = params["player"].name
     if target_name and target_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target name not found")
     elif target_name == player_name:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Can not cast a spell on yourself")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast a spell on yourself")
     elif player_name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
-    elif spell not in game.spells:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
-    result = game.cast_spell(spell, target_name)
-    if game.get_winner():
-        game.finish(manager)
-
+    result = game.cast_spell(target_name)
+    game.check_win()
     return result
 
 #LOBBY WEBSOCKET
@@ -265,11 +277,11 @@ async def websocket_lobby(websocket: WebSocket):
 async def websocket_game(websocket: WebSocket, game_name: str):
     await manager.connect_game(websocket, game_name)
     try:
-        game = manager.games.get(game_name).dict()
-        connections = manager.game_connections.get(game_name)
+        game = manager.games[game_name]
+        connections = manager.game_connections[game_name]
         while True:
             await asyncio.sleep(0.5)
-            await manager.broadcast_json(game, connections)
+            await manager.broadcast_json(game.dict(), connections)
 
     except Exception:
         manager.disconnect_game(websocket, game_name)

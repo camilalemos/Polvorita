@@ -86,7 +86,6 @@ class Proclamations(BaseModel):
     deck: List[Loyalty] = []
     hand: List[Loyalty] = []
     discarded: List[Loyalty] = []
-    expelliarmus: bool = False
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
 
@@ -96,12 +95,12 @@ class Proclamations(BaseModel):
         for i in range(11):
             self.deck.append('DEATH_EATERS')
         random.shuffle(self.deck)
-        print(self.deck)
 
     def shuffle(self):
         if len(self.deck) < 3:
             self.deck.extend(self.discarded)
             random.shuffle(self.deck)
+            self.discarded.clear()
 
     def get_proclamations(self, num_proclamations: int):
         self.shuffle()
@@ -118,7 +117,7 @@ class Proclamations(BaseModel):
     def discard(self, loyalty: Loyalty):
         self.hand.remove(loyalty)
         self.discarded.append(loyalty)
-        if (not self.expelliarmus and len(self.hand) == 1):
+        if len(self.hand) == 1:
             self.enact()
 
 class Game(BaseModel):
@@ -134,7 +133,7 @@ class Game(BaseModel):
     players: Dict[str, Player] = {}
     proclamations: Proclamations = None
     elections: Elections = None
-    spells: Set[Spell] = ['ADIVINATION', 'AVADA_KEDAVRA', 'CRUCIO', 'IMPERIUS']
+    spells: List[Spell] = []
     chat: List[str] = []
 
     def exist(self, username: str):
@@ -147,9 +146,31 @@ class Game(BaseModel):
         self.send_message(f"{player_name} has joined the room!", "system")
 
     def delete_player(self, player_name: str):
-        self.players.pop(player_name)
+        player = self.players.pop(player_name)
         self.num_players -= 1
         self.send_message(f"{player_name} has left the room!", "system")
+        if player.user_name == self.owner and self.num_players:
+            self.owner = random.choice(list(self.players.values())).user_name
+
+    def start(self):
+        self.status = 'STARTED'
+        self.proclamations = Proclamations()
+        self.proclamations.init()
+        self.assign_loyalties()
+        self.assign_roles()
+        self.assign_spells()
+        self.elections = Elections()
+        self.elections.init(list(self.players))
+        self.send_message("Game started!", "system")
+
+    def assign_loyalties(self):
+        num_death_eaters = math.ceil(self.num_players / 2)-1
+        num_phoenix_order = self.num_players - num_death_eaters
+        to_assign = random.sample(list(self.players.values()), self.num_players)
+        for i in range(num_phoenix_order):
+            to_assign.pop().loyalty = 'PHOENIX_ORDER'
+        for i in range(num_death_eaters):
+            to_assign.pop().loyalty = 'DEATH_EATERS'
 
     def assign_roles(self):
         to_assign_phoenix_order = [player for player in self.players.values() if player.loyalty == 'PHOENIX_ORDER']
@@ -164,49 +185,59 @@ class Game(BaseModel):
         while to_assign_death_eaters:
             to_assign_death_eaters.pop().role = DE_roles.pop()
 
-    def assign_loyalties(self):
-        num_death_eaters = math.ceil(self.num_players / 2)-1
-        num_phoenix_order = self.num_players - num_death_eaters
-        to_assign = random.sample(list(self.players.values()), self.num_players)
-        for i in range(num_phoenix_order):
-            to_assign.pop().loyalty = 'PHOENIX_ORDER'
-        for i in range(num_death_eaters):
-            to_assign.pop().loyalty = 'DEATH_EATERS'
+    def assign_spells(self):
+        if self.num_players in range(5, 7):
+            self.spells = ['NONE_SPELL', 'NONE_SPELL', 'NONE_SPELL', 'DIVINATION', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+        elif self.num_players in range(7, 9):
+            self.spells = ['NONE_SPELL', 'NONE_SPELL', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
+        elif self.num_players in range(9, 11):
+            self.spells = ['NONE_SPELL', 'CRUCIO', 'CRUCIO', 'IMPERIO', 'AVADA_KEDAVRA', 'AVADA_KEDAVRA']
 
-    def start(self):
-        self.status = 'STARTED'
-        self.proclamations = Proclamations()
-        self.proclamations.init()
-        self.assign_loyalties()
-        self.assign_roles()
-        self.elections = Elections()
-        self.elections.init(list(self.players))
-        self.send_message("Game started!", "system")
-
-    def cast_spell(self, spell: Spell, target: str):
-        self.spells.remove(spell)
-        if spell == 'ADIVINATION':
+    def cast_spell(self, target: str):
+        result = self
+        spell = self.spells[self.proclamations.DE_enacted_proclamations]
+        if spell == 'DIVINATION':
             self.proclamations.shuffle()
-            return self.proclamations.deck[:3]
+            result = self.proclamations.deck[:3]
+            self.send_message("The Minister of Magic has used the DIVINATION spell!", "system")
         elif spell == 'AVADA_KEDAVRA':
+            if not target:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.players[target].kill()
-            return self
+            self.send_message(f"The Minister of Magic has used the AVADA KEDAVRA spell against {target}!", "system")
+        elif spell == 'CRUCIO':
+            result = self.players[target].loyalty
+            self.send_message(f"The Minister of Magic has used the CRUCIO spell against {target}!", "system")
+        elif spell == 'IMPERIO':
+            if not target:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
+            self.elections.nominate('MINISTER', target)
+            self.send_message(f"The Minister of Magic has used the IMPERIO spell against {target}!", "system")
+        elif spell == 'NONE_SPELL':
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
-    def get_winner(self):
+        self.spells[self.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
+        return result
+
+    def check_win(self):
         if self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
+            self.send_message(f"The game is over, the Order of the Phoenix has enacted 5 proclamations and wins the match!", "system")
         elif self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
+            self.send_message(f"The game is over, the Death Eaters has enacted 6 proclamations and wins the match!", "system")
         elif not self.players[self.voldemort].is_alive:
             self.winner = 'PHOENIX_ORDER'
+            self.send_message(f"The game is over, Voldemort has been executed and the Order of the Phoenix wins the match!", "system")
         elif self.elections.headmaster == self.voldemort and self.proclamations.DE_enacted_proclamations >= 3:
             self.winner = 'DEATH_EATERS'
+            self.send_message(f"The game is over, Voldemort has been promoted to Headmaster and the Death Eaters wins the match!", "system")
 
-        return self.winner
+        if self.winner:
+            self.status = 'FINISHED'
 
     def send_message(self, msg: str, player_name: str):
         self.chat.append(f"{player_name}: {msg}")
 
-    def finish(self, manager):
+    def finish(self):
         self.status = 'FINISHED'
-        manager.delete_game(self.name)

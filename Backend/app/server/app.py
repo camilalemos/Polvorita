@@ -227,23 +227,6 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
 
     return game
 
-#EXPELLIARMUS
-@app.put("/game/proclamations/expelliarmus/", response_model=Game)
-def use_expelliarmus(card1: Loyalty, card2: Loyalty, expelliarmus: Optional[bool] = None, params = Depends(get_player)):
-    game = params["game"]
-    if params["player"].name not in [game.elections.minister, game.elections.headmaster]:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only headmaster can use Expelliarmus")
-    elif game.proclamations.DE_enacted_proclamations < 5:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Expelliarmus cannot be used") 
-    elif expelliarmus and params["player"].name == game.elections.minister:
-        game.proclamations.expelliarmus = expelliarmus
-
-    if game.proclamations.expelliarmus: 
-        game.proclamations.expelliarmus(card1, card2)
-        game.proclamations.expelliarmus = False
-
-    return game
-
 #CAST SPELL
 @app.put("/game/spells/")
 def cast_spell(spell: Spell, target_name: Optional[str] = None, params = Depends(check_game)):

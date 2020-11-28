@@ -206,6 +206,9 @@ def vote(vote:Vote, params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
+    if game.elections.check_for_chaos():
+            game.proclamations.get_proclamations(1)
+            game.proclamations.enact()
     game.check_win()
     return game
 

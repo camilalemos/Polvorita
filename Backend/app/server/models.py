@@ -126,7 +126,7 @@ class Game(BaseModel):
     status: GameStatus = 'CREATED'
     winner: Loyalty = None
     min_players: int = 5
-    max_players: int = 5
+    max_players: int
     num_players: int = 0
     owner: str = None
     voldemort: str = None

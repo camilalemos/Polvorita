@@ -6,6 +6,7 @@ from .app import app
 client = TestClient(app)
 num_games = 5
 num_players = 5
+max_players = 5
 
 def get_header(username):
     login = {
@@ -249,6 +250,7 @@ def test_post_create_game_with_malformed_game_name():
     data={
         "game_name": "Juego_0?",
         "player_name": "Player_0",
+        "max_players": max_players,
         "password": "Player123"
     }
     response = client.post("/game/", headers=headers, data=data)
@@ -265,6 +267,7 @@ def test_post_create_game_with_malformed_player_name():
     data={
         "game_name": "Juego_0",
         "player_name": "Player?",
+        "max_players": max_players,
         "password": "Player123"
     }
     response = client.post("/game/", headers=headers, data=data)
@@ -281,6 +284,7 @@ def test_post_create_game_with_malformed_password():
     data={
         "game_name": "Juego_0",
         "player_name": "Player_0",
+        "max_players": max_players,
         "password": "Player123?"
     }
     response = client.post("/game/", headers=headers, data=data)
@@ -299,6 +303,7 @@ def test_post_create_game():
             data={
                 "game_name": f"Juego_{i}",
                 "player_name": "Player_0",
+                "max_players": max_players,
                 "password": "Player123"
             }
         )
@@ -333,6 +338,7 @@ def test_post_create_game_with_existing_name():
     data={
         "game_name": "Juego_0",
         "player_name": "Player_0",
+        "max_players": max_players,
         "password": "Player123"
     }
     response = client.post("/game/", headers=headers, data=data)

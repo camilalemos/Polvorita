@@ -183,7 +183,7 @@ def send_message(msg: str = Form(...), params = Depends(check_player)):
     game.send_message(msg, player_name)
     return game.chat
 
-def check_game(params = Depends(get_player)):
+def check_game(params = Depends(check_player)):
     game = params["game"]
     player = params["player"]
     if game.status != 'STARTED':

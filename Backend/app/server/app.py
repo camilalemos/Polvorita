@@ -183,7 +183,7 @@ def send_message(msg: str = Form(...), params = Depends(check_player)):
     game.send_message(msg, player_name)
     return game.chat
 
-def check_game(params = Depends(get_player)):
+def check_game(params = Depends(check_player)):
     game = params["game"]
     player = params["player"]
     if game.status != 'STARTED':
@@ -258,6 +258,25 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
         game.proclamations.discard(loyalty)
 
     game.check_win()
+    return game
+
+#EXPELLIARMUS
+@app.put("/game/proclamations/expelliarmus/", response_model=Game)
+def use_expelliarmus(minister_exp: Optional[bool] = None, params = Depends(check_game)):
+    game = params["game"]
+    player_name = params["player"].name
+    if player_name not in [game.elections.minister, game.elections.headmaster]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can use Expelliarmus")
+    elif game.proclamations.DE_enacted_proclamations < 5 or len(game.proclamations.hand) != 2:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot use Expelliarmus at this moment")
+    elif player_name == game.elections.minister and not game.proclamations.headmaster_exp:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Headmaster must cast Expelliarmus first")
+
+    if player_name == game.elections.headmaster:
+        game.proclamations.headmaster_exp = True
+    elif player_name == game.elections.minister:
+        game.proclamations.expelliarmus(minister_exp)
+
     return game
 
 #CAST SPELL

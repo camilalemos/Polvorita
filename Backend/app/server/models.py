@@ -56,6 +56,13 @@ class Elections(BaseModel):
         if len(self.votes) == len(self.players):
             self.set_result()
 
+    def check_for_chaos(self):
+        if self.rejected == 3:
+            self.rejected = 0
+            return True
+        else:
+            return False
+
     def get_result(self):
         lumos_votes = sum(map(('LUMOS').__eq__, self.votes.values()))
         nox_votes = sum(map(('NOX').__eq__, self.votes.values()))
@@ -119,7 +126,7 @@ class Game(BaseModel):
     status: GameStatus = 'CREATED'
     winner: Loyalty = None
     min_players: int = 5
-    max_players: int = 5
+    max_players: int
     num_players: int = 0
     owner: str = None
     voldemort: str = None

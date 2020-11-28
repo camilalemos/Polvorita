@@ -5,7 +5,8 @@ import {
     GET_USER,
     GET_USER_SUCCESS,
     GET_USER_FAIL,
-    USER_DATA
+    USER_DATA,
+    LOGOUT_USER
 } from '../../../constants/actionTypes/login';
 
 const initialState= {
@@ -58,6 +59,12 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 user: action.payload.user
+            }
+        case LOGOUT_USER:
+            return {
+                ...state,
+                statusLogin: false,
+                is_logged: false
             }
         default:
             return {...state};

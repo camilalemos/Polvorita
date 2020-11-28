@@ -17,7 +17,7 @@ export default function Game () {
     const [gameStatusFinish, setGameStatusFinish ] = useState(false);
 
     const ws = useRef(null);
-    console.log(ws, "WS");
+    //console.log(ws, "WS");
     useEffect(() => {
 
 	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);

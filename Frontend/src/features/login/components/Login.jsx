@@ -6,6 +6,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withSnackbar } from 'notistack';
+import useDidMountEffect from '../../../constants/hooks/useDidMountEffect'
 
 const Login = function ({ loginUser, status, enqueueSnackbar }) {
 
@@ -18,7 +19,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
 
     const handleLogin = () => {loginUser({userNameOrEmail, password})}
 
-    useEffect(() => {
+    useDidMountEffect(() => {
         if (status === 'failed') enqueueSnackbar('Sign In Failed, Username/email or password do not match', { variant: 'error'});
         if (status === 'success') {
             enqueueSnackbar('Sign In successfully', { variant: 'success'});

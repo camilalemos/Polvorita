@@ -10,7 +10,7 @@ import CreateGameContainer from '../../createGameForm/containers/CreateGameConta
 import ChangeProfileContainer from '../../changeProfile/containers/ChangeProfileContainer';
 import PopUp from './PopUp';
 
-const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
+const Joingame = ({joingame, status, enqueueSnackbar, user, logout }) => {
 	const history = useHistory();
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playerName, setPlayerName] = useState('');
@@ -58,19 +58,27 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 	}
 
 	const isJoing = (currentGame) => {
-
+		console.log(user, "ISER");
 		let fil = Object.values(currentGame.players).filter(players => players.user_name === user.username)
 		if (fil.length) return false;
 		return true;
 
 	}
 
+	const handleLogout = () => {
+		logout();
+		history.push(`/login`);
+	}
+
   return (
     <div style={{display: 'flex', flexDirection:'column', padding:40}}>
 		<div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
         	<b style={{ fontSize:70 }}>GAMES</b>
-			<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => setOpenModalChangeProfile(true)} variant="contained" >Profile</Button>
-			<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={() => setOpenModalCreateGame(true)} variant="contained" >Create Game</Button>
+			<div>
+				<Button style={{ backgroundColor:'lightblue', marginRight:20 }} size='small' onClick={() => setOpenModalChangeProfile(true)} variant="contained" >Profile</Button>
+				<Button style={{ backgroundColor:'lightblue', marginRight:20 }} size='small' onClick={() => setOpenModalCreateGame(true)} variant="contained" >Create Game</Button>
+				<Button style={{ backgroundColor:'lightblue' }} size='small' onClick={handleLogout} variant="contained" >Logout</Button>
+			</div>
 		</div>
 		<div style={{padding:40}}>
 		<div style={{display:'flex', marginBottom: 40}}>

@@ -88,7 +88,6 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
         if ( hand.length === 2 ) {
             setOpenSnackDirector(true)
         }
-        console.log(openSnackDirector, 'que wea pasa aca')
     }, )
     function ShowSquare(enactedproclamations, loyalty){
 

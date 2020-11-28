@@ -3,8 +3,6 @@ import { useHistory, withRouter, useParams } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Chat from '../../chat/containers/ChatContainer'
 
-
-
 const Lobby = function ({ user, startGame, statusStart }) { 
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playersName, setPlayersName] = useState([]);
@@ -72,7 +70,7 @@ const Lobby = function ({ user, startGame, statusStart }) {
 					</Button>}
 				</div>
 			</div>
-			<div className="lobby" style={{display:'flex', flexDirection:'column', alignItems: 'center',padding: '2%'}}>
+			<div className="lobby" style={{display:'flex', flexDirection:'column', alignItems: 'center',padding: '2%', width: '20%'}}>
                 <Chat gameInfo={ gameInfo }/>
 			</div>
         </div>

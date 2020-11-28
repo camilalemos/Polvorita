@@ -8,9 +8,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { useHistory } from "react-router-dom";
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
+import Select from '@material-ui/core/Select';
 import { withSnackbar } from 'notistack';
-
-
+import MenuItem from '@material-ui/core/MenuItem';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -23,15 +23,18 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
     const [gameName, setGameName] = useState('');
     const [playerName, setPlayerName] = useState('');
     const [gamePassword, setPassword] = useState('');
+    const [maxPlayers, setMaxPlayers] = useState('');
     const [playerNameError, setPlayerNameError] = useState(false);
     const [gameNameError, setGameNameError] = useState(false);
     const [gamePasswordError, setGamePasswordError] = useState(false);
+    const [maxPlayersError, setMaxPlayersError] = useState(false);
     const history = useHistory();
 
+    
 
     const notEmpty = () => {
         let result = true;
-        if (gameName.length === 0  || playerName.length === 0){
+        if (gameName.length === 0  || playerName.length === 0 || maxPlayers.length === 0){
             enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
             result = false;
         }
@@ -46,8 +49,11 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         if (!playerName) {
             setPlayerNameError(true);
         }
+        if (!maxPlayers) {
+            setMaxPlayersError(true);
+        }
         if (notEmpty()) {
-            createGame({ playerName, gameName, gamePassword })
+            createGame({ playerName, gameName, maxPlayers, gamePassword })
         }
     }
 
@@ -92,6 +98,14 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             enqueueSnackbar( 'Password is optional, but if you want it, must have 5 to 10 characters', { variant: 'error'});
             setGamePasswordError(true);
         }
+    }
+
+    const createMaxPlayerOptions = () => {
+        let menuItems = [];
+        for (var i = 5; i <= 10; i++) {
+            menuItems.push(<MenuItem value={i}>{i}</MenuItem>);
+        }
+        return menuItems;
     }
 
     const checkStatusCode = () => {
@@ -166,7 +180,28 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                         onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     />
                 </FormControl>
-            
+                <FormControl variant="outlined" 
+                    required
+                    error={maxPlayersError}
+                    style={{ marginBottom: 40, minWidth:300 }}
+                    size='small'
+                    label="Max Players"
+                    variant="outlined"
+                    >
+                    <InputLabel id="Max Players">Max Players</InputLabel>
+                    <Select
+                        labelId="Max Players"
+                        id="Max Players"
+                        value={maxPlayers}
+                        onChange={(value) => setMaxPlayers(value.target.value, setMaxPlayersError(false))}
+                        label="Max Players"
+                        displayEmpty
+                        size='small'
+                        variant="outlined"
+                    >
+                    {createMaxPlayerOptions()}
+                    </Select>
+                </FormControl>
                 <div style={{ display: 'flex', justifyContent:'center' }}>
                     {status === 'loading' ? 
                         <CircularProgress />

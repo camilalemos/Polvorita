@@ -11,7 +11,6 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
     const [ gameName, setGameName] = useState('');
     const [ hand, setHand] = useState([]);
     const [ numProclamations, setNumProclamations] = useState();
-    const [ valueProclamation, setValueProclamation ] = useState('');
     const [ POenactedProclamations, setPOenactedProclamations ] = useState();
     const [ DEenactedProclamations, setDEenactedProclamations ] = useState();
     const [ discardedProclamations, setDiscardedProclamations ] = useState([])
@@ -32,12 +31,6 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
             setNumPlayers(gameInfo.num_players);
         }
     }, [gameInfo,setMinisterName])
-
-/*     useEffect(() => {
-        if (ministerName) {
-            getProclamationsInfo(ministerName,gameName) 
-        }
-    },[ministerName]) */
 
     useEffect(() => {
         if(gameInfo.length !== 0 ){

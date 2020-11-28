@@ -17,27 +17,18 @@ export default function Game () {
     const [gameStatusFinish, setGameStatusFinish ] = useState(false);
 
     const ws = useRef(null);
-    //console.log(ws, "WS");
     useEffect(() => {
 
 	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
 
-		// ws.onopen = () => {
-		// ws.send(JSON.stringify({event: 'game:subscribe'}));
-		// };
-
 		ws.current.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
-        // console.log(gameInfo)
+
         };
         
         ws.current.onerror = function(err) {
 			console.log(err, "ERROR")
 		}
-
-		// ws.onclose = () => {
-		// ws.close();
-		// };
 
 		return () => {
 		ws.current.close();

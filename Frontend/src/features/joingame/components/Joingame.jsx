@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useState, useRef} from 'react';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
@@ -20,25 +20,19 @@ const Joingame = ({joingame, status, enqueueSnackbar, user, logout }) => {
 	const [openModalChangeProfile, setOpenModalChangeProfile] = useState(false);
 	const [routeGame, setRouteGame] = useState('')
 
-	useEffect(() => {
+    const ws = useRef(null);
+    console.log(ws, "WS");
+    useEffect(() => {
 
-		const ws = new WebSocket('ws://localhost:8000/lobby/');
-
-		ws.onopen = () => {
-		ws.send(JSON.stringify({event: 'lobby:subscribe'}));
-		};
+		ws.current = new WebSocket('ws://localhost:8000/lobby/');
 		
-		ws.onmessage = (event) => {
+		ws.current.onmessage = (event) => {
 		setGameInfo(JSON.parse(event.data));
 	    console.log(gameInfo);
 		};
 		
-		ws.onclose = () => {
-		ws.close();
-		};
-
 		return () => {
-		ws.close();
+		ws.current.close();
 		};
 	});
 

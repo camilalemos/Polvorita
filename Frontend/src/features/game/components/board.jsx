@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function Board( {gameInfo, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
+export default function Board( {user, gameInfo, statusGetProclamation, getProclamationsInfo, discardproclamation}) {
     
     const classes = useStyles();
     const [ ministerName, setMinisterName ] = useState('');
@@ -15,63 +15,92 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
     const [ POenactedProclamations, setPOenactedProclamations ] = useState();
     const [ DEenactedProclamations, setDEenactedProclamations ] = useState();
     const [ discardedProclamations, setDiscardedProclamations ] = useState([])
-    const [open, setOpen] = useState(false);
-    const [openSnackDirector, setOpenSnackDirector] =useState(false);
+    const [ open, setOpen ] = useState(false);
+    const [ openSnackDirector, setOpenSnackDirector ] =useState(false);
+    const [ isMinister, setIsMinister ] = useState(false);
+    const [ isHeadMaster, setIsHeadMaster] = useState(false);
+    const [ players, setPlayers ] = useState([]);
+    const [ currentPlayer, setCurrentPlayer ] = useState(null);
+    const [ isGetProclamation , setIsGetProclamation ] = useState(true);
+
 
     useEffect(() => {
-        if (gameInfo){
-            setMinisterName(gameInfo.elections?.minister);
-            setHeadmasterName(gameInfo.elections?.headmaster)
+        if (gameInfo.length !== 0){
+            setMinisterName(gameInfo.elections.minister);
+            setHeadmasterName(gameInfo.elections.headmaster)
             setGameName(gameInfo.name);
             setNumPlayers(gameInfo.num_players);
         }
     }, [gameInfo,setMinisterName])
 
-    useEffect(() => {
+/*     useEffect(() => {
         if (ministerName) {
             getProclamationsInfo(ministerName,gameName) 
         }
-    },[ministerName])
+    },[ministerName]) */
 
     useEffect(() => {
         if(gameInfo.length !== 0 ){
-            setHand(gameInfo.proclamations?.hand);
+            setHand(gameInfo.proclamations.hand);
         }
     }, [gameInfo.proclamations?.hand])
 
     useEffect(() => {
-        setNumProclamations(Object((gameInfo.proclamations)?.deck).length);
+        if ( statusGetProclamation ){
+            setNumProclamations(Object((gameInfo.proclamations)?.deck).length);
+        }
         setDiscardedProclamations(Object((gameInfo.proclamations)?.discarded).length)
     }, )
 
-    useEffect(() => {
+     useEffect(() => {
         if (gameInfo.length !== 0 ){
-            setPOenactedProclamations(gameInfo.proclamations?.PO_enacted_proclamations);
-            setDEenactedProclamations(gameInfo.proclamations?.DE_enacted_proclamations);
+            setPOenactedProclamations(gameInfo.proclamations.PO_enacted_proclamations);
+            setDEenactedProclamations(gameInfo.proclamations.DE_enacted_proclamations);
         }
     }, [gameInfo])
 
+//--------------------------------------------
+
+    useEffect(() => {
+        if (gameInfo.length !==0 ) {
+            setPlayers(Object.values(gameInfo.players));
+        }
+    }, [gameInfo, setPlayers])
+
+    useEffect(() => {
+        if (gameInfo.length !== 0) {
+            setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
+        }
+    }, [user, players])
+
+    useEffect(() => {
+        if(currentPlayer && gameInfo.length !==0){
+            if( gameInfo.elections.minister === currentPlayer.name ){
+                setIsMinister(true);
+            }
+            if( gameInfo.elections.headmaster === currentPlayer.name) {
+                setIsHeadMaster(true);
+            }
+        }
+    },[gameInfo.elections, currentPlayer, setIsMinister, setIsHeadMaster])
 
     function ShowSquare(enactedproclamations, loyalty){
 
-        const poArrayAux  = new Array(5).fill(null);
-        const deArrayAux  = new Array(6).fill(null);
+        const poArrayAux = new Array(5)
+        const deArrayAux = new Array(6)
         let result;
 
         if ( loyalty === "PHOENIX_ORDER") {
             poArrayAux.fill("PHOENIX_ORDER", 0,enactedproclamations);
             result = poArrayAux.map((proclamation) => (
                 assignImgProclamation(proclamation)
-                //console.log(proclamation)
             ))
-            //console.log(poArrayAux)
         } 
         else if ( loyalty === "DEATH_EATERS") {
             deArrayAux.fill("DEATH_EATERS", 0,enactedproclamations);
             result = deArrayAux.map((proclamation) => (
-            assignImgProclamation(proclamation)
+                assignImgProclamation(proclamation)
             ))
-            //console.log(deArrayAux)
         }
         return result;
     }
@@ -90,16 +119,31 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
     }
 
     const Deck = (proclamations, numProclamationsInDeck,) => {
+        
+        useEffect(() => {
+            if ( hand.length === 2 ) {
+                setOpenSnackDirector(true)
+            }
+        }, )
+
+        useEffect(() => {
+            if (hand.length === 3) {
+                setOpen(true)
+            }
+        },)
 
         const handleClick = () => {
-            setOpen(true);
+            if(currentPlayer && gameInfo.length !==0 ){
+                if (gameInfo.elections.minister === currentPlayer.name && statusGetProclamation !== 'success' && isGetProclamation) {
+                    getProclamationsInfo(ministerName,gameName)
+                    setIsGetProclamation(false)
+                }
+            }
         };
     
         const handleClose = (value) => {
             setOpen(false)
-            setValueProclamation(value)
             discardproclamation(value,ministerName,gameName)
-            setOpenSnackDirector(true)
         };
 
         const handleCloseHeadMaster = (value) => {
@@ -113,6 +157,7 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
                     Proclamations: {numProclamationsInDeck}
                 <img src= {require('../../../constants/images/Proclamation.png')} alt= "Proclamation" style={{width: "150px", height: "190px"}}></img>
                 </button>
+                {isMinister && hand.length === 3 &&
                 <Snackbar open={open} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (
@@ -121,7 +166,8 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
                         </button>
                         ))}
                     </div>
-                </Snackbar>
+                </Snackbar>}
+                {isHeadMaster && hand.length === 2 &&
                 <Snackbar open={openSnackDirector} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (
@@ -130,7 +176,7 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
                         </button>
                         ))}
                     </div>
-                </Snackbar>
+                </Snackbar>}
             </div>
         );
     }

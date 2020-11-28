@@ -7,3 +7,5 @@ export const GET_USER_SUCCESS='GET_USER_SUCCESS';
 export const GET_USER_FAIL='GET_USER_FAIL';
 
 export const USER_DATA='USER_DATA';
+
+export const LOGOUT_USER='LOGOUT_USER';

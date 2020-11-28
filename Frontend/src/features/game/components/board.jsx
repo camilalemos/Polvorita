@@ -10,7 +10,7 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
     const [ numPlayers, setNumPlayers ] = useState();
     const [ gameName, setGameName] = useState('');
     const [ hand, setHand] = useState([]);
-    const [ numProclamations, setNumProclamations] = useState(17);
+    const [ numProclamations, setNumProclamations] = useState();
     const [ valueProclamation, setValueProclamation ] = useState('');
     const [ POenactedProclamations, setPOenactedProclamations ] = useState();
     const [ DEenactedProclamations, setDEenactedProclamations ] = useState();
@@ -21,6 +21,7 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
     const [ isHeadMaster, setIsHeadMaster] = useState(false);
     const [ players, setPlayers ] = useState([]);
     const [ currentPlayer, setCurrentPlayer ] = useState(null);
+    const [ isGetProclamation , setIsGetProclamation ] = useState(true);
 
     console.log(gameInfo)
 
@@ -130,12 +131,14 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
             if (hand.length === 3) {
                 setOpen(true)
             }
-        })
+        },)
 
         const handleClick = () => {
             if(currentPlayer && gameInfo.length !==0 ){
-                if (gameInfo.elections.minister === currentPlayer.name && statusGetProclamation !== 'failed') 
+                if (gameInfo.elections.minister === currentPlayer.name && statusGetProclamation !== 'success' && isGetProclamation) {
                     getProclamationsInfo(ministerName,gameName)
+                    setIsGetProclamation(false)
+                }
             }
         };
     

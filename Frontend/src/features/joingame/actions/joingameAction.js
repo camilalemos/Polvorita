@@ -26,7 +26,7 @@ const _joingame = async (gameName, playerName, gamePassword, dispatch, getState)
 
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game?game_name=${gameName}`,
+            url: `${api.url}/game/?game_name=${gameName}`,
             data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
@@ -53,7 +53,7 @@ const _startGame = async (gameName, dispatch, getState) => {
 
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game/start?game_name=${gameName}`,
+            url: `${api.url}/game/start/?game_name=${gameName}`,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`

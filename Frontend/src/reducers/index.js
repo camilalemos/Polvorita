@@ -10,6 +10,10 @@ import createGame from '../features/createGameForm/reducers/createGameReducer';
 import getUserInfo from '../features/changeProfile/reducers/changeProfile';
 import enactProclamation from '../features/game/reducers/enactproclamationReducer'
 import playerActionsReducer from '../features/game/reducers/playerActionsReducer'
+import chat from '../features/chat/reducers/chatReducer'
+import SpellsReducer from '../features/game/reducers/spellsReducer'
+
+
 
 const rootReducer = combineReducers({
 	register,
@@ -19,6 +23,8 @@ const rootReducer = combineReducers({
 	getUserInfo,
 	enactProclamation,
 	playerActionsReducer,
+	chat,
+	SpellsReducer
 });
 
 export default rootReducer;

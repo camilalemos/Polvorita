@@ -78,7 +78,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
 
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
-            {gameInfo && 
+            {gameInfo !== null && 
                 <>
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Minister: {minister ? minister : 'Not selected'}</a>
                     <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Director: {director ? director : 'Not selected'}</a>

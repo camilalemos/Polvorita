@@ -29,7 +29,7 @@ class ConnectionManager:
 
     async def connect_game(self, websocket: WebSocket, game_name: str):
         connections = self.game_connections.get(game_name)
-        if game_name in self.game_connections and websocket not in connections and len(connections) < 5:
+        if game_name in self.game_connections and websocket not in connections:
             await websocket.accept()
             connections.append(websocket)
 
@@ -37,10 +37,6 @@ class ConnectionManager:
         connections = self.game_connections.get(game_name)
         if game_name in self.game_connections and websocket in connections:
             connections.remove(websocket)
-
-    async def broadcast_text(self, message: str, dst: List[WebSocket]):
-        for connection in dst:
-            await connection.send_text(message)
 
     async def broadcast_json(self, message: any, dst: List[WebSocket]):
         for connection in dst:

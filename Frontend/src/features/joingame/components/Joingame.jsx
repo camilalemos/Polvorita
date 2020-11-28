@@ -85,14 +85,14 @@ const Joingame = ({joingame, status, enqueueSnackbar, user }) => {
 			<div key={currentGame.name}>
 				<div style={{display:'flex',alignItems:'center', cursor:'pointer'}} onClick={() => history.push(`/lobby/${currentGame.name}`)}>
 					<a style={{flex: 1, fontSize: 20}}>{currentGame.name}</a>
-					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{Object.keys(currentGame.players)[0]}</a>
+					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{currentGame.owner}</a>
 					<a style={{flex: 1, textAlign: 'center', fontSize: 20}}>{currentGame.num_players}/{currentGame.max_players}</a>
 					<div style={{flex: 1, textAlign: 'right', display:'flex', alignItems:'center', justifyContent:'flex-end'}}>
 					<ListItemIcon >
 						{currentGame.password === null ?
 						<LockOpenIcon/> : <LockIcon/>} 
 					</ListItemIcon>
-					{isJoing(currentGame) && <Button onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
+					{isJoing(currentGame) && currentGame.num_players < currentGame.max_players && <Button onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
 					</div>
 				</div>
 				<div style={{  height:.5 , backgroundColor:'lightgrey', display:'flex', marginBottom:20, marginTop:10}} />

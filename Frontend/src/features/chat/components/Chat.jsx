@@ -95,14 +95,16 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
             </Grid>
         </Grid>
         <Grid container component={Paper} className={classes.chatSection}>
-            <Grid style={{flexgrow: '0'}}>
+            <Grid style={{flex: 1, width:200}}>
                 <List className={classes.messageArea}>
                     <ListItem key="Message">
                         <Grid container>
                             <Grid item xs={12}>
-                                {messages !== undefined && messages.map((message)=> (
-                                     <ListItemText align="left" primary={message}></ListItemText>
-                                ))}
+                                {messages !== undefined && messages.map((message)=> {
+                                    if (message.split(':')[0] === 'system') return <ListItemText align="left" primary={message} style={{color: 'blue'}}></ListItemText>
+                                    return <ListItemText align="left" primary={message} ></ListItemText>
+                                    
+                                })}
                             </Grid>
                         </Grid>
                     </ListItem>

@@ -84,11 +84,6 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
         }
     },[gameInfo.elections, currentPlayer, setIsMinister, setIsHeadMaster])
 
-    useEffect(() => {
-        if ( hand.length === 2 ) {
-            setOpenSnackDirector(true)
-        }
-    }, )
     function ShowSquare(enactedproclamations, loyalty){
 
         const poArrayAux = new Array(5)
@@ -124,13 +119,23 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
     }
 
     const Deck = (proclamations, numProclamationsInDeck,) => {
+        
+        useEffect(() => {
+            if ( hand.length === 2 ) {
+                setOpenSnackDirector(true)
+            }
+        }, )
+
+        useEffect(() => {
+            if (hand.length === 3) {
+                setOpen(true)
+            }
+        })
 
         const handleClick = () => {
-            if(currentPlayer && gameInfo.length !==0 && hand.length !== 2){
-                if (gameInfo.elections.minister ===  currentPlayer.name ) {
+            if(currentPlayer && gameInfo.length !==0 ){
+                if (gameInfo.elections.minister === currentPlayer.name && statusGetProclamation !== 'failed') 
                     getProclamationsInfo(ministerName,gameName)
-                    setOpen(true);
-                }
             }
         };
     
@@ -150,7 +155,7 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
                     Proclamations: {numProclamationsInDeck}
                 <img src= {require('../../../constants/images/Proclamation.png')} alt= "Proclamation" style={{width: "150px", height: "190px"}}></img>
                 </button>
-                {isMinister &&
+                {isMinister && hand.length === 3 &&
                 <Snackbar open={open} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (
@@ -160,7 +165,7 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
                         ))}
                     </div>
                 </Snackbar>}
-                {isHeadMaster &&
+                {isHeadMaster && hand.length === 2 &&
                 <Snackbar open={openSnackDirector} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (

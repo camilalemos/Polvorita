@@ -121,10 +121,6 @@ class Proclamations(BaseModel):
         if (not self.expelliarmus and len(self.hand) == 1):
             self.enact()
 
-    def expelliarmus(self,card1: Loyalty, card2: Loyalty):
-        self.discard(card1)
-        self.discard(card2)
-
 class Game(BaseModel):
     name: str
     password: Optional[str] = None

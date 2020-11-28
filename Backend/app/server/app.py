@@ -209,7 +209,6 @@ def vote(vote:Vote, params = Depends(check_game)):
     if game.elections.check_for_chaos():
             game.proclamations.get_proclamations(1)
             game.proclamations.enact()
-            
     game.check_win()
     return game
 

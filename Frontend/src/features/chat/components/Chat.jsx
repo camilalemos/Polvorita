@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -28,7 +28,8 @@ const useStyles = makeStyles({
   messageArea: {
     width: '100%',
     height: '70vh',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    overflowX:'hidden'
   }
 });
 
@@ -40,6 +41,11 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
     const [newMessage, setNewMessage] = useState('')
     const [currentPlayer, setCurrentPlayer] = useState(null)
 
+    const messagesEndRef = useRef(null);
+    const scrollToBottom = () => {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    };
+    useEffect(scrollToBottom, [messages]);
 
     const handleSend = () => {
         console.log("SENDING " + newMessage)
@@ -95,7 +101,7 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
             </Grid>
         </Grid>
         <Grid container component={Paper} className={classes.chatSection}>
-            <Grid style={{flex: 1, width:200}}>
+            <Grid style={{flex:1, width:350}}>
                 <List className={classes.messageArea}>
                     <ListItem key="Message">
                         <Grid container>
@@ -105,6 +111,7 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
                                     return <ListItemText align="left" primary={message} ></ListItemText>
                                     
                                 })}
+                                <Grid ref={messagesEndRef} />
                             </Grid>
                         </Grid>
                     </ListItem>

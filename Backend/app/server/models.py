@@ -88,6 +88,7 @@ class Proclamations(BaseModel):
     discarded: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
+    headmaster_exp: bool = False
 
     def init(self):
         for i in range(6):
@@ -119,6 +120,13 @@ class Proclamations(BaseModel):
         self.discarded.append(loyalty)
         if len(self.hand) == 1:
             self.enact()
+
+    def expelliarmus(self, minister_exp: bool):
+        if minister_exp and self.headmaster_exp:
+            for i in range(2):
+                loyalty = self.hand.pop()
+                self.discarded.append(loyalty)
+            self.headmaster_exp = False
 
 class Game(BaseModel):
     name: str

@@ -25,9 +25,9 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
     console.log(gameInfo)
 
     useEffect(() => {
-        if (gameInfo){
-            setMinisterName(gameInfo.elections?.minister);
-            setHeadmasterName(gameInfo.elections?.headmaster)
+        if (gameInfo.length !== 0){
+            setMinisterName(gameInfo.elections.minister);
+            setHeadmasterName(gameInfo.elections.headmaster)
             setGameName(gameInfo.name);
             setNumPlayers(gameInfo.num_players);
         }
@@ -41,7 +41,7 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
 
     useEffect(() => {
         if(gameInfo.length !== 0 ){
-            setHand(gameInfo.proclamations?.hand);
+            setHand(gameInfo.proclamations.hand);
         }
     }, [gameInfo.proclamations?.hand])
 
@@ -54,8 +54,8 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
 
      useEffect(() => {
         if (gameInfo.length !== 0 ){
-            setPOenactedProclamations(gameInfo.proclamations?.PO_enacted_proclamations);
-            setDEenactedProclamations(gameInfo.proclamations?.DE_enacted_proclamations);
+            setPOenactedProclamations(gameInfo.proclamations.PO_enacted_proclamations);
+            setDEenactedProclamations(gameInfo.proclamations.DE_enacted_proclamations);
         }
     }, [gameInfo])
 
@@ -73,18 +73,23 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
         }
     }, [user, players])
 
-
     useEffect(() => {
         if(currentPlayer && gameInfo.length !==0){
-            if( ministerName === currentPlayer.name ){
+            if( gameInfo.elections.minister === currentPlayer.name ){
                 setIsMinister(true);
             }
-            if( headmasterName === currentPlayer.name) {
+            if( gameInfo.elections.headmaster === currentPlayer.name) {
                 setIsHeadMaster(true);
             }
         }
     },[gameInfo.elections, currentPlayer, setIsMinister, setIsHeadMaster])
 
+    useEffect(() => {
+        if ( hand.length === 2 ) {
+            setOpenSnackDirector(true)
+        }
+        console.log(openSnackDirector, 'que wea pasa aca')
+    }, )
     function ShowSquare(enactedproclamations, loyalty){
 
         const poArrayAux = new Array(5)
@@ -122,9 +127,9 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
     const Deck = (proclamations, numProclamationsInDeck,) => {
 
         const handleClick = () => {
-            if(currentPlayer && gameInfo.length !==0){
-                if (ministerName ===  currentPlayer.name) {
-                    getProclamationsInfo(ministerName,gameName) 
+            if(currentPlayer && gameInfo.length !==0 && hand.length !== 2){
+                if (gameInfo.elections.minister ===  currentPlayer.name ) {
+                    getProclamationsInfo(ministerName,gameName)
                     setOpen(true);
                 }
             }
@@ -132,10 +137,7 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
     
         const handleClose = (value) => {
             setOpen(false)
-            setValueProclamation(value)
             discardproclamation(value,ministerName,gameName)
-            if (isHeadMaster)
-                setOpenSnackDirector(true)
         };
 
         const handleCloseHeadMaster = (value) => {
@@ -149,7 +151,8 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
                     Proclamations: {numProclamationsInDeck}
                 <img src= {require('../../../constants/images/Proclamation.png')} alt= "Proclamation" style={{width: "150px", height: "190px"}}></img>
                 </button>
-                {<Snackbar open={open} display= 'flex'>
+                {isMinister &&
+                <Snackbar open={open} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (
                         <button onClick={ () => handleClose(threeproclamations)}>
@@ -158,7 +161,8 @@ export default function Board( {user, gameInfo, statusGetProclamation, getProcla
                         ))}
                     </div>
                 </Snackbar>}
-                {<Snackbar open={openSnackDirector} display= 'flex'>
+                {isHeadMaster &&
+                <Snackbar open={openSnackDirector} display= 'flex'>
                     <div>
                         {proclamations.map((threeproclamations) => (
                         <button onClick={ () => handleCloseHeadMaster(threeproclamations)}>

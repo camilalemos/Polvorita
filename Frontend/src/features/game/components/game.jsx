@@ -68,7 +68,7 @@ export default function Game () {
                 <Board gameInfo={ gameInfo }/>
                 <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo= { gameInfo}/>
             </div>
-            <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
+            <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1, padding: 20}}>
                 <Chat gameInfo={ gameInfo }/>
             </div>
         </div>

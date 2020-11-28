@@ -4,7 +4,6 @@ import HandSnackbar from './HandSnackbar.jsx'
 import TargetsPopUp from './TargetsPopUp.jsx'
 
 const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
-
     
     const [players, setPlayers] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -68,7 +67,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
                 }
                 break;
             default:
-                console.log("nothing to do")
+                //console.log("nothing to do")
                 break;
         }
     }
@@ -137,7 +136,6 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards}) => {
             </div>
             <TargetsPopUp open={openModal} onClose={() => setOpenModal(false)} players={players} currentPlayer={currentPlayer}
             castSpell={(targetName) => castSpell(spell, targetName, gameInfo.name, currentPlayer.name)} />      
-
         </div>    
     )
 

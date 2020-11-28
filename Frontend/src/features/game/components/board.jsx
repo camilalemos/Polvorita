@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 
-export default function Board( {gameInfo, statusGetProclamation, getProclamationsInfo, proclamationsInfo, discardproclamation}) {
+export default function Board( {gameInfo, statusGetProclamation, getProclamationsInfo, discardproclamation}) {
     
     const classes = useStyles();
     const [ ministerName, setMinisterName ] = useState('');
@@ -10,7 +10,7 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
     const [ numPlayers, setNumPlayers ] = useState();
     const [ gameName, setGameName] = useState('');
     const [ hand, setHand] = useState([]);
-    const [ numProclamations, setNumProclamations] = useState();
+    const [ numProclamations, setNumProclamations] = useState(17);
     const [ valueProclamation, setValueProclamation ] = useState('');
     const [ POenactedProclamations, setPOenactedProclamations ] = useState();
     const [ DEenactedProclamations, setDEenactedProclamations ] = useState();
@@ -18,7 +18,7 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
     const [open, setOpen] = useState(false);
     const [openSnackDirector, setOpenSnackDirector] =useState(false);
 
-    //console.log(gameInfo)
+    console.log(gameInfo)
 
     useEffect(() => {
         if (gameInfo){
@@ -42,7 +42,9 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
     }, [gameInfo.proclamations?.hand])
 
     useEffect(() => {
-        setNumProclamations(Object((gameInfo.proclamations)?.deck).length);
+        if( statusGetProclamation && open === true) {
+            setNumProclamations(Object((gameInfo.proclamations)?.deck).length);
+        }
         setDiscardedProclamations(Object((gameInfo.proclamations)?.discarded).length)
     }, )
 
@@ -53,27 +55,23 @@ export default function Board( {gameInfo, statusGetProclamation, getProclamation
         }
     }, [gameInfo])
 
-
     function ShowSquare(enactedproclamations, loyalty){
 
-        const poArrayAux  = new Array(5).fill(null);
-        const deArrayAux  = new Array(6).fill(null);
+        const poArrayAux  = new Array(5)
+        const deArrayAux  = new Array(6)
         let result;
 
         if ( loyalty === "PHOENIX_ORDER") {
             poArrayAux.fill("PHOENIX_ORDER", 0,enactedproclamations);
             result = poArrayAux.map((proclamation) => (
                 assignImgProclamation(proclamation)
-                //console.log(proclamation)
             ))
-            //console.log(poArrayAux)
         } 
         else if ( loyalty === "DEATH_EATERS") {
             deArrayAux.fill("DEATH_EATERS", 0,enactedproclamations);
             result = deArrayAux.map((proclamation) => (
-            assignImgProclamation(proclamation)
+                assignImgProclamation(proclamation)
             ))
-            //console.log(deArrayAux)
         }
         return result;
     }

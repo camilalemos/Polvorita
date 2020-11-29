@@ -6,7 +6,7 @@ import {
 
 const initialState= {
 	status: 'unknow',
-	statusCode: ''
+	errorMsg: '' 
 }
 
 export default (state = initialState, action) => {
@@ -20,7 +20,7 @@ export default (state = initialState, action) => {
 			return {
 				...state,
 				status: 'failed',
-				statusCode: action.payload.statusCode
+				errorMsg: action.payload.errorMsg
 			}
 		case CREATE_GAME_SUCCESS:
 			return {

@@ -1,4 +1,4 @@
-import React,  {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useHistory, withRouter, useParams } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Chat from '../../chat/containers/ChatContainer';
@@ -6,41 +6,41 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-const Lobby = function ({ user, startGame, statusStart }) { 
+const Lobby = function ({ user, startGame }) {
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playersName, setPlayersName] = useState([]);
-    const history = useHistory(); 
-    const { game } = useParams();
+	const history = useHistory();
+	const { game } = useParams();
 
-    const ws = useRef(null);
+	const ws = useRef(null);
 
-    useEffect(() => {
+	useEffect(() => {
 
-	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
+		ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
 
 		ws.current.onmessage = (event) => {
-        	setGameInfo(JSON.parse(event.data));
-        };
-        
-        ws.current.onerror = function(err) {
+			setGameInfo(JSON.parse(event.data));
+		};
+
+		ws.current.onerror = function (err) {
 			console.log(err, "ERROR")
 		}
 
 		return () => {
-            ws.current.close();
-        };
+			ws.current.close();
+		};
 
-    });
+	});
 
 	useEffect(() => {
 		if (gameInfo.status === 'STARTED') history.push(`/game/${game}`)
 	}, [gameInfo.status])
-	
+
 	useEffect(() => {
-		if(gameInfo.players){
+		if (gameInfo.players) {
 			setPlayersName(Object.keys(gameInfo.players));
 		}
-	},[gameInfo])
+	}, [gameInfo])
 
     return (
         <div style={{ display:'flex', flexDirection:'row' ,height:'100%', alignItems:'center',  width:'100%', justifyContent:'space-evenly',backgroundImage: `url(${require('../../../constants/images/fondo3.jpeg')})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover" }}>
@@ -90,9 +90,8 @@ const Lobby = function ({ user, startGame, statusStart }) {
 			<div className="lobby" style={{display:'flex', flexDirection:'column', alignItems: 'center', width: '20%'}}>
                 <Chat gameInfo={ gameInfo }/>
 			</div>
-        </div>
-    )
-
+		</div>
+	)
 }
 
 export default withRouter(Lobby);

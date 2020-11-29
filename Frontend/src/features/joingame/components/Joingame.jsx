@@ -118,6 +118,8 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 				</div>	
 			</div>
 		</div>
+		<ChangeProfileContainer open={openModalChangeProfile} onClose={() => setOpenModalChangeProfile(false)} />
+		<CreateGameContainer open={openModalCreateGame} onClose={() => setOpenModalCreateGame(false)} />
 	</div>
 	);
 };

@@ -77,9 +77,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     useEffect(() => {
         setProclamationsDECount(gameInfo.proclamations?.DE_enacted_proclamations)
     }, [gameInfo, setProclamationsDECount])
-    //console.log("CURRENT PLAYER " + JSON.stringify(currentPlayer))
-    //console.log("MINISTER " + JSON.stringify(minister))
-    //console.log("DE PROC " + proclamationsDEcount)
+   
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)

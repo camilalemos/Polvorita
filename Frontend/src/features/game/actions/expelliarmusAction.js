@@ -17,10 +17,7 @@ const _expelliarmus = async (ministerResponse, playerName, gameName, dispatch, g
 		let uri
 		if (ministerResponse === '') {
 			uri = `${api.url}/game/proclamations/expelliarmus/?&player_name=${playerName}&game_name=${gameName}`
-			console.log(ministerResponse, "MALIO SAL")
-
 		} else {
-			console.log(ministerResponse, "MINISTER RESPONSE ACTIONS")
 			uri = `${api.url}/game/proclamations/expelliarmus/?minister_exp=${ministerResponse}&player_name=${playerName}&game_name=${gameName}`
 		}
 		const response = await axios({

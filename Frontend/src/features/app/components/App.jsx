@@ -58,7 +58,7 @@ const App = function ({ getUserData, statusLogin, is_logged, getLoginData}) {
                     <Router>
                     <Switch>
                         <Route exact path="/">
-                            <Redirect to="/login" />
+                            <Redirect to="/lobby" />
                         </Route>
                         <PrivateRoute exact path='/lobby' restricted={is_logged} component={<JoinGameContainer/>} />
                         <PrivateRoute exact path='/lobby/:game' restricted={is_logged} component={<LobbyContainer/>} />

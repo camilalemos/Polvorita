@@ -42,7 +42,8 @@ class Elections(BaseModel):
     rejected: int = 0
 
     def init(self, players: List[str]):
-        self.players = random.sample(players, len(players))
+        rot = random.choice(range(len(players)))
+        self.players = players[rot:] + players[:rot]
         self.minister_candidate = self.players[0]
 
     def nominate(self, nomination: Nomination, candidate: str):
@@ -77,7 +78,7 @@ class Elections(BaseModel):
             self.minister = self.minister_candidate
             self.headmaster = self.headmaster_candidate
 
-        self.players.insert(len(self.players), self.players.pop(0))
+        self.players = self.players[1:] + self.players[:1]
         self.minister_candidate = self.players[0]
         self.headmaster_candidate = None
         self.votes.clear()
@@ -88,6 +89,7 @@ class Proclamations(BaseModel):
     discarded: List[Loyalty] = []
     PO_enacted_proclamations: int = 0
     DE_enacted_proclamations: int = 0
+    headmaster_exp: bool = False
 
     def init(self):
         for i in range(6):
@@ -119,6 +121,13 @@ class Proclamations(BaseModel):
         self.discarded.append(loyalty)
         if len(self.hand) == 1:
             self.enact()
+
+    def expelliarmus(self, minister_exp: bool):
+        if minister_exp and self.headmaster_exp:
+            for i in range(2):
+                loyalty = self.hand.pop()
+                self.discarded.append(loyalty)
+            self.headmaster_exp = False
 
 class Game(BaseModel):
     name: str

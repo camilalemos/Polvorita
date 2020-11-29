@@ -7,6 +7,8 @@ import Chat from '../../chat/containers/ChatContainer'
 import Spells from '../containers/SpellsContainers'
 import PlayerList from '../containers/ListPlayersContainers'
 import WinPopUp from './winPopUp.jsx'
+import Expelliarmus from '../containers/ExpelliarmusContainer'
+
 
 
 export default function Game () {
@@ -23,16 +25,13 @@ export default function Game () {
 
 		ws.current.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
-
+        ws.current.close();
         };
         
         ws.current.onerror = function(err) {
 			console.log(err, "ERROR")
 		}
 
-		return () => {
-		ws.current.close();
-		};
     });
     useEffect(() => {
         if ( gameInfo.length !== 0 && gameInfo.status === 'FINISHED')
@@ -50,6 +49,7 @@ export default function Game () {
                 </div>
                 <div style={{ flex:1, borderTop:'solid', borderTopWidth:1, borderTopColor:'lightgrey' }}>
                     <Spells gameInfo={gameInfo} />
+                    <Expelliarmus gameInfo={gameInfo} />
                 </div>
                 <div style={{ flex:1, borderTop:'solid', borderTopWidth:1, borderTopColor:'lightgrey' }}>
                     <PlayerList gameInfo={gameInfo} />

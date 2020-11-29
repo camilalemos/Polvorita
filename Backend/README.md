@@ -1,2 +1,2 @@
-#run with: python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python3 app/main.py
+#run with: python3 -m venv venv && source venv/bin/activate && pip install wheel && pip install -r requirements.txt && python3 app/main.py
 #test with: source venv/bin/activate && pytest -v app/server/test.py ; rm app/server/database.sqlite

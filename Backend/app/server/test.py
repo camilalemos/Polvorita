@@ -72,7 +72,7 @@ def test_post_register():
 
 def test_post_register_with_existing_username():
     data = {
-        "username": "Admin_0", 
+        "username": "Admin_0",
         "email":"Admin_0@admin.com",
         "password": "Admin123",
     }
@@ -84,7 +84,7 @@ def test_post_register_with_existing_username():
 
 def test_post_register_with_existing_email():
     data = {
-        "username": "Admin_0",  
+        "username": "Admin_0",
         "email": "Admin_0@admin.com",
         "password": "Admin123",
         }
@@ -130,7 +130,7 @@ def test_post_login_wrong_email():
 
 def test_post_login_with_username():
     data = {
-        "username": "Admin_0", 
+        "username": "Admin_0",
         "password": "Admin123",
     }
     response = client.post("/login/", data=data)

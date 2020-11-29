@@ -1,4 +1,4 @@
-import React,{useEffect,useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
@@ -25,29 +25,27 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 	const [openModalChangeProfile, setOpenModalChangeProfile] = useState(false);
 	const [routeGame, setRouteGame] = useState('')
 
-    const ws = useRef(null);
-    console.log(ws, "WS");
-    useEffect(() => {
+	const ws = useRef(null);
+	console.log(ws, "WS");
+	useEffect(() => {
 
 		ws.current = new WebSocket('ws://localhost:8000/lobby/');
-		
+
 		ws.current.onmessage = (event) => {
-		setGameInfo(JSON.parse(event.data));
-	    console.log(gameInfo);
+			setGameInfo(JSON.parse(event.data));
+			console.log(gameInfo);
+			ws.current.close();
 		};
-		
-		return () => {
-		ws.current.close();
-		};
+
 	});
 
 	useEffect(() => {
-		if (status === 'failed') if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error'});
+		if (status === 'failed') if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error' });
 		if (status === 'success') history.push(`/lobby/${routeGame}`);
-	},[status]);
+	}, [status]);
 
 	const handleJoin = (id) => {
-		joingame(id ,playerName, gamePassword);
+		joingame(id, playerName, gamePassword);
 		setRouteGame(id);
 	}
 
@@ -120,10 +118,7 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 				</div>	
 			</div>
 		</div>
-		<ChangeProfileContainer open={openModalChangeProfile} onClose={() => setOpenModalChangeProfile(false)}/>
-		<CreateGameContainer open={openModalCreateGame} onClose={() => setOpenModalCreateGame(false)}/>
-    </div>
-  );
+	);
 };
 
 export default withRouter(withSnackbar(Joingame));

@@ -127,7 +127,8 @@ class Proclamations(BaseModel):
             for i in range(2):
                 loyalty = self.hand.pop()
                 self.discarded.append(loyalty)
-            self.headmaster_exp = False
+
+        self.headmaster_exp = False
 
 class Game(BaseModel):
     name: str

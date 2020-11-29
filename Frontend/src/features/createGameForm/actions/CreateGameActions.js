@@ -6,8 +6,8 @@ import {
 import axios from 'axios'
 import api from '../../../configs/api'
 
-export const createGame = (data) => (dispatch, getState) => _createGame(dispatch, getState, data);
-const _createGame = async (dispatch, getState, data) => {
+export const createGame = (data) => (dispatch, getState) => _createGame(data, dispatch, getState);
+const _createGame = async (data, dispatch, getState) => {
 
 	try {
         dispatch({type: CREATE_GAME});
@@ -18,9 +18,10 @@ const _createGame = async (dispatch, getState, data) => {
 
         bodyFormData.append('game_name', data.gameName);
         bodyFormData.append('player_name', data.playerName);
+        bodyFormData.append('max_players', data.maxPlayers);
         bodyFormData.append('password', data.gamePassword);
-
-        const response = await axios({
+       
+        await axios({
             method: 'post',
             url: `${api.url}/game/`,
             data: bodyFormData,

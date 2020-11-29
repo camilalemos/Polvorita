@@ -3,21 +3,21 @@ import { bindActionCreators } from 'redux';
 
 import Board from '../components/board';
 
-import { enactproclamation, getProclamationsInfo } from '../actions/enactproclamationAction'
+import {  getProclamationsInfo, discardproclamation } from '../actions/enactproclamationAction'
 
 function mapStateToProps(state) {
     return {
         user: state.login.user,
-        status: state.enactProclamation.status,
         statusGetProclamation: state.enactProclamation.statusGetProclamation,
-        proclamationsInfo: state.enactProclamation.proclamationsInfo
+        proclamationsInfo: state.enactProclamation.proclamationsInfo,
+        statusDiscardProclamation: state.enactProclamation.statusDiscardProclamation,
     };
 }
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        enactproclamation,
         getProclamationsInfo,
+        discardproclamation,
     }, dispatch);
 };
 

@@ -26,7 +26,7 @@ const _joingame = async (gameName, playerName, gamePassword, dispatch, getState)
 
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game?game_name=${gameName}`,
+            url: `${api.url}/game/?game_name=${gameName}`,
             data: bodyFormData,
             headers: { 
             'Content-Type':'multipart/form-data',
@@ -38,7 +38,8 @@ const _joingame = async (gameName, playerName, gamePassword, dispatch, getState)
         
     } catch (error){
         console.log(error, "ERROR")
-        dispatch({type: JOIN_GAME_FAIL});
+        if (error.response.status === 401) dispatch({type: JOIN_GAME_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 403) dispatch({type: JOIN_GAME_FAIL, payload: {errorMsg: error.response.data.detail }});
     }
 };
 
@@ -53,7 +54,7 @@ const _startGame = async (gameName, dispatch, getState) => {
 
         const response = await axios({
             method: 'put',
-            url: `${api.url}/game/start?game_name=${gameName}`,
+            url: `${api.url}/game/start/?game_name=${gameName}`,
             headers: { 
             'Content-Type':'multipart/form-data',
             "Authorization" : `Bearer ${access_token}`

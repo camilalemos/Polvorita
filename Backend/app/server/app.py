@@ -12,7 +12,7 @@ app = FastAPI()
 manager = ConnectionManager()
 
 origins = [
-    "http://localhost",
+    "http://127.0.0.1:3000",
     "http://localhost:3000"
 ]
 
@@ -236,7 +236,7 @@ def get_proclamations(params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Still have proclamations in hand")
     elif game.elections.headmaster_candidate:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot get proclamations at this moment")
-    
+
     game.proclamations.get_proclamations(3)
     return game.proclamations.hand
 
@@ -249,7 +249,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
     elif loyalty not in game.proclamations.hand:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Proclamation not in hand")
-    elif game.elections.headmaster_candidate:
+    elif game.elections.headmaster_candidate or game.proclamations.headmaster_exp:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot discard proclamations at this moment")
 
     if player_name == game.elections.minister and len(game.proclamations.hand) == 3:

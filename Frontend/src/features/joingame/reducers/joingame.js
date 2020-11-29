@@ -9,7 +9,8 @@ import {
 
 const initialState= {
 	status: 'undefined',
-	statusStart: 'undefined'
+	statusStart: 'undefined',
+	errorMsg: ''
 }
 
 export default (state = initialState, action) => {
@@ -22,7 +23,8 @@ export default (state = initialState, action) => {
 		case JOIN_GAME_FAIL:
 			return {
 				...state,
-				status: 'failed'
+				status: 'failed',
+				errorMsg: action.payload.errorMsg
 			}
 		case JOIN_GAME_SUCCESS:
 			return {

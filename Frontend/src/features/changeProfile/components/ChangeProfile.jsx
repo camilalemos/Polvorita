@@ -119,9 +119,10 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                             value={userName}   
                             error={errorUserName}
                             id="Username" 
+                            size='small'
                             label={userNameLabel} 
-                            variant="filled" 
-                            //style={{ marginBottom: 40, minWidth:300 }}
+                            className={classes.inputRoot}
+                            variant="outlined"
                             onChange={(value) => (setUserName(value.target.value), setErrorUserName(false))}
                             onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                         />
@@ -132,8 +133,10 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                             value={email}  
                             error={errorEmail} 
                             id="E-mail" 
+                            size='small'
                             label={emailLabel} 
-                            variant="filled" 
+                            className={classes.inputRoot}
+                            variant="outlined"
                             onChange={(value) => (setEmail(value.target.value), setErrorEmail(false))}
                             onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                         />
@@ -144,23 +147,26 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                             value={fullName} 
                             error={errorFullName}
                             id="Full Name" 
-                            label={fullNameLabel} 
-                            variant="filled"
-                        // style={{ marginBottom: 40, minWidth:300 }}
+                            size='small'
+                            label={fullNameLabel}
+                            className={classes.inputRoot} 
+                            variant="outlined"
                             onChange={(value) => (setFullName(value.target.value), setErrorFullName(false))}
                             onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                         
                         />
                     </ListItem>
                     <ListItem>
-                        <ListItemText style={{color:'white'}}  primary="Change Password" />
+                        <ListItemText style={{color:'white', marginRight:20}}  primary="Change Password" />
                         <TextField 
                             value={newPassword} 
                             error={errorNewPassword}
                             id="Change Password" 
                             label="New password" 
                             type='password'
-                            variant="filled" 
+                            size='small'
+                            className={classes.inputRoot}
+                            variant="outlined"
                             onChange={(value) => (handleChangePassword(value))}
                             onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                         />
@@ -169,15 +175,17 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                         {renderConfirmPassword 
                         ?
                         <ListItem>
-                            <ListItemText style={{color:'white'}}  primary="Confirm New Password" />
+                            <ListItemText style={{color:'white', marginRight:20}}  primary="Confirm New Password" />
                             <TextField 
                                 value={confirmPassword}
                                 error={errorConfirmPassword}
                                 id="Confirm New Password" 
                                 required
+                                size='small'
+                                className={classes.inputRoot}
                                 label="New Password" 
                                 type='password'
-                                variant="filled" 
+                                variant="outlined" 
                                 onChange={(value) => (setConfirmPassword(value.target.value), setErrorConfirmPassword(false))}
                                 onKeyPress={(e) => {if (e.key === 'Enter') handleSave()}}
                             /> 
@@ -190,13 +198,13 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                 <PopUp sendNewInfo={handleUpdateInfo} open={openModal} 
                 password={password} errorPassword={errorPassword} setPassword={(value) => setPassword(value)} 
                 setErrorPassword={(value) => setErrorPassword(value)} onClose={() => setOpenModal(false)}/>
-                <div style={{ flexDirection:'row'}}>
-                            <Button size='small' onClick={onClose} variant="outlined" color="secondary" style={{ borderRadius:4, width:120 }}>
-                                Cancel
-                            </Button>
-                            <Button  color="secondary" variant="outlined" size='small' onClick={handleSave} style={{ borderRadius:4, width:120 }}>
-                                Save
-                            </Button>
+                <div style={{ flexDirection:'row', paddingTop:30}}>
+                    <Button size='small' onClick={onClose} variant="outlined" color="secondary" style={{ borderRadius:4, width:120 }}>
+                        Cancel
+                    </Button>
+                    <Button  color="secondary" variant="outlined" size='small' onClick={handleSave} style={{ borderRadius:4, width:120, marginLeft:20 }}>
+                        Save
+                    </Button>
                 </div>
             </div>
         </Dialog>

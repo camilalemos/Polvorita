@@ -42,7 +42,8 @@ class Elections(BaseModel):
     rejected: int = 0
 
     def init(self, players: List[str]):
-        self.players = random.sample(players, len(players))
+        rot = random.choice(range(len(players)))
+        self.players = players[rot:] + players[:rot]
         self.minister_candidate = self.players[0]
 
     def nominate(self, nomination: Nomination, candidate: str):
@@ -77,7 +78,7 @@ class Elections(BaseModel):
             self.minister = self.minister_candidate
             self.headmaster = self.headmaster_candidate
 
-        self.players.insert(len(self.players), self.players.pop(0))
+        self.players = self.players[1:] + self.players[:1]
         self.minister_candidate = self.players[0]
         self.headmaster_candidate = None
         self.votes.clear()

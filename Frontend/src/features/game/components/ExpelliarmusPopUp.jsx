@@ -1,4 +1,4 @@
-import React, {Component, useState, useEffect} from "react";
+import React, {useState} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -11,12 +11,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   
-    const ExpelliarmusPopUp = function ({ open, onClose, minister }) {
+const ExpelliarmusPopUp = function ({ open, onClose, headMaster, expelliarmus}) {
   
-    const handleClick = () => {
-        console.log("click")
-    }
     
+    const handleClick = (type) => {
+        if (type === 'yes') expelliarmus(true)
+        else expelliarmus(false)
+        onClose()
+    }
+
     return (
         
       <div>
@@ -28,12 +31,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
               aria-describedby="alert-dialog-slide-description"
           >
               <DialogTitle style={{ textAlign: 'center'}} id="alert-dialog-slide-title">{"EXPELLIARMUS ACTIVATED!"}</DialogTitle>
-              <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Expelliarmus has beeen activated by {minister}!</a>
+              <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Expelliarmus has beeen activated by {headMaster}!</a>
               <DialogActions>
-                  <Button onClick={handleClick} color="primary">
+                  <Button onClick={()=>(handleClick('yes'))} color="primary">
                       Acept
                   </Button>
-                  <Button onClick={onClose} color="primary">
+                  <Button onClick={()=>(handleClick('no'))} color="primary">
                       Cancel
                   </Button>
               </DialogActions>

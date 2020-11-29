@@ -14,30 +14,15 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     const [isHeadMaster, setIsHeadMaster] = useState(false);
     const [headMaster, setHeadMaster] = useState('');
     const [proclamationsDEcount, setProclamationsDECount] = useState('');
-    const [currentPLayerName, setCurrentPlayerName] = useState('')
-    const [ministerDecision, setMinisterDecision] = useState(false)
     const [hand, setHand] = useState(0)
     const[isActivated, setIsActivated] = useState(false)
    
 
-   // console.log(gameInfo, "GAME INFO")
-    const handlePopUp = () => {
-        if (isActivated && isMinister) {
-            setOpenModal(true)
-        }
-    }
-    const handleMinisterClick = () => {
-        console.log("HOLI")
-       
-    }
 
     const handleHeadMasterClick = () => {
-        console.log("Head Master Click")
-        console.log("Minister Click")
-        expelliarmus(ministerDecision, currentPlayer.name, gameInfo.name)
+        expelliarmus('', currentPlayer.name, gameInfo.name)
 
     }
-
 
     const expelliarmusActivated = () => {
         let isExpelliarmus = false;
@@ -62,7 +47,6 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     useEffect(() => {
         if (gameInfo && gameInfo.length !== 0) {
             setIsActivated(gameInfo.proclamations?.headmaster_exp)
-            console.log(isActivated, "ACTIVATED")
         }
     }, [gameInfo.proclamations?.headmaster_exp])
     
@@ -105,17 +89,17 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     return (
         <div>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
-                {proclamationsDEcount === 5 && hand.length === 2 && currentPlayer !== null && currentPlayer.is_alive && isHeadMaster &&
+                {status !== 'success' && proclamationsDEcount === 5 && hand.length === 2 && currentPlayer !== null && currentPlayer.is_alive && isHeadMaster &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width: 200 }} onClick={handleHeadMasterClick}>
                         Expelliarmus!
                     </Button>
                 }
                 {expelliarmusActivated() && !isMinister && !isHeadMaster &&
-                    <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> Expelliarmus aviable</a>
+                    <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> Expelliarmus Aviable</a>
                 }
             </div>
             <div display='flex' style={{ width: 'min-content' }}>
-                <MinisterPopUp open={openModal} onClose={() => setOpenModal(false)} minister={minister} />
+                <MinisterPopUp open={openModal} onClose={() => setOpenModal(false)} headMaster={headMaster}  expelliarmus={(ministerResponse) => expelliarmus(ministerResponse, currentPlayer.name, gameInfo.name)}/>
             </div>
 
         </div>

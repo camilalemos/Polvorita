@@ -8,13 +8,14 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import PopUp from './PopUp.jsx';
 import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/core/styles';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
 const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open, onClose, enqueueSnackbar }) {
-
+    const classes = useStyles();
     const [openModal, setOpenModal] = useState(false);
     const [userName, setUserName] = useState('');
     const [fullName, setFullName] = useState('');
@@ -28,11 +29,9 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
     const [errorFullName, setErrorFullName] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
 
-
     const [errorNewPassword, setErrorNewPassword] = useState(false);
     const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
 
-    
     const [fullNameLabel, setFullNameLabel] = useState('')
     const [userNameLabel, setUserNameLabel] = useState('')
     const [emailLabel, setEmailLabel] = useState('')
@@ -107,14 +106,15 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
             open={open} 
             TransitionComponent={Transition}
             keepMounted
+            className={classes.backgroundRoot}
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
         >
             <div style={{ display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding: 40}} id='fondo'>
-                <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60}} id="alert-dialog-slide-title">{"MY PROFILE"}</a>
+                <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60, color:'white'}} id="alert-dialog-slide-title">{"MY PROFILE"}</a>
                 <List component="nav"  aria-label="contacts">
                     <ListItem >
-                        <ListItemText primary="Username" />
+                        <ListItemText style={{color:'white'}}  primary="Username" />
                         <TextField
                             value={userName}   
                             error={errorUserName}
@@ -127,7 +127,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                         />
                     </ListItem>
                     <ListItem>
-                        <ListItemText primary="E-mail" />
+                        <ListItemText style={{color:'white'}} primary="E-mail" />
                         <TextField 
                             value={email}  
                             error={errorEmail} 
@@ -139,7 +139,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                         />
                     </ListItem>
                     <ListItem>
-                        <ListItemText primary="Fullname" />
+                        <ListItemText style={{color:'white'}} primary="Fullname" />
                         <TextField 
                             value={fullName} 
                             error={errorFullName}
@@ -153,7 +153,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                         />
                     </ListItem>
                     <ListItem>
-                        <ListItemText primary="Change Password" />
+                        <ListItemText style={{color:'white'}}  primary="Change Password" />
                         <TextField 
                             value={newPassword} 
                             error={errorNewPassword}
@@ -169,7 +169,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                         {renderConfirmPassword 
                         ?
                         <ListItem>
-                            <ListItemText primary="Confirm New Password" />
+                            <ListItemText style={{color:'white'}}  primary="Confirm New Password" />
                             <TextField 
                                 value={confirmPassword}
                                 error={errorConfirmPassword}
@@ -191,10 +191,10 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
                 password={password} errorPassword={errorPassword} setPassword={(value) => setPassword(value)} 
                 setErrorPassword={(value) => setErrorPassword(value)} onClose={() => setOpenModal(false)}/>
                 <div style={{ flexDirection:'row'}}>
-                            <Button size='small' onClick={onClose} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
+                            <Button size='small' onClick={onClose} variant="outlined" color="secondary" style={{ borderRadius:4, width:120 }}>
                                 Cancel
                             </Button>
-                            <Button  color="primary" onClick={handleSave}>
+                            <Button  color="secondary" variant="outlined" size='small' onClick={handleSave} style={{ borderRadius:4, width:120 }}>
                                 Save
                             </Button>
                 </div>
@@ -205,4 +205,20 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
 }
 
 export default withSnackbar(ChangeProfile);
+
+const useStyles = makeStyles((theme) => ({
+    backgroundRoot: {
+        '& .MuiDialog-paper': {
+            backgroundColor: 'dimgrey',
+        }
+    },
+    inputRoot:{
+        '& .MuiInputLabel-outlined': {
+            color:'white'
+        },
+        '& .MuiOutlinedInput-input': {
+            color:'white'
+        }
+    }
+  }));
   

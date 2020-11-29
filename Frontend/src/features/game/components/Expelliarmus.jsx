@@ -20,8 +20,8 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     const[isActivated, setIsActivated] = useState(false)
    
 
-    console.log(gameInfo, "GAME INFO")
-    const handleActivation = () => {
+   // console.log(gameInfo, "GAME INFO")
+    const handlePopUp = () => {
         if (isActivated && isMinister) {
             setOpenModal(true)
         }
@@ -35,7 +35,6 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
         console.log("Head Master Click")
         console.log("Minister Click")
         expelliarmus(ministerDecision, currentPlayer.name, gameInfo.name)
-        handleActivation()
 
     }
 
@@ -43,7 +42,6 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     const expelliarmusActivated = () => {
         let isExpelliarmus = false;
         if (proclamationsDEcount === 5 && hand.length === 2) {
-            console.log(hand, "HAND")
             isExpelliarmus = true;
         }
         return isExpelliarmus;
@@ -73,7 +71,10 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
             setHand(gameInfo.proclamations?.hand)
         }
     }, [gameInfo.proclamations?.hand])
-
+    
+    useEffect(() =>{
+        if (isActivated && isMinister && expelliarmusActivated()) setOpenModal(true)
+    }, [isActivated, isMinister])
 
     useEffect(() => {
         if (currentPlayer && gameInfo.length !== 0) {
@@ -110,18 +111,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
                     </Button>
                 }
                 {expelliarmusActivated() && !isMinister && !isHeadMaster &&
-                    <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> Expelliarmus has been activated!!</a>
-                }
-                {expelliarmusActivated() && currentPlayer && currentPlayer.is_alive && isMinister &&
-                    <>
-                        <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}>Expelliarmus has been activated by {minister}!</a>
-                        <Button size='large' style={{ backgroundColor: 'lightblue', marginRight: 40 }} onClick={handleMinisterClick}>
-                            Acept
-                    </Button>
-                        <Button size='large' style={{ backgroundColor: 'lightblue' }} onClick={handleMinisterClick} >
-                            Cancel
-                    </Button>
-                    </>
+                    <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> Expelliarmus aviable</a>
                 }
             </div>
             <div display='flex' style={{ width: 'min-content' }}>

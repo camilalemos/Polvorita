@@ -3,10 +3,8 @@ import {
     GET_PROFILE_INFO_FAIL,
     GET_PROFILE_INFO_SUCCESS
 } from '../../../constants/actionTypes/changeProfile';
-
-  import axios from 'axios'
-  import api from '../../../configs/api'
-
+import axios from 'axios'
+import api from '../../../configs/api'
 
 export const getUserInfo = (userName, email, newPassword, password, fullName) => (dispatch, getState) => _getUserInfo(userName, email, newPassword, password, fullName, dispatch, getState);
 const _getUserInfo = async (userName, email, newPassword, password, fullName, dispatch, getState) => {

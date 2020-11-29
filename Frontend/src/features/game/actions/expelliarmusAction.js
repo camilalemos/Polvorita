@@ -3,11 +3,8 @@ import {
 	EXPELLIARMUS_FAIL,
 	EXPELLIARMUS_SUCCESS
 } from '../../../constants/actionTypes/expelliarmus';
-
 import axios from 'axios'
 import api from '../../../configs/api'
-// /game/proclamations/expelliarmus/      minister_exp, player_name, game_name 
-//ministerDesicion, playerName, gameName
 
 export const expelliarmus = (ministerResponse, playerName, gameName) => (dispatch, getState) => _expelliarmus(ministerResponse, playerName, gameName, dispatch, getState);
 const _expelliarmus = async (ministerResponse, playerName, gameName, dispatch, getState) => {

@@ -24,7 +24,7 @@ const _selectDirector = async ( candidateName, playerName, gameName, dispatch, g
 
         let {access_token} = {...getState().login}
 
-        const response = await axios({
+        await axios({
             method: 'put',
             url: `${api.url}/game/elections/nominate/?candidate_name=${candidateName}&player_name=${playerName}&game_name=${gameName}`,
             headers: { 
@@ -50,7 +50,7 @@ const _vote = async ( vote, playerName, gameName, dispatch, getState) => {
 
         let {access_token} = {...getState().login}
 
-        const response = await axios({
+        await axios({
             method: 'put',
             url: `${api.url}/game/elections/vote/?vote=${vote}&player_name=${playerName}&game_name=${gameName}`,
             headers: { 
@@ -101,7 +101,7 @@ const _putResults = async (gameName, dispatch, getState) => {
 
         let {access_token} = {...getState().login}
 
-        const response = await axios({
+        await axios({
             method: 'put',
             url: `${api.url}/game/elections/result/?game_name=${gameName}`,
             headers: { 

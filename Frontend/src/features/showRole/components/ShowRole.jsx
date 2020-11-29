@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../../App.css'
 
 export const handleSelectImgLoyalty = (playerLoyalty) => {
 
     let imageLoyalty
-    
+
     switch (playerLoyalty) {
         case "PHOENIX_ORDER":
             imageLoyalty = (require('../../../constants/images/LoyaltyPO.png'));
@@ -19,14 +19,13 @@ export const handleSelectImgLoyalty = (playerLoyalty) => {
     return imageLoyalty;
 };
 
-
 export const handelSelectImgRole = (playerRole, playerLoyalty) => {
-    
+
     let imageRole
 
     const snapeSelectLoyalty = (snapeLoyalty) => {
         if (snapeLoyalty === "PHOENIX_ORDER") {
-            imageRole =  (require('../../../constants/images/Roles/RoleSNAPEOF.png'));
+            imageRole = (require('../../../constants/images/Roles/RoleSNAPEOF.png'));
         } else {
             imageRole = (require('../../../constants/images/Roles/RoleSNAPEM.png'));
         }
@@ -36,7 +35,7 @@ export const handelSelectImgRole = (playerRole, playerLoyalty) => {
     switch (playerRole) {
         case "BELLATRIX":
             imageRole = (require('../../../constants/images/Roles/RoleBELLATRIX.png'));
-            break;                
+            break;
         case "DOLORES":
             imageRole = (require('../../../constants/images/Roles/RoleDOLORES.png'));
             break;
@@ -69,10 +68,10 @@ export const handelSelectImgRole = (playerRole, playerLoyalty) => {
             break;
         case "SIRIUS":
             imageRole = (require('../../../constants/images/Roles/RoleSIRIUS.png'));
-            break;            
+            break;
         case "SNAPE":
             imageRole = (snapeSelectLoyalty(playerLoyalty));
-            break;            
+            break;
         case "VOLDEMORT":
             imageRole = (require('../../../constants/images/Roles/RoleVOLDEMORT.png'));
             break;
@@ -83,28 +82,26 @@ export const handelSelectImgRole = (playerRole, playerLoyalty) => {
     return imageRole;
 }
 
-const ShowRole = ({ user , gameInfo }) => {
+const ShowRole = ({ user, gameInfo }) => {
 
     const [playersInfo, setplayersInfo] = useState([]);
     const [userLoyalty, setUserLotalty] = useState('');
     const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
-		if(gameInfo.players){
-			setplayersInfo(Object.values(gameInfo.players).filter(player => player.user_name === user.username)[0]);
-            setUserLotalty(playersInfo?.loyalty)
-            setUserRole(playersInfo?.role)
-		}
-	},[gameInfo])
-    
-    
+        if (gameInfo.players) {
+            setplayersInfo(Object.values(gameInfo.players).filter(player => player.user_name === user.username)[0]);
+            setUserLotalty(playersInfo.loyalty)
+            setUserRole(playersInfo.role)
+        }
+    }, [gameInfo])
 
     return (
 
-        <div style={{display: 'flex', flexDirection:'column', padding:20}}>
-            <div style={{ display: 'flex', flexDirection:'row', justifyContent:'space-between'}}>
-                <img  src={handelSelectImgRole(userRole, userLoyalty)} alt= "Role" style={{display: 'flex', width: '200px', height: '270', padding: 5}}/>
-                <img src={handleSelectImgLoyalty(userLoyalty)} alt= "Loyalty" style={{display: 'flex', width: '200px', height: '270',padding: 5}}/>
+        <div style={{ display: 'flex', flexDirection: 'column', padding: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <img src={handelSelectImgRole(userRole, userLoyalty)} alt="Role" style={{ display: 'flex', width: '200px', height: '270', padding: 5 }} />
+                <img src={handleSelectImgLoyalty(userLoyalty)} alt="Loyalty" style={{ display: 'flex', width: '200px', height: '270', padding: 5 }} />
             </div>
         </div>
     );

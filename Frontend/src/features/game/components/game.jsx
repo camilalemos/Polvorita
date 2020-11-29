@@ -21,7 +21,7 @@ export default function Game () {
     const ws = useRef(null);
     useEffect(() => {
 
-	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
+	    ws.current = new WebSocket(`ws://190.190.133.175:8000/game/${game}`);
 
 		ws.current.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
@@ -58,6 +58,9 @@ export default function Game () {
             <div className="game-board" style={{display:'flex', flex:2.5}}>
                 <Board gameInfo={ gameInfo }/>
                 <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo= { gameInfo}/>
+            </div>
+            <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1, padding: 20}}>
+                <Chat gameInfo={ gameInfo }/>
             </div>
         </div>
     );

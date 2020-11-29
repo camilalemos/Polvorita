@@ -28,7 +28,7 @@ const Login = function ({ loginUser, status, enqueueSnackbar }) {
     },[status])
     
     return (            
-        <div style={{ display:'flex', height:'100%', width:'100%', justifyContent:'center', alignItems:'center', backgroundImage: `url(${require('../../../constants/images/Fondo.jpg')})`}} id='fondo'>
+        <div style={{ display:'flex', height:'100%', width:'100%', justifyContent:'center', alignItems:'center', backgroundImage: `url(${require('../../../constants/images/Fondo.jpg')})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover"}} id='fondo'>
             {/* <div style={{ display: 'flex', flexDirection: 'column' }} id='login'> */}
             <Paper style={{ display: 'flex', flexDirection: 'column', padding: 32, borderRadius:12, opacity:0.7 }} elevation={8} square >
                 <b style={{ fontSize:40, textAlign:'center', marginBottom:20}}>

@@ -285,7 +285,7 @@ async def websocket_lobby(websocket: WebSocket):
     try:
         games = [game.dict() for game in manager.games.values() if game.status == 'CREATED']
         while True:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
             await manager.broadcast_json(games, manager.lobby_connections)
 
     except Exception:
@@ -299,7 +299,7 @@ async def websocket_game(websocket: WebSocket, game_name: str):
         game = manager.games[game_name]
         connections = manager.game_connections[game_name]
         while True:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.1)
             await manager.broadcast_json(game.dict(), connections)
 
     except Exception:

@@ -5,12 +5,11 @@ import LockIcon from '@material-ui/icons/Lock';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import { withSnackbar } from 'notistack';
 import { useHistory,withRouter } from "react-router-dom";
-
 import CreateGameContainer from '../../createGameForm/containers/CreateGameContainers';
 import ChangeProfileContainer from '../../changeProfile/containers/ChangeProfileContainer';
 import PopUp from './PopUp';
 
-const Joingame = ({joingame, status, enqueueSnackbar, user, logout }) => {
+const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg }) => {
 	const history = useHistory();
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playerName, setPlayerName] = useState('');
@@ -37,7 +36,7 @@ const Joingame = ({joingame, status, enqueueSnackbar, user, logout }) => {
 	});
 
 	useEffect(() => {
-		if (status === 'failed') enqueueSnackbar('Cannot join the game, you are already the owner', { variant: 'error'});
+		if (status === 'failed') if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error'});
 		if (status === 'success') history.push(`/lobby/${routeGame}`);
 	},[status]);
 

@@ -9,15 +9,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import PopUp from './PopUp.jsx';
 import TextField from '@material-ui/core/TextField';
 
-
-
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
 const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open, onClose, enqueueSnackbar }) {
-    
-   
 
     const [openModal, setOpenModal] = useState(false);
     const [userName, setUserName] = useState('');

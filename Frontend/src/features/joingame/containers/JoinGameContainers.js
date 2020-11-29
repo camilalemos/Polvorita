@@ -9,7 +9,8 @@ import { logout } from '../../../features/login/actions/LoginAction';
 function mapStateToProps(state) {
     return {
         status: state.joingame.status,
-        user: state.login.user
+        user: state.login.user,
+        errorMsg: state.joingame.errorMsg
     };
 }
 

@@ -21,7 +21,7 @@ const theme = createMuiTheme({
             hover: 'rgba(0, 0, 0, 0.07)'
         },
         secondary: {
-            main: '#adasda',
+            main: '#ffffff',
             complementary: '#EB9A50'
         }
     },

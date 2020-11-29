@@ -12,6 +12,7 @@ import enactProclamation from '../features/game/reducers/enactproclamationReduce
 import playerActionsReducer from '../features/game/reducers/playerActionsReducer'
 import chat from '../features/chat/reducers/chatReducer'
 import spellsReducer from '../features/game/reducers/spellsReducer'
+import expelliarmus from '../features/game/reducers/expelliarmus'
 
 
 
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
 	enactProclamation,
 	playerActionsReducer,
 	chat,
-	spellsReducer
+	spellsReducer,
+	expelliarmus
 });
 
 export default rootReducer;

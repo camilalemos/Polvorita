@@ -144,7 +144,7 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             aria-describedby="alert-dialog-slide-description"
         >
             <div style={{ display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding: 40}} id='fondo'>
-            <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60, color:'white'}} id="alert-dialog-slide-title">{"NEW GAME"}</a>
+                <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60, color:'white'}} id="alert-dialog-slide-title">{"NEW GAME"}</a>
                 <TextField
                     value={gameName}
                     required

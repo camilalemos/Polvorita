@@ -236,7 +236,7 @@ def get_proclamations(params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Still have proclamations in hand")
     elif game.elections.headmaster_candidate:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot get proclamations at this moment")
-    
+
     game.proclamations.get_proclamations(3)
     return game.proclamations.hand
 

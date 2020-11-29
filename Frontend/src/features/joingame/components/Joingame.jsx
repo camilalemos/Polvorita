@@ -33,10 +33,11 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 
 		ws.current.onmessage = (event) => {
 			setGameInfo(JSON.parse(event.data));
-			console.log(gameInfo);
-			ws.current.close();
 		};
 
+		return () => {
+            ws.current.close();
+        };
 	});
 
 	useEffect(() => {
@@ -55,7 +56,6 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 	}
 
 	const isJoing = (currentGame) => {
-		console.log(user, "ISER");
 		let fil = Object.values(currentGame.players).filter(players => players.user_name === user.username)
 		if (fil.length) return false;
 		return true;
@@ -92,7 +92,7 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 													{currentGame.password === null ?
 														<LockOpenIcon color='secondary' /> : <LockIcon />}
 												</ListItemIcon>
-												{isJoing(currentGame) && currentGame.num_players < currentGame.max_players && <Button onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
+												{isJoing(currentGame) && currentGame.num_players < currentGame.max_players && <Button color='primary' onClick={(e) => handleJoinNewGame(e)} variant="contained" >Join Game</Button>}
 											</div>
 										</div>
 										<div style={{ height: .5, backgroundColor: 'lightgrey', display: 'flex', marginBottom: 20, marginTop: 10 }} />

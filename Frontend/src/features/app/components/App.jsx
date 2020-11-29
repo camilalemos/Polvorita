@@ -1,4 +1,4 @@
-import React, { Component, Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
@@ -58,7 +58,7 @@ const App = function ({ getUserData, statusLogin, is_logged, getLoginData}) {
                     <Router>
                     <Switch>
                         <Route exact path="/">
-                            <Redirect to="/login" />
+                            <Redirect to="/lobby" />
                         </Route>
                         <PrivateRoute exact path='/lobby' restricted={is_logged} component={<JoinGameContainer/>} />
                         <PrivateRoute exact path='/lobby/:game' restricted={is_logged} component={<LobbyContainer/>} />

@@ -1,11 +1,13 @@
 import React from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import TextField from '@material-ui/core/TextField';
 import { withSnackbar } from 'notistack';
 import { makeStyles } from '@material-ui/core/styles';
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -55,8 +57,8 @@ const PopUp = function ({ open, password, setPassword, errorPassword, setErrorPa
                 aria-labelledby="alert-dialog-slide-title"
                 aria-describedby="alert-dialog-slide-description"
             >
-                <div style={{ display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding: 40}}>
-                    <DialogTitle style={{ textAlign: 'center', color:'white' }} id="alert-dialog-slide-title">{"ENTER PASSWORD"}</DialogTitle>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: 40 }}>
+                    <DialogTitle style={{ textAlign: 'center', color: 'white' }} id="alert-dialog-slide-title">{"ENTER PASSWORD"}</DialogTitle>
                     <div id='inputs' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 20 }}>
                         <TextField
                             style={{ marginBottom: 40, minWidth: 300 }}
@@ -73,11 +75,11 @@ const PopUp = function ({ open, password, setPassword, errorPassword, setErrorPa
                             variant="outlined"
                         />
                     </div>
-                    <div style={{ flexDirection:'row'}}>
-                        <Button onClick={onClose} size='small' variant='outlined' style={{ borderRadius:4, width:120 }} color="secondary">
+                    <div style={{ flexDirection: 'row' }}>
+                        <Button onClick={onClose} size='small' variant='outlined' style={{ borderRadius: 4, width: 120 }} color="secondary">
                             Cancel
                         </Button>
-                        <Button onClick={handleConfirm} size='small' variant='outlined' style={{ borderRadius:4, width:120, marginLeft:20 }} color="secondary">
+                        <Button onClick={handleConfirm} size='small' variant='outlined' style={{ borderRadius: 4, width: 120, marginLeft: 20 }} color="secondary">
                             Confirm
                         </Button>
                     </div>
@@ -104,3 +106,4 @@ const useStyles = makeStyles((theme) => ({
         }
     }
 }));
+

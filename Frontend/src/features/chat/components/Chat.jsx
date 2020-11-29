@@ -95,11 +95,6 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
 
     return (
       <div>
-        <Grid container>
-            <Grid item xs={12} >
-                <Typography variant="h5" className="header-message">Chat</Typography>
-            </Grid>
-        </Grid>
         <Grid container component={Paper} className={classes.chatSection}>
             <Grid style={{flex:1, width:350}}>
                 <List className={classes.messageArea}>

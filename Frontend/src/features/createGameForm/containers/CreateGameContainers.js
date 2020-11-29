@@ -6,7 +6,7 @@ import CreateGameForm from "../components/CreateGameForm";
 function mapStateToProps(state) {
     return {
         status: state.createGame.status,
-        statusCode: state.createGame.statusCode
+        errorMsg: state.createGame.errorMsg
     };
 }
 

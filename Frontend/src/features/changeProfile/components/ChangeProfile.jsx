@@ -1,4 +1,4 @@
-import React, {Component, useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
@@ -60,9 +60,17 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
         }
         return isAllowed
     }
+    const checkInput = () => {
+        let isAllowed = true
+        if (!userName && !fullName && !newPassword && !email ) {
+            enqueueSnackbar( 'Nothing to do', { variant: 'error'});
+            isAllowed = false
+        }
+        return isAllowed
+    }
 
     const handleSave = () => {
-        if(checkNewPassword())
+        if(checkNewPassword() && checkInput())
         setOpenModal(true)
     }
    
@@ -89,13 +97,9 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
 
         if (status === 'success') { 
             updateData()
-            if (password){
-                enqueueSnackbar('Profile data successfully updated', { variant: 'success'});
-           }
+            if (password) enqueueSnackbar('Profile data successfully updated', { variant: 'success'});
         }
-        if (status === 'failed'){
-            if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error'});
-        }
+        if (status === 'failed') if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error'});
     },[status])
 
 

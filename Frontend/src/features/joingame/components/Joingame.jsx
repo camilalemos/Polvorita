@@ -33,10 +33,11 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 
 		ws.current.onmessage = (event) => {
 			setGameInfo(JSON.parse(event.data));
-			console.log(gameInfo);
-			ws.current.close();
 		};
 
+		return () => {
+            ws.current.close();
+        };
 	});
 
 	useEffect(() => {
@@ -55,7 +56,6 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 	}
 
 	const isJoing = (currentGame) => {
-		console.log(user, "ISER");
 		let fil = Object.values(currentGame.players).filter(players => players.user_name === user.username)
 		if (fil.length) return false;
 		return true;

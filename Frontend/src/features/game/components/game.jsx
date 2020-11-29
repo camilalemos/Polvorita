@@ -24,13 +24,15 @@ export default function Game () {
 	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
 
 		ws.current.onmessage = (event) => {
-        setGameInfo(JSON.parse(event.data));
-        ws.current.close();
+            setGameInfo(JSON.parse(event.data));
         };
         
         ws.current.onerror = function(err) {
 			console.log(err, "ERROR")
-		}
+        }
+        return () => {
+            ws.current.close();
+        };
 
     });
     useEffect(() => {

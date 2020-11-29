@@ -10,16 +10,22 @@ const Lobby = function ({ user, startGame, statusStart }) {
     const { game } = useParams();
 
     const ws = useRef(null);
-    console.log(ws, "WS");
+
     useEffect(() => {
 
 	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
-      		
+
 		ws.current.onmessage = (event) => {
-			setGameInfo(JSON.parse(event.data));
-			console.log(gameInfo);	
-			ws.current.close();
-		};
+        	setGameInfo(JSON.parse(event.data));
+        };
+        
+        ws.current.onerror = function(err) {
+			console.log(err, "ERROR")
+		}
+
+		return () => {
+            ws.current.close();
+        };
 
     });
 
@@ -35,7 +41,7 @@ const Lobby = function ({ user, startGame, statusStart }) {
 	},[gameInfo])
 
     return (
-        <div style={{ display:'flex', flexDirection:'row' ,height:'100%', alignItems:'center',  width:'100%', justifyContent:'space-evenly' }}>
+        <div style={{ display:'flex', flexDirection:'row' ,height:'100%', alignItems:'center',  width:'100%', justifyContent:'space-evenly',backgroundImage: `url(${require('../../../constants/images/fondo3.jpeg')})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover" }}>
 			<div className="lobby" style={{display:'flex', flex:1, flexDirection:'column', alignItems: 'center'}}>
 				<div style={{ display:'flex', alignItems:'center', justifyContent:'flex-start', flexDirection:'row' }}>
 					<a style={{ fontSize:48 }} >GAME NAME: </a>

@@ -1,10 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import MinisterPopUp from '../components/ExpelliarmusPopUp'
 
 const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
-
 
     const [players, setPlayers] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -17,11 +15,8 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     const [hand, setHand] = useState(0)
     const[isActivated, setIsActivated] = useState(false)
    
-
-
     const handleHeadMasterClick = () => {
         expelliarmus('', currentPlayer.name, gameInfo.name)
-
     }
 
     const expelliarmusActivated = () => {

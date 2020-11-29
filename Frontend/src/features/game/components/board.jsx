@@ -11,8 +11,8 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
     const [gameName, setGameName] = useState('');
     const [hand, setHand] = useState([]);
     const [numProclamations, setNumProclamations] = useState();
-    const [POenactedProclamations, setPOenactedProclamations] = useState();
-    const [DEenactedProclamations, setDEenactedProclamations] = useState();
+    const [POenactedProclamations, setPOenactedProclamations] = useState(0);
+    const [DEenactedProclamations, setDEenactedProclamations] = useState(0);
     const [discardedProclamations, setDiscardedProclamations] = useState([])
     const [open, setOpen] = useState(false);
     const [openSnackDirector, setOpenSnackDirector] = useState(false);
@@ -83,7 +83,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         const deArrayAux = new Array(6)
         let result;
 
-        if (loyalty === "PHOENIX_ORDER") {
+        if (loyalty === "PHOENIX_ORDER" ) {
             poArrayAux.fill("PHOENIX_ORDER", 0, enactedproclamations);
             result = poArrayAux.map((proclamation) => (
                 assignImgProclamation(proclamation)
@@ -116,6 +116,9 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         useEffect(() => {
             if (hand.length === 2) {
                 setOpenSnackDirector(true)
+                if (gameInfo.proclamations?.headmaster_exp){
+                    setOpenSnackDirector(false)
+                }
             }
         })
 

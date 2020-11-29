@@ -118,6 +118,7 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
 				</div>	
 			</div>
 		</div>
+	</div>
 	);
 };
 

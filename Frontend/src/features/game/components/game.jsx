@@ -23,16 +23,13 @@ export default function Game () {
 
 		ws.current.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
-
+        ws.current.close();
         };
         
         ws.current.onerror = function(err) {
 			console.log(err, "ERROR")
 		}
 
-		return () => {
-		ws.current.close();
-		};
     });
     useEffect(() => {
         if ( gameInfo.length !== 0 && gameInfo.status === 'FINISHED')

@@ -80,14 +80,16 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg, r
 				<div style={{ display: 'flex', flexDirection: 'column', flex: 3, justifyContent: 'center' }}>
 					<div style={{ display: 'flex', height: '70%' }}>
 						<Grid component={Paper} style={{ padding: 40, flex: 3, opacity: 0.8, overflow: 'auto', backgroundColor: 'black' }}>
-							<div style={{display:'flex', justifyContent:'flex-end', flexDirection:'row', alignItems:'center', paddingBottom:20}}>
-								<h style={{color:'white'}} >Games started</h>
-								<Switch
-									color="secondary"
-									checked={reconnect}
-									onChange={() => setReconnet(!reconnect)}
-								/>
-							</div>
+							{reconnectGames && reconnectGames.length &&
+								<div style={{display:'flex', justifyContent:'flex-end', flexDirection:'row', alignItems:'center', paddingBottom:20}}>
+									<h style={{color:'white'}} >Games started</h>
+									<Switch
+										color="secondary"
+										checked={reconnect}
+										onChange={() => setReconnet(!reconnect)}
+									/>
+								</div>
+							}
 							{!reconnect ?
 								<>
 									<div style={{ display: 'flex', marginBottom: 40 }}>

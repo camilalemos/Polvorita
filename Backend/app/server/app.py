@@ -268,6 +268,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
         game.proclamations.discard(loyalty)
     elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
         game.proclamations.discard(loyalty)
+        game.send_message("The Director has enacted a proclamation!", "system")
         if game.spells[game.proclamations.DE_enacted_proclamations] == 'NONE_SPELL':
             game.status = 'STARTED'
         else:

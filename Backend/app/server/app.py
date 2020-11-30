@@ -216,7 +216,7 @@ def vote(vote:Vote, params = Depends(check_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
-    if len(game.elections.votes) == len(game.players):
+    if len(game.elections.votes) == len(game.elections.players):
         game.elections.set_result()
         if game.elections.result == 'LUMOS':
             game.send_message("The result of the election has been LUMOS!", "system")

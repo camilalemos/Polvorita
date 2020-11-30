@@ -13,15 +13,16 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     const [headMaster, setHeadMaster] = useState('');
     const [proclamationsDEcount, setProclamationsDECount] = useState('');
     const [hand, setHand] = useState(0)
-    const[isActivated, setIsActivated] = useState(false)
-   
+    const [isActivated, setIsActivated] = useState(false)
+    const [gameStatus, setGameStatus] = useState('')
+
     const handleHeadMasterClick = () => {
         expelliarmus('', currentPlayer.name, gameInfo.name)
     }
 
     const expelliarmusActivated = () => {
         let isExpelliarmus = false;
-        if (proclamationsDEcount === 5 && hand.length === 2) {
+        if (proclamationsDEcount === 5 && hand.length === 2 && gameStatus === "LEGISLATIVE") {
             isExpelliarmus = true;
         }
         return isExpelliarmus;
@@ -44,14 +45,20 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
             setIsActivated(gameInfo.proclamations?.headmaster_exp)
         }
     }, [gameInfo.proclamations?.headmaster_exp])
-    
+
     useEffect(() => {
         if (gameInfo.length !== 0) {
             setHand(gameInfo.proclamations?.hand)
         }
     }, [gameInfo.proclamations?.hand])
-    
-    useEffect(() =>{
+
+    useEffect(() => {
+        if (gameInfo.length !== 0) {
+            setGameStatus(gameInfo.status)
+        }
+    }, [gameInfo, gameInfo.status, setGameStatus])
+
+    useEffect(() => {
         if (isActivated && isMinister && expelliarmusActivated()) setOpenModal(true)
     }, [isActivated, isMinister])
 
@@ -61,10 +68,13 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
             setHeadMaster(gameInfo.elections?.headmaster)
             if (minister === currentPlayer.name) {
                 setIsMinister(true);
-
+            } else {
+                setIsMinister(false);
             }
             if (headMaster === currentPlayer.name) {
                 setIsHeadMaster(true);
+            } else {
+                setIsHeadMaster(false);
             }
         }
     }, [gameInfo.elections, currentPlayer])
@@ -72,7 +82,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     useEffect(() => {
         setProclamationsDECount(gameInfo.proclamations?.DE_enacted_proclamations)
     }, [gameInfo, setProclamationsDECount])
-   
+
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
@@ -82,7 +92,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
     return (
         <div>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
-                {status !== 'success' && proclamationsDEcount === 5 && hand.length === 2 && currentPlayer !== null && currentPlayer.is_alive && isHeadMaster &&
+                {status !== 'success' && expelliarmusActivated() && isHeadMaster &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width: 200 }} onClick={handleHeadMasterClick}>
                         Expelliarmus!
                     </Button>
@@ -92,7 +102,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
                 }
             </div>
             <div display='flex' style={{ width: 'min-content' }}>
-                <MinisterPopUp open={openModal} onClose={() => setOpenModal(false)} headMaster={headMaster}  expelliarmus={(ministerResponse) => expelliarmus(ministerResponse, currentPlayer.name, gameInfo.name)}/>
+                <MinisterPopUp open={openModal} onClose={() => setOpenModal(false)} headMaster={headMaster} expelliarmus={(ministerResponse) => expelliarmus(ministerResponse, currentPlayer.name, gameInfo.name)} />
             </div>
 
         </div>

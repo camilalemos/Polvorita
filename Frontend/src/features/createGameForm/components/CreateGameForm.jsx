@@ -16,7 +16,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
-  });
+});
 
 const CreateGameForm = function ({ createGame, status, statusCode, open, onClose, enqueueSnackbar }) {
 
@@ -31,18 +31,18 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
     const [maxPlayersError, setMaxPlayersError] = useState(false);
     const history = useHistory();
 
-    
+
 
     const notEmpty = () => {
         let result = true;
-        if (gameName.length === 0  || playerName.length === 0 || maxPlayers.length === 0){
-            enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
+        if (gameName.length === 0 || playerName.length === 0 || maxPlayers.length === 0) {
+            enqueueSnackbar('Required fields cannot be omitted', { variant: 'error' });
             result = false;
         }
         return result;
     }
 
-    
+
     const handleContinue = () => {
         if (!gameName) {
             setGameNameError(true);
@@ -58,45 +58,45 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         }
     }
 
-    
+
     const validated = (gameName, playerName, gamePassword) => {
         let isAllowed = true;
         const expression = /^([A-Z_a-z0-9])*$/
         const passwordexpression = /^[A-Za-z0-9]*$/
-        
-        if (!expression.test(String(gameName).toLowerCase())){
+
+        if (!expression.test(String(gameName).toLowerCase())) {
             setGameNameError(true);
             isAllowed = false;
         }
-        if (!expression.test(String(playerName).toLowerCase())){
+        if (!expression.test(String(playerName).toLowerCase())) {
             setPlayerNameError(true);
             isAllowed = false;
         }
-        if (!passwordexpression.test(String(gamePassword).toLowerCase())){
+        if (!passwordexpression.test(String(gamePassword).toLowerCase())) {
             setGamePasswordError(true);
             isAllowed = false;
         }
         return isAllowed
     }
-    
+
     const hasWhiteSpace = (input) => {
         return input.indexOf(' ') >= 0;
     }
 
-    const feedback422 = () =>{
-        if ((!validated(gameName, playerName, gamePassword))){
-            enqueueSnackbar( 'Special characters or white spaces are not allowed', { variant: 'error'});
+    const feedback422 = () => {
+        if ((!validated(gameName, playerName, gamePassword))) {
+            enqueueSnackbar('Special characters or white spaces are not allowed', { variant: 'error' });
         }
-        if (gameName.length > 20 || gameName.length < 5){
-            enqueueSnackbar( 'Game Name must have 5 to 20 characters', { variant: 'error'});
+        if (gameName.length > 20 || gameName.length < 5) {
+            enqueueSnackbar('Game Name must have 5 to 20 characters', { variant: 'error' });
             setGameNameError(true);
         }
-        if (playerName.length > 15 || playerName.length < 3){
-            enqueueSnackbar( 'Player Name must have 3 to 15 characters', { variant: 'error'});
+        if (playerName.length > 15 || playerName.length < 3) {
+            enqueueSnackbar('Player Name must have 3 to 15 characters', { variant: 'error' });
             setPlayerNameError(true);
         }
-        if (!hasWhiteSpace(gamePassword) && gamePassword.length > 0 && (gamePassword.length > 10 || gamePassword.length < 5)){
-            enqueueSnackbar( 'Password is optional, but if you want it, must have 5 to 10 characters', { variant: 'error'});
+        if (!hasWhiteSpace(gamePassword) && gamePassword.length > 0 && (gamePassword.length > 10 || gamePassword.length < 5)) {
+            enqueueSnackbar('Password is optional, but if you want it, must have 5 to 10 characters', { variant: 'error' });
             setGamePasswordError(true);
         }
     }
@@ -115,25 +115,25 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                 feedback422();
                 break;
             case '403':
-                enqueueSnackbar('Game name already in use', { variant: 'error'});
+                enqueueSnackbar('Game name already in use', { variant: 'error' });
                 break;
             default:
-                enqueueSnackbar('Something is going wrong, check your conection or try again later', { variant: 'error'});
+                enqueueSnackbar('Something is going wrong, check your conection or try again later', { variant: 'error' });
                 break;
         }
     }
-    
+
     useEffect(() => {
         if (status === 'failed') {
             checkStatusCode();
         }
-        if (status === 'success') { 
+        if (status === 'success') {
             history.push(`/lobby/${gameName}`);
         }
 
-    },[status])
+    }, [status])
 
-    return (      
+    return (
         <Dialog
             open={open}
             id='prueba'
@@ -143,15 +143,15 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
         >
-            <div style={{ display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding: 40}} id='fondo'>
-                <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60, color:'white'}} id="alert-dialog-slide-title">{"NEW GAME"}</a>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: 40 }} id='fondo'>
+                <a style={{ textAlign: 'center', fontSize: 40, marginBottom: 60, color: 'white' }} id="alert-dialog-slide-title">{"NEW GAME"}</a>
                 <TextField
                     value={gameName}
                     required
                     error={gameNameError}
-                    style={{ marginBottom: 40, minWidth:300 }}
-                    onChange={(value) => (setGameName(value.target.value), setGameNameError(false))}
-                    onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
+                    style={{ marginBottom: 40, minWidth: 300 }}
+                    onChange={(value) => { setGameName(value.target.value); setGameNameError(false) }}
+                    onKeyPress={(e) => { if (e.key === 'Enter') handleContinue() }}
                     id="gameName"
                     size='small'
                     color='secondary'
@@ -163,9 +163,9 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                     value={playerName}
                     required
                     error={playerNameError}
-                    style={{ marginBottom: 40, minWidth:300 }}
-                    onChange={(value) => (setPlayerName(value.target.value), setPlayerNameError(false))}
-                    onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
+                    style={{ marginBottom: 40, minWidth: 300 }}
+                    onChange={(value) => { setPlayerName(value.target.value); setPlayerNameError(false) }}
+                    onKeyPress={(e) => { if (e.key === 'Enter') handleContinue() }}
                     id="playerName"
                     size='small'
                     color='secondary'
@@ -181,23 +181,23 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                         type='password'
                         value={gamePassword}
                         error={gamePasswordError}
-                        style={{ marginBottom: 40, minWidth:300 }}
-                        label = 'password'
+                        style={{ marginBottom: 40, minWidth: 300 }}
+                        label='password'
                         onChange={(value) => setPassword(value.target.value, setGamePasswordError(false))}
-                        onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
+                        onKeyPress={(e) => { if (e.key === 'Enter') handleContinue() }}
                     />
                 </FormControl>
-                <FormControl variant="outlined" 
+                <FormControl
                     required
                     color='secondary'
                     error={maxPlayersError}
-                    style={{ marginBottom: 40, minWidth:300 }}
+                    style={{ marginBottom: 40, minWidth: 300 }}
                     size='small'
                     label="Max Players"
                     variant="outlined"
                     className={classes.inputRoot}
-                    >
-                    <InputLabel styles={{color:'white', backgroundColor:'white'}} id="Max Players">Max Players</InputLabel>
+                >
+                    <InputLabel styles={{ color: 'white', backgroundColor: 'white' }} id="Max Players">Max Players</InputLabel>
                     <Select
                         color='secondary'
                         labelId="Max Players"
@@ -209,21 +209,21 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                         size='small'
                         variant="outlined"
                     >
-                    {createMaxPlayerOptions()}
+                        {createMaxPlayerOptions()}
                     </Select>
                 </FormControl>
-                <div style={{ display: 'flex', justifyContent:'center' }}>
-                    {status === 'loading' ? 
-                        <CircularProgress color='secondary'/>
-                    :
-                    <div style={{ flexDirection:'row'}}>
-                        <Button size='small' onClick={onClose} variant="outlined" color='secondary' style={{ borderRadius:4, width:120 }}>
-                            Cancel
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    {status === 'loading' ?
+                        <CircularProgress color='secondary' />
+                        :
+                        <div style={{ flexDirection: 'row' }}>
+                            <Button size='small' onClick={onClose} variant="outlined" color='secondary' style={{ borderRadius: 4, width: 120 }}>
+                                Cancel
                         </Button>
-                        <Button size='small' onClick={handleContinue} variant="outlined" color='secondary' style={{ borderRadius:4, width:120, marginLeft:20 }}>
-                            Create
+                            <Button size='small' onClick={handleContinue} variant="outlined" color='secondary' style={{ borderRadius: 4, width: 120, marginLeft: 20 }}>
+                                Create
                         </Button>
-                    </div>
+                        </div>
                     }
                 </div>
             </div>
@@ -239,12 +239,12 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: 'dimgrey',
         }
     },
-    inputRoot:{
+    inputRoot: {
         '& .MuiInputLabel-outlined': {
-            color:'white'
+            color: 'white'
         },
         '& .MuiOutlinedInput-input': {
-            color:'white'
+            color: 'white'
         }
     }
-  }));
+}));

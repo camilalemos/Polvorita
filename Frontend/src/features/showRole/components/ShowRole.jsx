@@ -91,10 +91,10 @@ const ShowRole = ({ user, gameInfo }) => {
     useEffect(() => {
         if (gameInfo.players) {
             setplayersInfo(Object.values(gameInfo.players).filter(player => player.user_name === user.username)[0]);
-            setUserLotalty(playersInfo.loyalty)
-            setUserRole(playersInfo.role)
+            setUserLotalty(playersInfo?.loyalty)
+            setUserRole(playersInfo?.role)
         }
-    }, [gameInfo])
+    }, [gameInfo, playersInfo, user])
 
     return (
 

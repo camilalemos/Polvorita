@@ -25,7 +25,7 @@ const ChangeProfile = function ({ userInfo, getUserInfo, status, errorMsg, open,
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
-    
+
     const [errorUserName, setErrorUserName] = useState(false);
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorFullName, setErrorFullName] = useState(false);

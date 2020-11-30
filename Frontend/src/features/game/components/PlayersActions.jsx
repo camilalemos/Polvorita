@@ -61,7 +61,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
 
     useEffect(() => {
         if(gameInfo) {
-            setVoting(gameInfo.status === 'VOTING')
+            setVoting(gameInfo.status === 'VOTING');
         }
     },[gameInfo, setVoting])
 
@@ -73,6 +73,10 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
             }
         }
     },[gameInfo, currentPlayer])
+
+    useEffect(() => {
+        if(gameInfo && gameInfo.status === "STARTED") setVoted(false);
+    },[gameInfo])
 
     const handleVote = (type) => {  
         setVoteChoice(type);

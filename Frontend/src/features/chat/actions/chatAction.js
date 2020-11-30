@@ -22,7 +22,7 @@ import {
 
         bodyFormData.append('msg', message);
 
-        const response = await axios({
+        await axios({
             method: 'post',
             url: `${api.url}/game/chat/?player_name=${playerName}&game_name=${gameName}`,
             data: bodyFormData,

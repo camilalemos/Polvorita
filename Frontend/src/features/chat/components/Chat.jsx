@@ -10,29 +10,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Fab from '@material-ui/core/Fab';
 import SendIcon from '@material-ui/icons/Send';
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-  chatSection: {
-    width: '100%',
-    height: '80vh'
-  },
-  headBG: {
-      backgroundColor: '#e0e0e0'
-  },
-  borderRight500: {
-      borderRight: '1px solid #e0e0e0',
-      
-  },
-  messageArea: {
-    width: '100%',
-    height: '70vh',
-    overflowY: 'auto',
-    overflowX:'hidden'
-  }
-});
-
 const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
   
     const [players, setPlayers] = useState([]);
@@ -95,19 +72,14 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
 
     return (
       <div>
-        <Grid container>
-            <Grid item xs={12} >
-                <Typography variant="h5" className="header-message">Chat</Typography>
-            </Grid>
-        </Grid>
         <Grid container component={Paper} className={classes.chatSection}>
-            <Grid style={{flex:1, width:350}}>
+            <Grid style={{flex:1, maxWidth:350}}>
                 <List className={classes.messageArea}>
                     <ListItem key="Message">
                         <Grid container>
                             <Grid item xs={12}>
                                 {messages !== undefined && messages.map((message)=> {
-                                    if (message.split(':')[0] === 'system') return <ListItemText align="left" primary={message} style={{color: 'blue'}}></ListItemText>
+                                    if (message.split(':')[0] === 'system') return <ListItemText align="left" primary={message} style={{color: 'orange', fontWeight:'bold'}}></ListItemText>
                                     return <ListItemText align="left" primary={message} ></ListItemText>
                                     
                                 })}
@@ -136,3 +108,27 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
 }
 
 export default Chat;
+
+const useStyles = makeStyles({
+    table: {
+        minWidth: 650,
+    },
+    chatSection: {
+        width: '100%',
+        height: '80vh',
+        opacity:'.8'
+    },
+    headBG: {
+        backgroundColor: '#e0e0e0'
+    },
+    borderRight500: {
+        borderRight: '1px solid #e0e0e0',
+        
+    },
+    messageArea: {
+        width: '100%',
+        height: '70vh',
+        overflowY: 'auto',
+        overflowX:'hidden'
+    }
+});

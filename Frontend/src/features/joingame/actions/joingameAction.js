@@ -1,12 +1,12 @@
 import {
-     JOIN_GAME,
-     JOIN_GAME_SUCCESS,
-     JOIN_GAME_FAIL,
-     START_GAME,
-     START_GAME_SUCCESS,
-     START_GAME_FAIL
- } from '../../../constants/actionTypes/joingame';
-
+    JOIN_GAME,
+    JOIN_GAME_SUCCESS,
+    JOIN_GAME_FAIL,
+    START_GAME,
+    START_GAME_SUCCESS,
+    START_GAME_FAIL,
+    RECCONECT_GAME_SUCCESS
+} from '../../../constants/actionTypes/joingame';
 import axios from 'axios';
 import api from '../../../configs/api';
 
@@ -15,31 +15,31 @@ const _joingame = async (gameName, playerName, gamePassword, dispatch, getState)
 
     try {
 
-        dispatch({type: JOIN_GAME});
+        dispatch({ type: JOIN_GAME });
 
-        let {access_token} = {...getState().login}
-        
+        let { access_token } = { ...getState().login }
+
         let bodyFormData = new FormData()
-        
+
         bodyFormData.append('player_name', playerName);
         bodyFormData.append('password', gamePassword);
 
-        const response = await axios({
+        await axios({
             method: 'put',
             url: `${api.url}/game/?game_name=${gameName}`,
             data: bodyFormData,
-            headers: { 
-            'Content-Type':'multipart/form-data',
-            "Authorization" : `Bearer ${access_token}`
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                "Authorization": `Bearer ${access_token}`
             }
         });
 
-        dispatch({type: JOIN_GAME_SUCCESS})
-        
-    } catch (error){
+        dispatch({ type: JOIN_GAME_SUCCESS })
+
+    } catch (error) {
         console.log(error, "ERROR")
-        if (error.response.status === 401) dispatch({type: JOIN_GAME_FAIL, payload: {errorMsg: error.response.data.detail }});
-        if (error.response.status === 403) dispatch({type: JOIN_GAME_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 401) dispatch({ type: JOIN_GAME_FAIL, payload: { errorMsg: error.response.data.detail } });
+        if (error.response.status === 403) dispatch({ type: JOIN_GAME_FAIL, payload: { errorMsg: error.response.data.detail } });
     }
 };
 
@@ -48,23 +48,46 @@ const _startGame = async (gameName, dispatch, getState) => {
 
     try {
 
-        dispatch({type: START_GAME});
+        dispatch({ type: START_GAME });
 
-        let {access_token} = {...getState().login}
+        let { access_token } = { ...getState().login }
 
-        const response = await axios({
+        await axios({
             method: 'put',
             url: `${api.url}/game/start/?game_name=${gameName}`,
-            headers: { 
-            'Content-Type':'multipart/form-data',
-            "Authorization" : `Bearer ${access_token}`
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                "Authorization": `Bearer ${access_token}`
             }
         });
 
-        dispatch({type: START_GAME_SUCCESS})
-        
-    } catch (error){
+        dispatch({ type: START_GAME_SUCCESS })
+
+    } catch (error) {
         console.log(error, "ERROR")
-        dispatch({type: START_GAME_FAIL});
+        dispatch({ type: START_GAME_FAIL });
+    }
+};
+
+export const reconnectGame = (gameName) => (dispatch, getState) => _reconnectGame(gameName, dispatch, getState);
+const _reconnectGame = async (gameName, dispatch, getState) => {
+
+    try {
+
+        let { access_token } = { ...getState().login }
+
+        const response =await axios({
+            method: 'get',
+            url: `${api.url}/game/?own=true`,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                "Authorization": `Bearer ${access_token}`
+            }
+        });
+
+        dispatch({ type: RECCONECT_GAME_SUCCESS, payload :  {reconnectGames: response.data }});
+
+    } catch (error) {
+        console.log(error, "ERROR")
     }
 };

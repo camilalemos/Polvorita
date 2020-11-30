@@ -75,7 +75,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
                 setIsHeadMaster(true);
             }
         }
-    }, [gameInfo, currentPlayer, setIsMinister, setIsHeadMaster])
+    }, [gameInfo.elections, currentPlayer, setIsMinister, setIsHeadMaster])
     
     function ShowSquare(enactedproclamations, loyalty) {
 

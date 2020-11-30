@@ -278,7 +278,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
 
 #EXPELLIARMUS
 @app.put("/game/proclamations/expelliarmus/", response_model=Game)
-def use_expelliarmus(minister_exp: Optional[bool] = None, params = Depends(check_player)):
+def expelliarmus(minister_exp: Optional[bool] = None, params = Depends(check_player)):
     game = params["game"]
     player_name = params["player"].name
     if game.status != 'LEGISLATIVE':
@@ -293,8 +293,8 @@ def use_expelliarmus(minister_exp: Optional[bool] = None, params = Depends(check
     if player_name == game.elections.headmaster:
         game.proclamations.headmaster_exp = True
     elif player_name == game.elections.minister:
-        game.proclamations.headmaster_exp = False
         game.proclamations.expelliarmus(minister_exp)
+        game.proclamations.headmaster_exp = False
         if minister_exp:
             game.status = 'STARTED'
 

@@ -101,7 +101,7 @@ const CreateGameForm = function ({ createGame, status, errorMsg, open, onClose, 
                 />
                 <FormControl className={classes.inputRoot} size='small' variant="outlined">
                     <InputLabel color='secondary' htmlFor="outlined-adornment-password">Password</InputLabel>
-                    <OutlinedInput
+                        <OutlinedInput
                         color='secondary'
                         id="outlined-adornment-password"
                         type='password'
@@ -111,7 +111,7 @@ const CreateGameForm = function ({ createGame, status, errorMsg, open, onClose, 
                         label='password'
                         onChange={(value) => setPassword(value.target.value, setGamePasswordError(false))}
                         onKeyPress={(e) => { if (e.key === 'Enter') handleContinue() }}
-                    />
+                        />
                 </FormControl>
                 <FormControl
                     required

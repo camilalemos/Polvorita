@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import HandSnackbar from './HandSnackbar.jsx'
 import TargetsPopUp from './TargetsPopUp.jsx'
@@ -18,7 +18,6 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
     const [aviableSpell, setAviableSpell] = useState('')
     const [previusDeProclamationsCount, setPreviusDeProclamationsCount] = useState(0)
 
-
     const handleClick = () => {
         if (newCards === null && spell === 'DIVINATION') {
             setOpenHand(true)
@@ -29,15 +28,15 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
         }
     }
 
-    const handleSpells = (spells) => {
+    const handleSpells = useCallback((spells) => {
         if (spells.length > 0 && spells[DEProclamationsCount] !== 'NONE_SPELL' &&
             previusDeProclamationsCount < DEProclamationsCount) {
             setSpell(spells[DEProclamationsCount])
             setAviableSpell(true)
         }
-    }
+    }, [previusDeProclamationsCount, DEProclamationsCount])
 
-    const handleSucces = (spell) => {
+    const handleSucces = useCallback((spell) => {
         switch (spell) {
             case 'CRUCIO':
                 setNewCards(cards)
@@ -55,7 +54,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
                 setPreviusDeProclamationsCount(DEProclamationsCount)
                 break;
         }
-    }
+    }, [ DEProclamationsCount, cards])
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -67,7 +66,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
         if (gameInfo.length !== 0) {
             setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
         }
-    }, [user, currentPlayer, players])
+    }, [user, currentPlayer, players, gameInfo])
 
 
     useEffect(() => {
@@ -77,7 +76,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
                 setIsMinister(true);
             }
         }
-    }, [gameInfo.elections, currentPlayer])
+    }, [gameInfo.elections, currentPlayer, minister, gameInfo.length])
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -85,8 +84,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
             setSpells(gameInfo.spells)
             handleSpells(spells)
         }
-
-    }, [gameInfo.proclamations?.DE_enacted_proclamations, gameInfo.spells])
+    }, [gameInfo.proclamations.DE_enacted_proclamations, gameInfo.spells, gameInfo.length, handleSpells, spells])
 
 
     useEffect(() => {
@@ -96,7 +94,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
         if (status === 'success') {
             handleSucces(spell)
         }
-    }, [status])
+    }, [status, errorMsg, handleSucces, spell])
 
     return (
         <div>
@@ -107,7 +105,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
                     </Button>
                 }
                 {aviableSpell && !isMinister && minister &&
-                    <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> The Magic Minister {minister} has obtained {spell}</a>
+                    <h style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> The Minister of Magic {minister} has obtained {spell}</h>
                 }
             </div>
             <div display='flex' style={{ width: 'min-content' }}>

@@ -10,7 +10,8 @@ function mapStateToProps(state) {
     return {
         status: state.joingame.status,
         user: state.login.user,
-        errorMsg: state.joingame.errorMsg
+        errorMsg: state.joingame.errorMsg,
+        reconnectGames: state.joingame.reconnectGames
     };
 }
 

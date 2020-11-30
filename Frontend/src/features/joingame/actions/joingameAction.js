@@ -84,8 +84,8 @@ const _reconnectGame = async (gameName, dispatch, getState) => {
                 "Authorization": `Bearer ${access_token}`
             }
         });
-        console.log(response, "RESPONSE");
-        dispatch({ type: RECCONECT_GAME_SUCCESS, payload :  {reconnectGame: response.data }});
+
+        dispatch({ type: RECCONECT_GAME_SUCCESS, payload :  {reconnectGames: response.data }});
 
     } catch (error) {
         console.log(error, "ERROR")

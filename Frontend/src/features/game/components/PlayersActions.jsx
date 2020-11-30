@@ -41,7 +41,11 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
             setMinister(gameInfo.elections.minister);
             setDirectorCandidate(gameInfo.elections.headmaster_candidate);
             setMinisterCandidate(gameInfo.elections.minister_candidate);
-            if(gameInfo.elections.minister_candidate === currentPlayer.name ) setIsCandidateMinister(true);
+            if(gameInfo.elections.minister_candidate === currentPlayer.name ){ 
+                setIsCandidateMinister(true);
+            } else {
+                setIsCandidateMinister(false);
+            } 
         }
     },[setIsCandidateMinister, gameInfo, currentPlayer])
 
@@ -62,7 +66,6 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     },[gameInfo, setVoting])
 
     useEffect(() => {
-
         if(gameInfo && gameInfo.elections && currentPlayer) {
             if (Object.keys(gameInfo.elections.votes).filter(player => player === currentPlayer.name).length) {
                 setVoted(true);

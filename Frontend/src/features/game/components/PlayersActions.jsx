@@ -49,7 +49,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
         let array = [];
         if(isCandidateMinister && gameInfo && gameInfo.elections) {
             for(const player of players) {
-                if(player.name !== currentPlayer.name && player.name !== gameInfo.elections.minister && player.name !== gameInfo.elections.headmaster) array.push(player);
+                if(player.is_alive && player.name !== currentPlayer.name && player.name !== gameInfo.elections.minister && player.name !== gameInfo.elections.headmaster) array.push(player);
             }
         }
         setCandidatePlayers(array);

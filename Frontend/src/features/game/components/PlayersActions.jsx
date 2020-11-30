@@ -7,6 +7,8 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
 
     const [minister, setMinister] = useState('');
     const [director, setDirector] = useState('');
+    const [ministerCandidate, setMinisterCandidate] = useState('');
+    const [directorCandidate, setDirectorCandidate] = useState('');
     const [players, setPlayers] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [isCandidateMinister, setIsCandidateMinister] = useState(false);
@@ -36,7 +38,9 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     useEffect(() => {
         if(gameInfo.length !== 0 && currentPlayer ){
             setDirector(gameInfo.elections.headmaster);
-            setMinister(gameInfo.elections.minister)
+            setMinister(gameInfo.elections.minister);
+            setDirectorCandidate(gameInfo.elections.headmaster_candidate);
+            setMinisterCandidate(gameInfo.elections.minister_candidate);
             if(gameInfo.elections.minister_candidate === currentPlayer.name ) setIsCandidateMinister(true);
         }
     },[setIsCandidateMinister, gameInfo, currentPlayer])
@@ -80,8 +84,10 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
             {gameInfo !== null && 
                 <>
-                    <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Minister: {minister ? minister : 'Not selected'}</a>
-                    <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Director: {director ? director : 'Not selected'}</a>
+                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Minister: {minister ? minister : 'Not selected'}</a>
+                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Director: {director ? director : 'Not selected'}</a>
+                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Minister Candidate: {ministerCandidate ? ministerCandidate : 'Not selected'}</a>
+                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Director Candidate: {directorCandidate ? directorCandidate : 'Not selected'}</a>
                 </>
             }
             {isCandidateMinister && !voting &&
@@ -91,7 +97,6 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
             }
             {voting && !voted &&
                 <>
-                    <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Candidate to director is: {gameInfo.elections.headmaster_candidate}</a>
                     <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >
                         <Button size='large' style={{ backgroundColor: 'lightblue', marginRight:40 }} onClick={() => handleVote("LUMOS")}>
                             LUMOS

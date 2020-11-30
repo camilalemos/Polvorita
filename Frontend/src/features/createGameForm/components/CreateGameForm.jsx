@@ -8,9 +8,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { useHistory } from "react-router-dom";
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
+import Select from '@material-ui/core/Select';
 import { withSnackbar } from 'notistack';
-
-
+import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from '@material-ui/core/styles';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -19,19 +20,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const CreateGameForm = function ({ createGame, status, statusCode, open, onClose, enqueueSnackbar }) {
 
-
+    const classes = useStyles();
     const [gameName, setGameName] = useState('');
     const [playerName, setPlayerName] = useState('');
     const [gamePassword, setPassword] = useState('');
+    const [maxPlayers, setMaxPlayers] = useState('');
     const [playerNameError, setPlayerNameError] = useState(false);
     const [gameNameError, setGameNameError] = useState(false);
     const [gamePasswordError, setGamePasswordError] = useState(false);
+    const [maxPlayersError, setMaxPlayersError] = useState(false);
     const history = useHistory();
 
+    
 
     const notEmpty = () => {
         let result = true;
-        if (gameName.length === 0  || playerName.length === 0){
+        if (gameName.length === 0  || playerName.length === 0 || maxPlayers.length === 0){
             enqueueSnackbar( 'Required fields cannot be omitted', { variant: 'error'});
             result = false;
         }
@@ -46,8 +50,11 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         if (!playerName) {
             setPlayerNameError(true);
         }
+        if (!maxPlayers) {
+            setMaxPlayersError(true);
+        }
         if (notEmpty()) {
-            createGame({ playerName, gameName, gamePassword })
+            createGame({ playerName, gameName, maxPlayers, gamePassword })
         }
     }
 
@@ -94,6 +101,14 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
         }
     }
 
+    const createMaxPlayerOptions = () => {
+        let menuItems = [];
+        for (var i = 5; i <= 10; i++) {
+            menuItems.push(<MenuItem value={i}>{i}</MenuItem>);
+        }
+        return menuItems;
+    }
+
     const checkStatusCode = () => {
         switch (statusCode) {
             case '422':
@@ -119,16 +134,17 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
     },[status])
 
     return (      
-        <div>  
         <Dialog
             open={open}
+            id='prueba'
+            className={classes.backgroundRoot}
             TransitionComponent={Transition}
             keepMounted
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
         >
             <div style={{ display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding: 40}} id='fondo'>
-            <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60}} id="alert-dialog-slide-title">{"NEW GAME"}</a>
+            <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60, color:'white'}} id="alert-dialog-slide-title">{"NEW GAME"}</a>
                 <TextField
                     value={gameName}
                     required
@@ -138,8 +154,10 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                     onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     id="gameName"
                     size='small'
+                    color='secondary'
                     label="Game Name"
                     variant="outlined"
+                    className={classes.inputRoot}
                 />
                 <TextField
                     value={playerName}
@@ -150,12 +168,15 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                     onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     id="playerName"
                     size='small'
+                    color='secondary'
                     label="Player Name"
                     variant="outlined"
+                    className={classes.inputRoot}
                 />
-                <FormControl size='small' variant="outlined">
-                    <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <FormControl className={classes.inputRoot} size='small' variant="outlined">
+                    <InputLabel color='secondary' htmlFor="outlined-adornment-password">Password</InputLabel>
                     <OutlinedInput
+                        color='secondary'
                         id="outlined-adornment-password"
                         type='password'
                         value={gamePassword}
@@ -166,16 +187,40 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                         onKeyPress={(e) => {if (e.key === 'Enter') handleContinue()}}
                     />
                 </FormControl>
-            
+                <FormControl variant="outlined" 
+                    required
+                    color='secondary'
+                    error={maxPlayersError}
+                    style={{ marginBottom: 40, minWidth:300 }}
+                    size='small'
+                    label="Max Players"
+                    variant="outlined"
+                    className={classes.inputRoot}
+                    >
+                    <InputLabel styles={{color:'white', backgroundColor:'white'}} id="Max Players">Max Players</InputLabel>
+                    <Select
+                        color='secondary'
+                        labelId="Max Players"
+                        id="Max Players"
+                        value={maxPlayers}
+                        onChange={(value) => setMaxPlayers(value.target.value, setMaxPlayersError(false))}
+                        label="Max Players"
+                        displayEmpty
+                        size='small'
+                        variant="outlined"
+                    >
+                    {createMaxPlayerOptions()}
+                    </Select>
+                </FormControl>
                 <div style={{ display: 'flex', justifyContent:'center' }}>
                     {status === 'loading' ? 
-                        <CircularProgress />
+                        <CircularProgress color='secondary'/>
                     :
                     <div style={{ flexDirection:'row'}}>
-                        <Button size='small' onClick={onClose} variant="outlined" color="primary" style={{ borderRadius:4, width:120 }}>
+                        <Button size='small' onClick={onClose} variant="outlined" color='secondary' style={{ borderRadius:4, width:120 }}>
                             Cancel
                         </Button>
-                        <Button size='small' onClick={handleContinue} variant="outlined" color="primary" style={{ borderRadius:4, width:120, marginLeft:20 }}>
+                        <Button size='small' onClick={handleContinue} variant="outlined" color='secondary' style={{ borderRadius:4, width:120, marginLeft:20 }}>
                             Create
                         </Button>
                     </div>
@@ -183,8 +228,23 @@ const CreateGameForm = function ({ createGame, status, statusCode, open, onClose
                 </div>
             </div>
         </Dialog>
-        </div>  
     );
 }
 
 export default withSnackbar(CreateGameForm);
+
+const useStyles = makeStyles((theme) => ({
+    backgroundRoot: {
+        '& .MuiDialog-paper': {
+            backgroundColor: 'dimgrey',
+        }
+    },
+    inputRoot:{
+        '& .MuiInputLabel-outlined': {
+            color:'white'
+        },
+        '& .MuiOutlinedInput-input': {
+            color:'white'
+        }
+    }
+  }));

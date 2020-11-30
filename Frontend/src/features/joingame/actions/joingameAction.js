@@ -38,7 +38,8 @@ const _joingame = async (gameName, playerName, gamePassword, dispatch, getState)
         
     } catch (error){
         console.log(error, "ERROR")
-        dispatch({type: JOIN_GAME_FAIL});
+        if (error.response.status === 401) dispatch({type: JOIN_GAME_FAIL, payload: {errorMsg: error.response.data.detail }});
+        if (error.response.status === 403) dispatch({type: JOIN_GAME_FAIL, payload: {errorMsg: error.response.data.detail }});
     }
 };
 

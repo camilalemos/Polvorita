@@ -7,6 +7,8 @@ import Chat from '../../chat/containers/ChatContainer'
 import Spells from '../containers/SpellsContainers'
 import PlayerList from '../containers/ListPlayersContainers'
 import WinPopUp from './winPopUp.jsx'
+import Expelliarmus from '../containers/ExpelliarmusContainer'
+
 
 
 export default function Game () {
@@ -17,31 +19,19 @@ export default function Game () {
     const [gameStatusFinish, setGameStatusFinish ] = useState(false);
 
     const ws = useRef(null);
-    //console.log(ws, "WS");
     useEffect(() => {
 
 	    ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
 
-		// ws.onopen = () => {
-		// ws.send(JSON.stringify({event: 'game:subscribe'}));
-		// };
-
 		ws.current.onmessage = (event) => {
         setGameInfo(JSON.parse(event.data));
-        // console.log(gameInfo)
+        ws.current.close();
         };
         
         ws.current.onerror = function(err) {
 			console.log(err, "ERROR")
 		}
 
-		// ws.onclose = () => {
-		// ws.close();
-		// };
-
-		return () => {
-		ws.current.close();
-		};
     });
     useEffect(() => {
         if ( gameInfo.length !== 0 && gameInfo.status === 'FINISHED')
@@ -59,6 +49,7 @@ export default function Game () {
                 </div>
                 <div style={{ flex:1, borderTop:'solid', borderTopWidth:1, borderTopColor:'lightgrey' }}>
                     <Spells gameInfo={gameInfo} />
+                    <Expelliarmus gameInfo={gameInfo} />
                 </div>
                 <div style={{ flex:1, borderTop:'solid', borderTopWidth:1, borderTopColor:'lightgrey' }}>
                     <PlayerList gameInfo={gameInfo} />
@@ -68,7 +59,7 @@ export default function Game () {
                 <Board gameInfo={ gameInfo }/>
                 <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo= { gameInfo}/>
             </div>
-            <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1}}>
+            <div className="game-info" style={{display:'flex', flex:.7, borderLeft:'solid', borderLeftWidth:1, padding: 20}}>
                 <Chat gameInfo={ gameInfo }/>
             </div>
         </div>

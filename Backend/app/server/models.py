@@ -54,12 +54,12 @@ class Elections(BaseModel):
 
     def vote(self, player_name: str, vote: Vote):
         self.votes[player_name] = vote
-        if len(self.votes) == len(self.players):
-            self.set_result()
 
     def check_for_chaos(self):
         if self.rejected == 3:
             self.rejected = 0
+            self.minister = None
+            self.headmaster = None
             return True
         else:
             return False
@@ -128,8 +128,6 @@ class Proclamations(BaseModel):
                 loyalty = self.hand.pop()
                 self.discarded.append(loyalty)
 
-        self.headmaster_exp = False
-
 class Game(BaseModel):
     name: str
     password: Optional[str] = None
@@ -163,7 +161,6 @@ class Game(BaseModel):
             self.owner = random.choice(list(self.players.values())).user_name
 
     def start(self):
-        self.status = 'STARTED'
         self.proclamations = Proclamations()
         self.proclamations.init()
         self.assign_loyalties()
@@ -224,6 +221,7 @@ class Game(BaseModel):
             self.elections.nominate('MINISTER', target)
             self.send_message(f"The Minister of Magic has used the IMPERIO spell against {target}!", "system")
         elif spell == 'NONE_SPELL':
+            self.status = 'STARTED'
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
         self.spells[self.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'

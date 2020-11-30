@@ -99,7 +99,7 @@ def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^
 @app.get("/game/")
 def get_game(own: bool, user: User = Depends(get_current_active_user)):
     if own:
-        return [game.name for game in manager.games.values() if game.exist(user.username)]
+        return [game.name for game in manager.games.values() if game.exist(user.username) and game.status != 'CREATED']
     else:
         return [game for game in manager.games.values() if game.status == 'CREATED']
 
@@ -117,7 +117,9 @@ def join_game(player_name: str = Form(..., min_length=3, max_length=15, regex="^
               params = Depends(get_game)):
     game = params["game"]
     username = params["user"].username
-    if game.exist(username):
+    if game.status != 'CREATED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot join game at this moment")
+    elif game.exist(username):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="A user cannot enter a game twice")
     elif password != game.password:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong password")
@@ -134,13 +136,14 @@ def join_game(player_name: str = Form(..., min_length=3, max_length=15, regex="^
 def start_game(params = Depends(get_game)):
     game = params["game"]
     if game.status != 'CREATED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game already started")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot start game at this moment")
     elif params["user"].username != game.owner:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only game owner can start the game")
     elif game.num_players < game.min_players:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough players")
 
     game.start()
+    game.status = 'STARTED'
     return game
 
 def get_player(player_name: str, params = Depends(get_game)):
@@ -158,8 +161,8 @@ def get_player(player_name: str, params = Depends(get_game)):
 def quit_game(params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
-    if game.status == 'STARTED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot quit a started game")
+    if game.status != 'CREATED' or game.status != 'FINISHED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot quit game at this moment")
 
     game.delete_player(player_name)
     if not game.num_players:
@@ -176,27 +179,20 @@ def check_player(params = Depends(get_player)):
     return params
 
 #SEND MESSAGE
-@app.post("/game/chat/", response_model=List[str])
+@app.post("/game/chat/")
 def send_message(msg: str = Form(...), params = Depends(check_player)):
     game = params["game"]
     player_name = params["player"].name
     game.send_message(msg, player_name)
-    return game.chat
-
-def check_game(params = Depends(check_player)):
-    game = params["game"]
-    player = params["player"]
-    if game.status != 'STARTED':
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not started")
-
-    return params
 
 #CHOOSE DIRECTOR
 @app.put("/game/elections/nominate/", response_model=Game)
-def choose_director(candidate_name:str, params = Depends(check_game)):
+def choose_director(candidate_name:str, params = Depends(check_player)):
     game = params["game"]
     player_name = params["player"].name
-    if candidate_name not in game.players:
+    if game.status != 'STARTED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot choose director at this moment")
+    elif candidate_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate name not found")
     elif player_name != game.elections.minister_candidate:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the minister candidate can choose the headmaster candidate")
@@ -204,96 +200,120 @@ def choose_director(candidate_name:str, params = Depends(check_game)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The candidate is not eligible")
 
     game.elections.nominate('HEADMASTER', candidate_name)
+    game.status = 'VOTING'
     return game
 
 #VOTE
 @app.put("/game/elections/vote/", response_model=Game)
-def vote(vote:Vote, params = Depends(check_game)):
+def vote(vote:Vote, params = Depends(check_player)):
     game = params["game"]
     player_name = params["player"].name
-    if not game.elections.headmaster_candidate:
+    if game.status != 'VOTING':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot vote at this moment")
+    elif not game.elections.headmaster_candidate:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Headmaster candidate not defined")
     elif player_name in game.elections.votes:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
-    elif game.proclamations.hand:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot vote at this moment")
 
     game.elections.vote(player_name, vote)
+    if len(game.elections.votes) == len(game.players):
+        game.elections.set_result()
+        if game.elections.result == 'LUMOS':
+            game.send_message("The result of the election has been LUMOS!", "system")
+            game.status = 'LEGISLATIVE'
+        elif game.elections.result == 'NOX':
+            game.send_message("The result of the election has been NOX!", "system")
+            game.status = 'STARTED'
+
     if game.elections.check_for_chaos():
         game.proclamations.get_proclamations(1)
         game.proclamations.enact()
+        game.spells[game.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
+        game.send_message("The government has entered a situation of chaos!", "system")
 
     game.check_win()
     return game
 
 #GET PROCLAMATIONS
 @app.get("/game/proclamations/", response_model=List[Loyalty])
-def get_proclamations(params = Depends(check_game)):
+def get_proclamations(params = Depends(check_player)):
     game = params["game"]
-    if params["player"].name != game.elections.minister:
+    if game.status != 'LEGISLATIVE':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot get proclamations at this moment")
+    elif params["player"].name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can get proclamations")
     elif game.proclamations.hand:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Still have proclamations in hand")
-    elif game.elections.headmaster_candidate:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot get proclamations at this moment")
 
     game.proclamations.get_proclamations(3)
     return game.proclamations.hand
 
 #DISCARD PROCLAMATION
 @app.put("/game/proclamations/discard/", response_model=Game)
-def discard_proclamation(loyalty: Loyalty, params = Depends(check_game)):
+def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
     game = params["game"]
     player_name = params["player"].name
-    if player_name not in [game.elections.minister, game.elections.headmaster]:
+    if game.status != 'LEGISLATIVE':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot discard proclamations at this moment")
+    elif player_name not in [game.elections.minister, game.elections.headmaster]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can discard a proclamation")
     elif loyalty not in game.proclamations.hand:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Proclamation not in hand")
-    elif game.elections.headmaster_candidate or game.proclamations.headmaster_exp:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot discard proclamations at this moment")
+    elif game.proclamations.headmaster_exp:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot discard proclamations during an Expelliarmus negotiation")
 
     if player_name == game.elections.minister and len(game.proclamations.hand) == 3:
         game.proclamations.discard(loyalty)
     elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
         game.proclamations.discard(loyalty)
+        if game.spells[game.proclamations.DE_enacted_proclamations] == 'NONE_SPELL':
+            game.status = 'STARTED'
+        else:
+            game.status = 'EXECUTIVE'
 
     game.check_win()
     return game
 
 #EXPELLIARMUS
 @app.put("/game/proclamations/expelliarmus/", response_model=Game)
-def use_expelliarmus(minister_exp: Optional[bool] = None, params = Depends(check_game)):
+def use_expelliarmus(minister_exp: Optional[bool] = None, params = Depends(check_player)):
     game = params["game"]
     player_name = params["player"].name
-    if player_name not in [game.elections.minister, game.elections.headmaster]:
+    if game.status != 'LEGISLATIVE':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot use Expelliarmus at this moment")
+    elif player_name not in [game.elections.minister, game.elections.headmaster]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister or headmaster can use Expelliarmus")
     elif game.proclamations.DE_enacted_proclamations < 5 or len(game.proclamations.hand) != 2:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot use Expelliarmus at this moment")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Expelliarmus not available")
     elif player_name == game.elections.minister and not game.proclamations.headmaster_exp:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Headmaster must cast Expelliarmus first")
 
     if player_name == game.elections.headmaster:
         game.proclamations.headmaster_exp = True
     elif player_name == game.elections.minister:
+        game.proclamations.headmaster_exp = False
         game.proclamations.expelliarmus(minister_exp)
+        if minister_exp:
+            game.status = 'EXECUTIVE'
 
     return game
 
 #CAST SPELL
 @app.put("/game/spells/")
-def cast_spell(target_name: Optional[str] = None, params = Depends(check_game)):
+def cast_spell(target_name: Optional[str] = None, params = Depends(check_player)):
     game = params ["game"]
     player_name = params["player"].name
-    if target_name and target_name not in game.players:
+    if game.status != 'EXECUTIVE':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast spells at this moment")
+    elif target_name and target_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target name not found")
     elif target_name == player_name:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast a spell on yourself")
     elif player_name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
-    elif game.elections.headmaster_candidate or game.proclamations.hand:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast spells at this moment")
 
     result = game.cast_spell(target_name)
+    game.status = 'STARTED'
     game.check_win()
     return result
 

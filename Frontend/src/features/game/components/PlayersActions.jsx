@@ -28,7 +28,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     },[statusResults, results])
 
     useEffect(() => {
-        if (gameInfo.length !== 0) setPlayers(Object.values(gameInfo.players));
+        if (gameInfo && gameInfo.players) setPlayers(Object.values(gameInfo.players));
     }, [gameInfo, setPlayers])
 
     useEffect(() => {
@@ -36,7 +36,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     }, [user, currentPlayer, players])
 
     useEffect(() => {
-        if(gameInfo.length !== 0 && currentPlayer ){
+        if(gameInfo && gameInfo.elections && currentPlayer ){
             setDirector(gameInfo.elections.headmaster);
             setMinister(gameInfo.elections.minister);
             setDirectorCandidate(gameInfo.elections.headmaster_candidate);
@@ -56,7 +56,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     },[setCandidatePlayers,players,currentPlayer, gameInfo])
 
     useEffect(() => {
-        if(gameInfo.length !== 0) {
+        if(gameInfo && gameInfo.elections) {
             if (gameInfo.elections.headmaster_candidate !== null) {
                 setVoting(true);
             } else {
@@ -90,7 +90,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
                     <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Director Candidate: {directorCandidate ? directorCandidate : 'Not selected'}</a>
                 </>
             }
-            {isCandidateMinister && !voting &&
+            {isCandidateMinister && !voting && gameInfo.status === "STARTED" &&
                 <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={() => setOpenModal(true)}>
                     Choose director
                 </Button>

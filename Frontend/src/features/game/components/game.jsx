@@ -34,7 +34,7 @@ export default function Game() {
     });
 
     useEffect(() => {
-        if (gameInfo.length !== 0 && gameInfo.status === 'FINISHED')
+        if (gameInfo && gameInfo.status === 'FINISHED')
             setGameStatusFinish(true)
     }, [gameInfo])
 

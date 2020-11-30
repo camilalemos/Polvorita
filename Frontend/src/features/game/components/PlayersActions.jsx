@@ -56,12 +56,8 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     },[setCandidatePlayers,players,currentPlayer, gameInfo])
 
     useEffect(() => {
-        if(gameInfo && gameInfo.elections) {
-            if (gameInfo.elections.headmaster_candidate !== null) {
-                setVoting(true);
-            } else {
-                setVoting(false);
-            }
+        if(gameInfo) {
+            setVoting(gameInfo.status === 'VOTING')
         }
     },[gameInfo, setVoting])
 

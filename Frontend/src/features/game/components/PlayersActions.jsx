@@ -85,20 +85,23 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
 
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
+            <div style={{ display:'flex', justifyContent:'flex-end' }}>
+                {gameInfo !== null && gameInfo.elections && <h> Elections: {gameInfo.elections.rejected} </h>}
+            </div>
             {gameInfo !== null && 
                 <>
-                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Minister: {minister ? minister : 'Not selected'}</a>
-                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Director: {director ? director : 'Not selected'}</a>
-                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Minister Candidate: {ministerCandidate ? ministerCandidate : 'Not selected'}</a>
-                    <a style={{ flex:1, textAlign:'left', fontSize:23 }}>Director Candidate: {directorCandidate ? directorCandidate : 'Not selected'}</a>
+                    <h style={{ flex:1, textAlign:'left', fontSize:23 }}>Minister: {minister ? minister : 'Not selected'}</h>
+                    <h style={{ flex:1, textAlign:'left', fontSize:23 }}>Director: {director ? director : 'Not selected'}</h>
+                    <h style={{ flex:1, textAlign:'left', fontSize:23 }}>Minister Candidate: {ministerCandidate ? ministerCandidate : 'Not selected'}</h>
+                    <h style={{ flex:1, textAlign:'left', fontSize:23 }}>Director Candidate: {directorCandidate ? directorCandidate : 'Not selected'}</h>
                 </>
             }
-            {isCandidateMinister && !voting && gameInfo.status === "STARTED" &&
+            {isCandidateMinister && !voting && gameInfo.status === "STARTED" && currentPlayer.is_alive &&
                 <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={() => setOpenModal(true)}>
                     Choose director
                 </Button>
             }
-            {voting && !voted &&
+            {voting && !voted && currentPlayer.is_alive &&
                 <>
                     <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >
                         <Button size='large' style={{ backgroundColor: 'lightblue', marginRight:40 }} onClick={() => handleVote("LUMOS")}>
@@ -110,8 +113,8 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
                     </div>
                 </>
             }
-            {voted && voting &&
-                <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Your vote is: {voteChoice} </a>
+            {voted && voting && currentPlayer.is_alive &&
+                <h style={{ flex:1, textAlign:'center', fontSize:30 }}>Your vote is: {voteChoice} </h>
             }
 
         <SelectDirectorCandidate open={openModal} onClose={() => setOpenModal(false)} candidatePlayers={candidatePlayers} selectDirector={(playerName) => selectDirector(playerName, currentPlayer.name, gameInfo.name)} />

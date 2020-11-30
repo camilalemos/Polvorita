@@ -16,9 +16,9 @@ export default function PlayerList({ gameInfo }) {
                 let textcolorlist
                 
                 if (player.is_alive === true)
-                    textcolorlist = <a style={{ fontSize: 26, padding: 3 }}> {player.name}</a>
+                    textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> {player.name}</h>
                 else
-                    textcolorlist = <a style={{ color: "grey", textDecoration: 'line-through', fontSize: 26, padding: 3 }}> {player.name} </a>
+                    textcolorlist = <h style={{ color: "grey", textDecoration: 'line-through', fontSize: 26, padding: 3 }}> {player.name} </h>
                 return textcolorlist
             })}
         </div>

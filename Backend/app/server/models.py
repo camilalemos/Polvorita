@@ -54,12 +54,12 @@ class Elections(BaseModel):
 
     def vote(self, player_name: str, vote: Vote):
         self.votes[player_name] = vote
-        if len(self.votes) == len(self.players):
-            self.set_result()
 
     def check_for_chaos(self):
         if self.rejected == 3:
             self.rejected = 0
+            self.minister = None
+            self.headmaster = None
             return True
         else:
             return False
@@ -68,6 +68,10 @@ class Elections(BaseModel):
         lumos_votes = sum(map(('LUMOS').__eq__, self.votes.values()))
         nox_votes = sum(map(('NOX').__eq__, self.votes.values()))
         return 'NOX' if lumos_votes < nox_votes else 'LUMOS'
+
+    def next_minister(self):
+        self.players = self.players[1:] + self.players[:1]
+        self.minister_candidate = self.players[0]
 
     def set_result(self):
         self.result = self.get_result()
@@ -78,8 +82,7 @@ class Elections(BaseModel):
             self.minister = self.minister_candidate
             self.headmaster = self.headmaster_candidate
 
-        self.players = self.players[1:] + self.players[:1]
-        self.minister_candidate = self.players[0]
+        self.next_minister()
         self.headmaster_candidate = None
         self.votes.clear()
 
@@ -128,8 +131,6 @@ class Proclamations(BaseModel):
                 loyalty = self.hand.pop()
                 self.discarded.append(loyalty)
 
-        self.headmaster_exp = False
-
 class Game(BaseModel):
     name: str
     password: Optional[str] = None
@@ -163,7 +164,6 @@ class Game(BaseModel):
             self.owner = random.choice(list(self.players.values())).user_name
 
     def start(self):
-        self.status = 'STARTED'
         self.proclamations = Proclamations()
         self.proclamations.init()
         self.assign_loyalties()
@@ -206,24 +206,28 @@ class Game(BaseModel):
     def cast_spell(self, target: str):
         result = self
         spell = self.spells[self.proclamations.DE_enacted_proclamations]
-        if spell == 'DIVINATION':
-            self.proclamations.shuffle()
-            result = self.proclamations.deck[:3]
-            self.send_message("The Minister of Magic has used the DIVINATION spell!", "system")
-        elif spell == 'AVADA_KEDAVRA':
+        if spell == 'AVADA_KEDAVRA':
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.players[target].kill()
+            if target == self.elections.minister_candidate:
+                self.elections.next_minister()
+            self.elections.players.remove(target)
             self.send_message(f"The Minister of Magic has used the AVADA KEDAVRA spell against {target}!", "system")
         elif spell == 'CRUCIO':
             result = self.players[target].loyalty
             self.send_message(f"The Minister of Magic has used the CRUCIO spell against {target}!", "system")
+        elif spell == 'DIVINATION':
+            self.proclamations.shuffle()
+            result = self.proclamations.deck[:3]
+            self.send_message("The Minister of Magic has used the DIVINATION spell!", "system")
         elif spell == 'IMPERIO':
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.elections.nominate('MINISTER', target)
             self.send_message(f"The Minister of Magic has used the IMPERIO spell against {target}!", "system")
         elif spell == 'NONE_SPELL':
+            self.status = 'STARTED'
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
 
         self.spells[self.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'

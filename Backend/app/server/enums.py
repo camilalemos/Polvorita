@@ -5,6 +5,9 @@ class GameStatus(str, Enum):
     created = 'CREATED'
     started = 'STARTED'
     finished = 'FINISHED'
+    voting = 'VOTING'
+    legislative = 'LEGISLATIVE'
+    executive = 'EXECUTIVE'
 
 class Nomination(str, Enum):
     minister = 'MINISTER'

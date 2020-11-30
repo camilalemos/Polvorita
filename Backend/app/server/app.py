@@ -99,7 +99,7 @@ def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^
 @app.get("/game/")
 def get_game(own: bool, user: User = Depends(get_current_active_user)):
     if own:
-        return [game.name for game in manager.games.values() if game.exist(user.username)]
+        return [game.name for game in manager.games.values() if game.exist(user.username) and game.status != 'CREATED']
     else:
         return [game for game in manager.games.values() if game.status == 'CREATED']
 

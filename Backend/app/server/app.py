@@ -117,7 +117,9 @@ def join_game(player_name: str = Form(..., min_length=3, max_length=15, regex="^
               params = Depends(get_game)):
     game = params["game"]
     username = params["user"].username
-    if game.exist(username):
+    if game.status != 'CREATED':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot join game at this moment")
+    elif game.exist(username):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="A user cannot enter a game twice")
     elif password != game.password:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong password")

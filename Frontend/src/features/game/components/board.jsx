@@ -65,7 +65,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
     }, [user, players])
 
     useEffect(() => {
-        if (currentPlayer && gameInfo.length !== 0) {
+        if (currentPlayer && gameInfo.elections) {
             if (gameInfo.elections.minister === currentPlayer.name) {
                 setIsMinister(true);
             } else { 

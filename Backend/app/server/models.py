@@ -210,9 +210,9 @@ class Game(BaseModel):
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.players[target].kill()
-            self.elections.players.remove(target)
             if target == self.elections.minister_candidate:
                 self.elections.next_minister()
+            self.elections.players.remove(target)
             self.send_message(f"The Minister of Magic has used the AVADA KEDAVRA spell against {target}!", "system")
         elif spell == 'CRUCIO':
             result = self.players[target].loyalty

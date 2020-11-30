@@ -194,6 +194,8 @@ def choose_director(candidate_name:str, params = Depends(check_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot choose director at this moment")
     elif candidate_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate name not found")
+    elif candidate_name not in game.elections.players:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Candidate is not alive")
     elif player_name != game.elections.minister_candidate:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the minister candidate can choose the headmaster candidate")
     elif candidate_name in [player_name, game.elections.minister, game.elections.headmaster]:
@@ -307,6 +309,8 @@ def cast_spell(target_name: Optional[str] = None, params = Depends(check_player)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast spells at this moment")
     elif target_name and target_name not in game.players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Target name not found")
+    elif target_name and target_name not in game.elections.players:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Target is not alive")
     elif target_name == player_name:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast a spell on yourself")
     elif player_name != game.elections.minister:

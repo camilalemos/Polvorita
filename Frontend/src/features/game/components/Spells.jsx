@@ -58,26 +58,20 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
     }
 
     useEffect(() => {
-        if (gameInfo.length !== 0) {
-            setPlayers(Object.values(gameInfo.players));
-        }
+        if (gameInfo.length !== 0) setPlayers(Object.values(gameInfo.players));
     }, [gameInfo, setPlayers, setMinister])
 
     useEffect(() => {
-        if (gameInfo.length !== 0) {
-            setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
-        }
-    }, [user, currentPlayer, players])
+        if (gameInfo.length !== 0) setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
+    }, [user, currentPlayer, players, gameInfo.length])
 
 
     useEffect(() => {
         if (currentPlayer && gameInfo.length !== 0) {
             setMinister(gameInfo.elections.minister)
-            if (minister === currentPlayer.name) {
-                setIsMinister(true);
-            }
+            if (minister === currentPlayer.name) setIsMinister(true);
         }
-    }, [gameInfo.elections, currentPlayer])
+    }, [gameInfo.elections, currentPlayer, gameInfo.length, minister])
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -90,12 +84,8 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
 
 
     useEffect(() => {
-        if (status === 'failed') {
-            console.log("ERROR " + errorMsg)
-        }
-        if (status === 'success') {
-            handleSucces(spell)
-        }
+        if (status === 'failed') console.log("ERROR " + errorMsg)
+        if (status === 'success') handleSucces(spell)
     }, [status])
 
     return (

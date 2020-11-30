@@ -15,7 +15,7 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 
-const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg }) => {
+const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg, reconnectGame }) => {
 	const history = useHistory();
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playerName, setPlayerName] = useState('');
@@ -39,6 +39,10 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg })
             ws.current.close();
         };
 	});
+
+	useEffect(() => {
+		reconnectGame()
+	},[gameInfo])
 
 	useEffect(() => {
 		if (status === 'failed') if (status === 'failed') enqueueSnackbar(errorMsg, { variant: 'error' });

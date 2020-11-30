@@ -4,7 +4,8 @@ import {
     JOIN_GAME_FAIL,
     START_GAME,
     START_GAME_SUCCESS,
-    START_GAME_FAIL
+    START_GAME_FAIL,
+    RECCONECT_GAME_SUCCESS
 } from '../../../constants/actionTypes/joingame';
 import axios from 'axios';
 import api from '../../../configs/api';
@@ -65,5 +66,28 @@ const _startGame = async (gameName, dispatch, getState) => {
     } catch (error) {
         console.log(error, "ERROR")
         dispatch({ type: START_GAME_FAIL });
+    }
+};
+
+export const reconnectGame = (gameName) => (dispatch, getState) => _reconnectGame(gameName, dispatch, getState);
+const _reconnectGame = async (gameName, dispatch, getState) => {
+
+    try {
+
+        let { access_token } = { ...getState().login }
+
+        const response =await axios({
+            method: 'get',
+            url: `${api.url}/game/?own=true`,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                "Authorization": `Bearer ${access_token}`
+            }
+        });
+        console.log(response, "RESPONSE");
+        dispatch({ type: RECCONECT_GAME_SUCCESS, payload :  {reconnectGame: response.data }});
+
+    } catch (error) {
+        console.log(error, "ERROR")
     }
 };

@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 
 import Joingame from '../components/Joingame';
 
-import { joingame } from '../actions/joingameAction';
+import { joingame, reconnectGame } from '../actions/joingameAction';
 import { logout } from '../../../features/login/actions/LoginAction';
 
 function mapStateToProps(state) {
@@ -18,7 +18,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         joingame,
-        logout
+        logout,
+        reconnectGame
     }, dispatch);
 };
 

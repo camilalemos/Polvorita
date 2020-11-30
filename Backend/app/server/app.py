@@ -315,8 +315,6 @@ def cast_spell(target_name: Optional[str] = None, params = Depends(check_player)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast a spell on yourself")
     elif player_name != game.elections.minister:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only minister can cast a spell")
-    elif game.elections.headmaster_candidate or game.proclamations.hand:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot cast spells at this moment")
 
     result = game.cast_spell(target_name)
     game.status = 'STARTED'

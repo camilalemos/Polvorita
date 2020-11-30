@@ -296,7 +296,7 @@ def use_expelliarmus(minister_exp: Optional[bool] = None, params = Depends(check
         game.proclamations.headmaster_exp = False
         game.proclamations.expelliarmus(minister_exp)
         if minister_exp:
-            game.status = 'EXECUTIVE'
+            game.status = 'STARTED'
 
     return game
 

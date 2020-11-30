@@ -5,7 +5,7 @@ import PlayerList from '../components/ListPlayers';
 
 function mapStateToProps(state) {
     return {
-
+        user: state.login.user,
     };
 }
 

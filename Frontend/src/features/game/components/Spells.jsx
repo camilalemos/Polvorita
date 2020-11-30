@@ -87,7 +87,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
             setSpells(gameInfo.spells)
             handleSpells(spells)
         }
-    }, [gameInfo.proclamations.DE_enacted_proclamations, gameInfo.spells, gameInfo.length, handleSpells, spells])
+    }, [gameInfo.proclamations?.DE_enacted_proclamations, gameInfo.spells, gameInfo.length, handleSpells, spells])
     
     useEffect(() => {
         if (status === 'failed') {

@@ -22,7 +22,6 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [isGetProclamation, setIsGetProclamation] = useState(true);
 
-
     useEffect(() => {
         if (gameInfo.length !== 0) {
             setMinisterName(gameInfo.elections.minister);

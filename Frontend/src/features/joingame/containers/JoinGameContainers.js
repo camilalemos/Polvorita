@@ -3,14 +3,15 @@ import { bindActionCreators } from 'redux';
 
 import Joingame from '../components/Joingame';
 
-import { joingame } from '../actions/joingameAction';
+import { joingame, reconnectGame } from '../actions/joingameAction';
 import { logout } from '../../../features/login/actions/LoginAction';
 
 function mapStateToProps(state) {
     return {
         status: state.joingame.status,
         user: state.login.user,
-        errorMsg: state.joingame.errorMsg
+        errorMsg: state.joingame.errorMsg,
+        reconnectGames: state.joingame.reconnectGames
     };
 }
 
@@ -18,7 +19,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         joingame,
-        logout
+        logout,
+        reconnectGame
     }, dispatch);
 };
 

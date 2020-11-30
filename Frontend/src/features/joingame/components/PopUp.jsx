@@ -2,7 +2,6 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,7 +23,7 @@ const PopUp = function ({  open, playerName, gamePassword, setPlayerName, setPas
             aria-describedby="alert-dialog-slide-description"
         >
             <div style={{ display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding: 40}} id='fondo'>
-                <a style={{ textAlign: 'center', color:'white', fontSize:40}} id="alert-dialog-slide-title">{"JOIN GAME"}</a>
+                <h style={{ textAlign: 'center', color:'white', fontSize:40}} id="alert-dialog-slide-title">{"JOIN GAME"}</h>
                 <div id='inputs' style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:20 }}>
                     <TextField
                         value={playerName}

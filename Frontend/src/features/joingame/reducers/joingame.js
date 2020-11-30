@@ -4,13 +4,15 @@ import {
 	JOIN_GAME,
 	START_GAME,
 	START_GAME_SUCCESS,
-	START_GAME_FAIL
+	START_GAME_FAIL,
+	RECCONECT_GAME_SUCCESS
 } from '../../../constants/actionTypes/joingame';
 
 const initialState= {
 	status: 'undefined',
 	statusStart: 'undefined',
-	errorMsg: ''
+	errorMsg: '',
+	reconnectGames: []
 }
 
 export default (state = initialState, action) => {
@@ -45,6 +47,11 @@ export default (state = initialState, action) => {
 			return {
 				...state, 
 				statusStart: 'success'
+			}
+		case RECCONECT_GAME_SUCCESS:
+			return {
+				...state,
+				reconnectGames: action.payload.reconnectGames
 			}
 		default:
 			return {...state};

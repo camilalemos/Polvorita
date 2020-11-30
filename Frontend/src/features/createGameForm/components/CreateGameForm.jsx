@@ -13,7 +13,6 @@ import { withSnackbar } from 'notistack';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 
-
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -39,7 +38,6 @@ const CreateGameForm = function ({ createGame, status, errorMsg, open, onClose, 
         }
         return result;
     }
-
 
     const handleContinue = () => {
         if (!gameName) setGameNameError(true);
@@ -71,14 +69,14 @@ const CreateGameForm = function ({ createGame, status, errorMsg, open, onClose, 
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
         >
-            <div style={{ display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding: 40}} id='fondo'>
-                <a style={{ textAlign: 'center', fontSize:40,  marginBottom:60, color:'white'}} id="alert-dialog-slide-title">{"NEW GAME"}</a>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', padding: 40 }} id='fondo'>
+                <a style={{ textAlign: 'center', fontSize: 40, marginBottom: 60, color: 'white' }} id="alert-dialog-slide-title">{"NEW GAME"}</a>
                 <TextField
                     value={gameName}
                     required
                     error={gameNameError}
                     style={{ marginBottom: 40, minWidth: 300 }}
-                    onChange={(value) => (setGameName(value.target.value), setGameNameError(false))}
+                    onChange={(value) => { setGameName(value.target.value); setGameNameError(false) }}
                     onKeyPress={(e) => { if (e.key === 'Enter') handleContinue() }}
                     id="gameName"
                     size='small'
@@ -92,7 +90,7 @@ const CreateGameForm = function ({ createGame, status, errorMsg, open, onClose, 
                     required
                     error={playerNameError}
                     style={{ marginBottom: 40, minWidth: 300 }}
-                    onChange={(value) => (setPlayerName(value.target.value), setPlayerNameError(false))}
+                    onChange={(value) => { setPlayerName(value.target.value); setPlayerNameError(false) }}
                     onKeyPress={(e) => { if (e.key === 'Enter') handleContinue() }}
                     id="playerName"
                     size='small'
@@ -115,7 +113,7 @@ const CreateGameForm = function ({ createGame, status, errorMsg, open, onClose, 
                         onKeyPress={(e) => { if (e.key === 'Enter') handleContinue() }}
                         />
                 </FormControl>
-                <FormControl variant="outlined"
+                <FormControl
                     required
                     color='secondary'
                     error={maxPlayersError}

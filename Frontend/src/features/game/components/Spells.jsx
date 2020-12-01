@@ -16,7 +16,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
     const [newCards, setNewCards] = useState(null)
     const [spell, setSpell] = useState('')
     const [aviableSpell, setAviableSpell] = useState('')
-    const [previusDeProclamationsCount, setPreviusDeProclamationsCount] = useState(0)
+    const [gameStatus, setGameStatus] = useState('')
 
     const handleClick = () => {
         if (newCards === null && spell === 'DIVINATION') {
@@ -29,12 +29,11 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
     }
 
     const handleSpells = useCallback((spells) => {
-        if (spells.length > 0 && spells[DEProclamationsCount] !== 'NONE_SPELL' &&
-            previusDeProclamationsCount < DEProclamationsCount) {
+        if (spells.length > 0 && spells[DEProclamationsCount] !== 'NONE_SPELL' && gameStatus === 'EXECUTIVE') {
             setSpell(spells[DEProclamationsCount])
             setAviableSpell(true)
         }
-    }, [previusDeProclamationsCount, DEProclamationsCount])
+    }, [DEProclamationsCount, gameStatus])
 
     const handleSucces = useCallback((spell) => {
         switch (spell) {
@@ -42,19 +41,16 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
                 setNewCards(cards)
                 setOpenHand(true)
                 setAviableSpell(false)
-                setPreviusDeProclamationsCount(DEProclamationsCount)
                 break;
             case 'DIVINATION':
                 setNewCards(cards)
                 setAviableSpell(false)
-                setPreviusDeProclamationsCount(DEProclamationsCount)
                 break;
             default:
                 setAviableSpell(false)
-                setPreviusDeProclamationsCount(DEProclamationsCount)
                 break;
         }
-    }, [ DEProclamationsCount, cards])
+    }, [cards])
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -68,15 +64,22 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
         }
     }, [user, currentPlayer, players, gameInfo])
 
-
     useEffect(() => {
         if (currentPlayer && gameInfo.length !== 0) {
             setMinister(gameInfo.elections.minister)
             if (minister === currentPlayer.name) {
                 setIsMinister(true);
+            } else {
+                setIsMinister(false);
             }
         }
     }, [gameInfo.elections, currentPlayer, minister, gameInfo.length])
+    
+    useEffect(() => {
+        if (gameInfo.length !== 0) {
+            setGameStatus(gameInfo.status)
+        }
+    }, [gameInfo, gameInfo.status, setGameStatus])
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -85,8 +88,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
             handleSpells(spells)
         }
     }, [gameInfo.proclamations?.DE_enacted_proclamations, gameInfo.spells, gameInfo.length, handleSpells, spells])
-
-
+    
     useEffect(() => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
@@ -99,12 +101,12 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
     return (
         <div>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
-                {aviableSpell && currentPlayer && currentPlayer.is_alive && spells && spells.length > 0 && isMinister &&
+                {aviableSpell && currentPlayer && currentPlayer.is_alive && spells && spells.length > 0 && isMinister && gameStatus === 'EXECUTIVE' &&
                     <Button color='secondary' style={{ backgroundColor: 'lightblue', width: 200 }} onClick={handleClick}>
                         {spell}
                     </Button>
                 }
-                {aviableSpell && !isMinister && minister &&
+                {aviableSpell && !isMinister && minister && gameStatus === 'EXECUTIVE' &&
                     <h style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> The Minister of Magic {minister} has obtained {spell}</h>
                 }
             </div>

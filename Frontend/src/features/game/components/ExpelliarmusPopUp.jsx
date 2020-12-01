@@ -31,7 +31,7 @@ const ExpelliarmusPopUp = function ({ open, onClose, headMaster, expelliarmus}) 
               aria-describedby="alert-dialog-slide-description"
           >
               <DialogTitle style={{ textAlign: 'center'}} id="alert-dialog-slide-title">{"EXPELLIARMUS ACTIVATED!"}</DialogTitle>
-              <a style={{ flex:1, textAlign:'center', fontSize:30 }}>Expelliarmus has beeen activated by {headMaster}!</a>
+              <h style={{ flex:1, textAlign:'center', fontSize:30 }}>Expelliarmus has beeen activated by {headMaster}!</h>
               <DialogActions>
                   <Button onClick={()=>(handleClick('yes'))} color="primary">
                       Acept

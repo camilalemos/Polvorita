@@ -5,12 +5,17 @@ export default function PlayerList({ gameInfo, user }) {
 
     const [playersInfo, setPlayersInfo] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(null);
-    const [isDeathEaters, setIsDeathEaters] = useState(false)
+    const [isDeathEaters, setIsDeathEaters] = useState(false);
+    const [numPlayers, setNumPlayers] = useState()
+    const [isVoldemort, setIsVoldemort] = useState(false)
 
     useEffect(() => {
-        if (gameInfo.players)
+        if (gameInfo.players) {
             setPlayersInfo(Object.values(gameInfo.players));
+        }
+        setNumPlayers(gameInfo.num_players);
     }, [gameInfo])
+    
 
     useEffect(() => {
         if (gameInfo.length !== 0) {
@@ -28,16 +33,44 @@ export default function PlayerList({ gameInfo, user }) {
         }
     }, [currentPlayer, setIsDeathEaters])
 
+    useEffect(() => {
+        if (currentPlayer) {
+            if ('VOLDEMORT' === currentPlayer.role) {
+                setIsVoldemort(true);
+            } else {
+                setIsVoldemort(false);
+            }
+        }
+    }, [currentPlayer, setIsVoldemort])
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', padding: 10, paddingLeft:'10%' }}>
             {playersInfo.map((player) => {
 
                 let textcolorlist
 
-                if (player.is_alive === true)
-                    textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> {player.name} {isDeathEaters && player.loyalty === 'DEATH_EATERS' && <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'DEATH EATER'}</h>} </h>
-                else
-                    textcolorlist = <h style={{ color: "grey", textDecoration: 'line-through', fontSize: 26, padding: 3 }}> {player.name} </h>
+                if (player.is_alive === true){
+                    if (numPlayers >= 7){
+                    textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> 
+                        {player.name}
+                        {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role !== 'VOLDEMORT' &&
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'Death Eater'}</h>}
+                        {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role === 'VOLDEMORT' &&
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'Voldemort'}</h>}
+                    </h>
+                    } else {
+                        textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> 
+                        {player.name}
+                        {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role !== 'VOLDEMORT' && !isVoldemort &&
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'DEATH EATER'}</h>}
+                        {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role === 'VOLDEMORT' && !isVoldemort &&
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'Voldemort'}</h>}
+                        </h>
+                    }
+                } else {
+                    textcolorlist = <h style={{ color: "grey", textDecoration: 'line-through', fontSize: 26, padding: 3 }}>
+                        {player.name} </h>
+                    }
                 return textcolorlist
             })}
         </div>

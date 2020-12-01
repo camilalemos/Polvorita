@@ -199,7 +199,7 @@ def choose_director(candidate_name:str, params = Depends(check_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The candidate is not eligible")
 
     game.elections.nominate('HEADMASTER', candidate_name)
-    game.sys_message("The voting has started!")
+    game.sys_message("Voting has started!")
     game.status = 'VOTING'
     return game
 
@@ -216,6 +216,7 @@ def vote(vote:Vote, params = Depends(check_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
+    game.sys_message(f"{player_name} has just voted!")
     if len(game.elections.votes) == len(game.elections.players):
         game.elections.set_result()
         if game.elections.result == 'LUMOS':

@@ -240,6 +240,7 @@ const useStyles = makeStyles((theme) => ({
         flexWrap: 'wrap',
         minWidth: 300,
         width: '100%',
+        flexDirection:'column',
         placeContent: 'center',
     },
     image: {

@@ -22,7 +22,6 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
     const [currentPlayer, setCurrentPlayer] = useState(null);
     const [isGetProclamation, setIsGetProclamation] = useState(true);
 
-
     useEffect(() => {
         if (gameInfo.length !== 0) {
             setMinisterName(gameInfo.elections.minister);
@@ -61,18 +60,20 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
     }, [gameInfo, setPlayers])
 
     useEffect(() => {
-        if (gameInfo.length !== 0) {
             setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
-        }
-    }, [user, players, gameInfo])
+    }, [user, players])
 
     useEffect(() => {
-        if (currentPlayer && gameInfo.length !== 0) {
+        if (currentPlayer && gameInfo.elections) {
             if (gameInfo.elections.minister === currentPlayer.name) {
                 setIsMinister(true);
+            } else { 
+                setIsMinister(false);
             }
             if (gameInfo.elections.headmaster === currentPlayer.name) {
                 setIsHeadMaster(true);
+            } else {
+                setIsHeadMaster(false);
             }
         }
     }, [gameInfo.elections, currentPlayer, setIsMinister, setIsHeadMaster])

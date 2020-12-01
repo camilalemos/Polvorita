@@ -9,6 +9,11 @@ class GameStatus(str, Enum):
     legislative = 'LEGISLATIVE'
     executive = 'EXECUTIVE'
 
+class WinCondition(str, Enum):
+    proclamations = 'PROCLAMATIONS'
+    elections = 'ELECTIONS'
+    execution = 'EXECUTION'
+
 class Nomination(str, Enum):
     minister = 'MINISTER'
     headmaster = 'HEADMASTER'
@@ -33,9 +38,6 @@ class Role(str, Enum):
     snape = 'SNAPE'
     voldemort = 'VOLDEMORT'
 
-PHOENIX_ORDER_ROLES = ['DUMBLEDORE', 'FRED', 'GEORGE', 'HARRY', 'HERMIONE', 'NEVILLE', 'RON', 'SIRIUS', 'SNAPE']
-DEATH_EATERS_ROLES = ['BELLATRIX', 'DOLORES', 'DRACO', 'LUCIUS', 'SNAPE']
-
 class Loyalty(str, Enum):
     phoenix_order = 'PHOENIX_ORDER'
     death_eaters = 'DEATH_EATERS'
@@ -46,3 +48,7 @@ class Spell(str, Enum):
     adivination = 'DIVINATION'
     imperius = 'IMPERIO'
     non_spell = 'NONE_SPELL'
+
+PHOENIX_ORDER_ROLES = ['DUMBLEDORE', 'FRED', 'GEORGE', 'HARRY', 'HERMIONE', 'NEVILLE', 'RON', 'SIRIUS', 'SNAPE']
+DEATH_EATERS_ROLES = ['BELLATRIX', 'DOLORES', 'DRACO', 'LUCIUS', 'SNAPE']
+CENSORED_WORDS = ['comunismo', 'peronismo', 'comunism', 'peronism', 'peron']

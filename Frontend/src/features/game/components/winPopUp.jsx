@@ -37,7 +37,7 @@ const WinPopUp = function ({ open, gameInfo, quitGame, user }) {
     
     const handleClickRedirectToLobby = () => {
         if (currentPlayer) {
-            //quitGame(gameName,currentPlayer.name);
+            quitGame(gameName,currentPlayer.name);
             history.push(`/lobby`)
         }
     }

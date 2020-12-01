@@ -78,7 +78,7 @@ const _reconnectGame = async (gameName, dispatch, getState) => {
 
         const response =await axios({
             method: 'get',
-            url: `${api.url}/game/?own=true`,
+            url: `${api.url}/game/`,
             headers: {
                 'Content-Type': 'multipart/form-data',
                 "Authorization": `Bearer ${access_token}`

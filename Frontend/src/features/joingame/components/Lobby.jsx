@@ -5,10 +5,15 @@ import Chat from '../../chat/containers/ChatContainer';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import ExitPopUp from '../../../features/game/containers/ExitPopUpContainer';
 
 const Lobby = function ({ user, startGame }) {
 	const [gameInfo, setGameInfo] = useState([]);
 	const [playersName, setPlayersName] = useState([]);
+	const [openModal, setOpenModal] = useState(false);
+	const [isInGame, setIsInGame] = useState(false);
 	const history = useHistory();
 	const { game } = useParams();
 
@@ -33,6 +38,14 @@ const Lobby = function ({ user, startGame }) {
 	});
 
 	useEffect(() => {
+		if (gameInfo && gameInfo.players) {
+			let players = Object.values(gameInfo.players);
+			setIsInGame(false);
+			if (players.filter(player => player.user_name === user.username).length) setIsInGame(true);
+		}
+	},[gameInfo])
+
+	useEffect(() => {
 		if (gameInfo.status === 'STARTED') history.push(`/game/${game}`)
 	}, [gameInfo.status])
 
@@ -47,6 +60,9 @@ const Lobby = function ({ user, startGame }) {
 			<div style={{flex:1}} />
 			<div style={{display:'flex', width:'100%', height:'100%', alignItems: 'center', flex:3, paddingRight:60 }}>
 				<Grid component={Paper} className="lobby" style={{display:'flex', flex:1, flexDirection:'column', alignItems: 'center', backgroundColor:'black', opacity:.8, height:'80%', overflowX:'auto'}}>
+					<div style={{ display:'flex', justifyContent:'flex-end', alignItems:'flex-end', width:'100%' }}>
+						{isInGame && <IconButton  onClick={() => setOpenModal(true)}> <CloseIcon color='secondary' fontSize='large' /> </IconButton>}
+					</div>
 					{gameInfo && gameInfo.players ?
 						<>
 							<div style={{ display:'flex', alignItems:'center', justifyContent:'flex-start', flexDirection:'row', paddingTop:30 }}>
@@ -90,6 +106,7 @@ const Lobby = function ({ user, startGame }) {
 			<div className="lobby" style={{display:'flex', flexDirection:'column', alignItems: 'center', width: '20%'}}>
                 <Chat gameInfo={ gameInfo }/>
 			</div>
+			<ExitPopUp open={openModal} onClose={() => setOpenModal(false)} gameInfo={gameInfo} />
 		</div>
 	)
 }

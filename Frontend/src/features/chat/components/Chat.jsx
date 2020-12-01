@@ -123,7 +123,7 @@ const useStyles = makeStyles({
     },
     messageArea: {
         width: '100%',
-        height: '85vh',
+        height: '80vh',
         overflowY: 'auto',
         overflowX:'hidden'
     }

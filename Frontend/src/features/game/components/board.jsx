@@ -76,7 +76,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
                 setIsHeadMaster(false);
             }
         }
-    }, [gameInfo.elections, currentPlayer, setIsMinister, setIsHeadMaster])
+    }, [gameInfo, currentPlayer, setIsMinister, setIsHeadMaster])
     
     function ShowSquare(enactedproclamations, loyalty) {
 
@@ -130,7 +130,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         })
 
         const handleClick = () => {
-            if (currentPlayer && gameInfo.length !== 0) {
+            if (currentPlayer && gameInfo.length !== 0 && gameInfo.status === "LEGISLATIVE") {
                 if (gameInfo.elections.minister === currentPlayer.name && statusGetProclamation !== 'success' && isGetProclamation) {
                     getProclamationsInfo(ministerName, gameName)
                     setIsGetProclamation(false)
@@ -157,8 +157,9 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
                 {isMinister && hand.length === 3 &&
                     <Snackbar open={open} display='flex'>
                         <div>
+                            <h style={{ display: 'flex', justifyContent: 'center'}}>Press a proclamation to discard</h>
                             {proclamations.map((threeproclamations) => (
-                                <button onClick={() => handleClose(threeproclamations)} key={threeproclamations}>
+                                <button style={{cursor:'pointer' }} onClick={() => handleClose(threeproclamations)} key={threeproclamations}>
                                     {assignImgProclamation(threeproclamations)}
                                 </button>
                             ))}
@@ -167,8 +168,9 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
                 {isHeadMaster && hand.length === 2 &&
                     <Snackbar open={openSnackDirector} display='flex'>
                         <div>
+                            <h style={{ display: 'flex', justifyContent: 'center'}}>Press a proclamation to discard</h>
                             {proclamations.map((threeproclamations) => (
-                                <button onClick={() => handleCloseHeadMaster(threeproclamations)} key={threeproclamations}>
+                                <button style={{cursor:'pointer' }} onClick={() => handleCloseHeadMaster(threeproclamations)} key={threeproclamations}>
                                     {assignImgProclamation(threeproclamations)}
                                 </button>
                             ))}

@@ -31,6 +31,7 @@ const PopUp = function ({  open, playerName, gamePassword, setPlayerName, setPas
                         className={classes.inputRoot}
                         style={{ marginBottom: 40, minWidth:300 }}
                         onChange={(value) => setPlayerName(value.target.value)}
+                        onKeyPress={(e) => {if (e.key === 'Enter') join()}}
                         id="playerName"
                         size='small'
                         label="Player Name"
@@ -40,6 +41,7 @@ const PopUp = function ({  open, playerName, gamePassword, setPlayerName, setPas
                         value={gamePassword}
                         style={{ marginBottom: 40, minWidth:300 }}
                         onChange={(value) => setPassword(value.target.value)}
+                        onKeyPress={(e) => {if (e.key === 'Enter') join()}}
                         id="gamePassword"
                         size='small'
                         className={classes.inputRoot}

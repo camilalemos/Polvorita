@@ -151,15 +151,15 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         return (
             <div>
                 <button style={{ cursor: 'pointer' }} onClick={handleClick}>
-                    Proclamations: {numProclamationsInDeck}
+                    <h style={{ display: 'flex', justifyContent: 'center'}}>Proclamations: {numProclamationsInDeck}</h>
                     <img src={require('../../../constants/images/Proclamation.png')} alt="Proclamation" style={{ width: "150px", height: "190px" }}></img>
                 </button>
                 {isMinister && hand.length === 3 &&
                     <Snackbar open={open} display='flex'>
                         <div>
-                            <h style={{ display: 'flex', justifyContent: 'center'}}>Press a proclamation to discard</h>
+                            <h style={{ display: 'flex', justifyContent: 'center', fontSize:'30px'}}>Press a proclamation to discard</h>
                             {proclamations.map((threeproclamations) => (
-                                <button style={{cursor:'pointer' }} onClick={() => handleClose(threeproclamations)} key={threeproclamations}>
+                                <button style={{cursor:'pointer', justifyContent: 'center'}} onClick={() => handleClose(threeproclamations)} key={threeproclamations}>
                                     {assignImgProclamation(threeproclamations)}
                                 </button>
                             ))}
@@ -168,9 +168,9 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
                 {isHeadMaster && hand.length === 2 &&
                     <Snackbar open={openSnackDirector} display='flex'>
                         <div>
-                            <h style={{ display: 'flex', justifyContent: 'center'}}>Press a proclamation to discard</h>
+                            <h style={{ display: 'flex', justifyContent: 'center', fontSize:'30px'}}>Press a proclamation to discard</h>
                             {proclamations.map((threeproclamations) => (
-                                <button style={{cursor:'pointer' }} onClick={() => handleCloseHeadMaster(threeproclamations)} key={threeproclamations}>
+                                <button style={{cursor:'pointer', justifyContent: 'center' }} onClick={() => handleCloseHeadMaster(threeproclamations)} key={threeproclamations}>
                                     {assignImgProclamation(threeproclamations)}
                                 </button>
                             ))}
@@ -184,7 +184,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
 
         return (
             <div>
-                Discarded: {numDiscardProclamations}
+                <h style={{ display: 'flex', justifyContent: 'center'}}>Discarded: {numDiscardProclamations}</h>
                 <img src={require('../../../constants/images/Discard.png')} alt="Proclamacion" style={{ width: "150px", height: "190px" }}></img>
             </div>
         );
@@ -213,23 +213,21 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
     }
 
     return (
-        <div className={classes.root}>
-            <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ width: '70%', justifyContent: 'space-between' }} disable>
-                <div className={classes.imageSrc} style={{ backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`, }} />
+        <div className={classes.root} >
+            <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ width: '70%'}} disable>
+                <div style={{display: 'flex', flex: 2.8, borderLeft: 'solid', borderLeftWidth: 1, padding: 145, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover",backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`, }} />
                 <div className={classes.imageBackdrop}>
                     {ShowSquare(DEenactedProclamations, "DEATH_EATERS")}
                 </div>
             </div>
-            <div display='flex' style={{ width: 'min-content' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row', width: '80%'}}>
                 {Deck(hand, numProclamations)}
-            </div>
-            <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ width: '70%', }} disable>
-                <div className={classes.imageSrc} style={{ backgroundImage: `url(${require('../../../constants/images/TableroPO.png')})`, }} />
-                <div className={classes.imageBackdrop}>
-                    {ShowSquare(POenactedProclamations, "PHOENIX_ORDER")}
+                <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ display:'flex', width: '80%', }} disable>
+                    <div className={classes.imageSrc} style={{display: 'flex', flex: 2.8, borderLeft: 'solid', borderLeftWidth: 1, padding: 145, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover",backgroundImage: `url(${require('../../../constants/images/TableroPO.png')})`, }}/>
+                    <div className={classes.imageBackdrop}>
+                        {ShowSquare(POenactedProclamations, "PHOENIX_ORDER")}
+                    </div>
                 </div>
-            </div>
-            <div display='flex' style={{ width: 'min-content' }}>
                 {discardDeck(discardedProclamations)}
             </div>
         </div>
@@ -246,7 +244,6 @@ const useStyles = makeStyles((theme) => ({
     },
     image: {
         position: 'relative',
-        height: 200,
         [theme.breakpoints.down('xs')]: {
             width: '100% !important', // Overrides inline-style
             height: 100,
@@ -266,7 +263,7 @@ const useStyles = makeStyles((theme) => ({
     },
     focusVisible: {},
     imageSrc: {
-        position: 'absolute',
+   
         left: 0,
         right: 0,
         top: 0,

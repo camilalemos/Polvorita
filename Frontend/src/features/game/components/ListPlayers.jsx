@@ -35,7 +35,7 @@ export default function PlayerList({ gameInfo, user }) {
                 let textcolorlist
 
                 if (player.is_alive === true)
-                    textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> {player.name} {isDeathEaters && player.loyalty === 'DEATH_EATERS' && <h style={{ fontSize: 26, padding: 3, color: 'darkorchid' }}>{'DEATH EATER'}</h>} </h>
+                    textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> {player.name} {isDeathEaters && player.loyalty === 'DEATH_EATERS' && <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'DEATH EATER'}</h>} </h>
                 else
                     textcolorlist = <h style={{ color: "grey", textDecoration: 'line-through', fontSize: 26, padding: 3 }}> {player.name} </h>
                 return textcolorlist

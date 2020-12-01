@@ -236,17 +236,17 @@ class Game(BaseModel):
         self.spells[self.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
         return result
 
-    def check_win(self):
-        if self.proclamations.PO_enacted_proclamations == 5:
+    def check_win(self, win_condition: WinCondition):
+        if win_condition == 'PROCLAMATIONS' and self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
             self.sys_message(f"The game is over, the Order of the Phoenix has enacted 5 proclamations and wins the match!")
-        elif self.proclamations.DE_enacted_proclamations == 6:
+        elif win_condition == 'PROCLAMATIONS' and self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
             self.sys_message(f"The game is over, the Death Eaters has enacted 6 proclamations and wins the match!")
-        elif not self.players[self.voldemort].is_alive:
+        elif win_condition == 'EXECUTION' and not self.players[self.voldemort].is_alive:
             self.winner = 'PHOENIX_ORDER'
             self.sys_message(f"The game is over, Voldemort has been executed and the Order of the Phoenix wins the match!")
-        elif self.voldemort == self.elections.headmaster and self.proclamations.DE_enacted_proclamations >= 3:
+        elif win_condition == 'ELECTIONS' and self.voldemort == self.elections.headmaster and self.proclamations.DE_enacted_proclamations >= 3:
             self.winner = 'DEATH_EATERS'
             self.sys_message(f"The game is over, Voldemort has been promoted to Headmaster and the Death Eaters wins the match!")
 

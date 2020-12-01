@@ -225,13 +225,14 @@ def vote(vote:Vote, params = Depends(check_player)):
             game.sys_message("The result of the election has been NOX!")
             game.status = 'STARTED'
 
+        game.check_win('ELECTIONS')
+
     if game.elections.check_for_chaos():
         game.proclamations.get_proclamations(1)
         game.proclamations.enact()
         game.spells[game.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
         game.sys_message("The government has entered a situation of chaos!")
 
-    game.check_win()
     return game
 
 #GET PROCLAMATIONS
@@ -271,7 +272,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
         else:
             game.status = 'EXECUTIVE'
 
-    game.check_win()
+    game.check_win('PROCLAMATIONS')
     return game
 
 #EXPELLIARMUS
@@ -316,7 +317,7 @@ def cast_spell(target_name: Optional[str] = None, params = Depends(check_player)
 
     result = game.cast_spell(target_name)
     game.status = 'STARTED'
-    game.check_win()
+    game.check_win('EXECUTION')
     return result
 
 #LOBBY WEBSOCKET

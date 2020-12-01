@@ -9,6 +9,11 @@ class GameStatus(str, Enum):
     legislative = 'LEGISLATIVE'
     executive = 'EXECUTIVE'
 
+class WinCondition(str, Enum):
+    proclamations = 'PROCLAMATIONS'
+    elections = 'ELECTIONS'
+    execution = 'EXECUTION'
+
 class Nomination(str, Enum):
     minister = 'MINISTER'
     headmaster = 'HEADMASTER'

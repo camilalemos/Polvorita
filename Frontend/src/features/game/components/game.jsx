@@ -6,11 +6,12 @@ import PlayersActions from '../containers/PlayerActionsContainers'
 import Chat from '../../chat/containers/ChatContainer'
 import Spells from '../containers/SpellsContainers'
 import PlayerList from '../containers/ListPlayersContainers'
-import WinPopUp from './winPopUp.jsx'
-import Expelliarmus from '../containers/ExpelliarmusContainer';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import WinPopUp from '../containers/quitGameContainers';
+import ExitPopUp from '../containers/ExitPopUpContainer'
+import Expelliarmus from '../containers/ExpelliarmusContainer'
 
 export default function Game() {
 
@@ -18,6 +19,7 @@ export default function Game() {
     const history = useHistory();
     const [gameInfo, setGameInfo] = useState([]);
     const [gameStatusFinish, setGameStatusFinish] = useState(false);
+    const [openModal, setOpenModal] = useState(false)
 
     const ws = useRef(null);
     useEffect(() => {
@@ -68,6 +70,7 @@ export default function Game() {
                     <IconButton  onClick={() => history.push('/lobby/')}> <ExitToAppIcon color='primary' fontSize='large' /> </IconButton>
                 </div>
                 <Chat gameInfo={gameInfo} />
+                <ExitPopUp open={openModal} onClose={() => setOpenModal(false)} gameInfo={gameInfo} />
             </div>
         </div>
     );

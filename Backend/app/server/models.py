@@ -246,7 +246,7 @@ class Game(BaseModel):
         elif not self.players[self.voldemort].is_alive:
             self.winner = 'PHOENIX_ORDER'
             self.sys_message(f"The game is over, Voldemort has been executed and the Order of the Phoenix wins the match!")
-        elif self.elections.headmaster == self.voldemort and self.proclamations.DE_enacted_proclamations >= 3:
+        elif self.voldemort == self.elections.headmaster and self.proclamations.DE_enacted_proclamations >= 3:
             self.winner = 'DEATH_EATERS'
             self.sys_message(f"The game is over, Voldemort has been promoted to Headmaster and the Death Eaters wins the match!")
 

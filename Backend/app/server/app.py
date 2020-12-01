@@ -264,10 +264,9 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
     elif game.proclamations.headmaster_exp:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot discard proclamations during an Expelliarmus negotiation")
 
-    if player_name == game.elections.minister and len(game.proclamations.hand) == 3:
-        game.proclamations.discard(loyalty)
-    elif player_name == game.elections.headmaster and len(game.proclamations.hand) == 2:
-        game.proclamations.discard(loyalty)
+    is_headmaster = player_name == game.elections.headmaster
+    game.proclamations.discard(loyalty, is_headmaster)
+    if is_headmaster:
         game.send_message("The Director has enacted a proclamation!", "system")
         if game.spells[game.proclamations.DE_enacted_proclamations] == 'NONE_SPELL':
             game.status = 'STARTED'

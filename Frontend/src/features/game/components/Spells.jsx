@@ -102,7 +102,7 @@ const Spells = ({ errorMsg, status, gameInfo, user, castSpell, cards }) => {
         <div>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
                 {aviableSpell && currentPlayer && currentPlayer.is_alive && spells && spells.length > 0 && isMinister && gameStatus === 'EXECUTIVE' &&
-                    <Button color='secondary' style={{ backgroundColor: 'lightblue', width: 200 }} onClick={handleClick}>
+                    <Button color='secondary' style={{ backgroundColor: 'darkslategrey', width: 200 }} onClick={handleClick}>
                         {spell}
                     </Button>
                 }

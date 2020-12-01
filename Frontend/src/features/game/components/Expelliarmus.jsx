@@ -93,7 +93,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
         <div>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column' }}>
                 {status !== 'success' && expelliarmusActivated() && isHeadMaster &&
-                    <Button color='secondary' style={{ backgroundColor: 'lightblue', width: 200 }} onClick={handleHeadMasterClick}>
+                    <Button color='secondary' style={{ backgroundColor: 'darkslategrey', width: 200 }} onClick={handleHeadMasterClick}>
                         Expelliarmus!
                     </Button>
                 }

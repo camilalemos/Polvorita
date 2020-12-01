@@ -168,7 +168,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
                 {isHeadMaster && hand.length === 2 &&
                     <Snackbar open={openSnackDirector} display='flex'>
                         <div>
-                            <h style={{ display: 'flex', justifyContent: 'center', fontSize:'30px'}}>Press a proclamation to discard</h>
+                            <h style={{ display: 'flex', justifyContent: 'center', fontSize:'30px'}}>Press a proclamation to enact</h>
                             {proclamations.map((threeproclamations) => (
                                 <button style={{cursor:'pointer', justifyContent: 'center' }} onClick={() => handleCloseHeadMaster(threeproclamations)} key={threeproclamations}>
                                     {assignImgProclamation(threeproclamations)}

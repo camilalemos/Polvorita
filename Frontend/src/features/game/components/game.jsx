@@ -40,7 +40,7 @@ export default function Game() {
 
     return (
         <div style={{ display: 'flex', flex: 1, flexDirection: 'row', height: '100%' }} >
-            <div className="game" style={{ display: 'flex', flex: 1, flexDirection: 'column', borderRight: 'solid', borderRightWidth: 1 }}>
+            <div className="game" style={{ display: 'flex', flex: 1, flexDirection: 'column', borderRight: 'solid', borderRightWidth: 1,backgroundImage: `url(${require('../../../constants/images/fondo_izq.jpeg')})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover" }}>
                 <div style={{ flex: 1 }}>
                     <ShowRoleContainers gameInfo={gameInfo} />
                 </div>
@@ -59,7 +59,7 @@ export default function Game() {
                 <Board gameInfo={gameInfo} />
                 <WinPopUp open={gameStatusFinish} onClose={() => setGameStatusFinish(false)} gameInfo={gameInfo} />
             </div>
-            <div className="game-info" style={{ display: 'flex', flex: .7, borderLeft: 'solid', borderLeftWidth: 1, padding: 20 }}>
+            <div className="game-info" style={{ display: 'flex', flex: .7, borderLeft: 'solid', borderLeftWidth: 1, padding: 20,backgroundImage: `url(${require('../../../constants/images/fondo_chat.jpeg')})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover" }}>
                 <Chat gameInfo={gameInfo} />
             </div>
         </div>

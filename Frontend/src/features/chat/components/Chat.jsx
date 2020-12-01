@@ -115,7 +115,7 @@ const useStyles = makeStyles({
     },
     chatSection: {
         width: '100%',
-        height: '80vh',
+        height: '100%',
         opacity:'.8'
     },
     headBG: {
@@ -127,7 +127,7 @@ const useStyles = makeStyles({
     },
     messageArea: {
         width: '100%',
-        height: '70vh',
+        height: '85vh',
         overflowY: 'auto',
         overflowX:'hidden'
     }

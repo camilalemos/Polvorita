@@ -46,7 +46,7 @@ const Lobby = function ({ user, startGame }) {
         <div style={{ display:'flex', flexDirection:'row' ,height:'100%', alignItems:'center',  width:'100%', justifyContent:'space-evenly',backgroundImage: `url(${require('../../../constants/images/fondo3.jpeg')})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover" }}>
 			<div style={{flex:1}} />
 			<div style={{display:'flex', width:'100%', height:'100%', alignItems: 'center', flex:3, paddingRight:60 }}>
-				<Grid component={Paper} className="lobby" style={{display:'flex', flex:1, flexDirection:'column', alignItems: 'center', backgroundColor:'black', opacity:.8, height:'80%'}}>
+				<Grid component={Paper} className="lobby" style={{display:'flex', flex:1, flexDirection:'column', alignItems: 'center', backgroundColor:'black', opacity:.8, height:'80%', overflowX:'auto'}}>
 					{gameInfo && gameInfo.players ?
 						<>
 							<div style={{ display:'flex', alignItems:'center', justifyContent:'flex-start', flexDirection:'row', paddingTop:30 }}>

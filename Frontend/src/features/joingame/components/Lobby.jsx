@@ -16,7 +16,7 @@ const Lobby = function ({ user, startGame }) {
 
 	useEffect(() => {
 
-		ws.current = new WebSocket(`ws://190.190.133.175:8000/game/${game}`);
+		ws.current = new WebSocket(`ws://localhost:8000/game/${game}`);
 
 		ws.current.onmessage = (event) => {
 			setGameInfo(JSON.parse(event.data));

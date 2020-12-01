@@ -105,10 +105,10 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
 
         if (proclamations === "PHOENIX_ORDER") {
             return (
-                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "150px", height: "190px" }}></img>)
+                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "145px", height: "190px" , padding: "3px"}}></img>)
         } else if (proclamations === "DEATH_EATERS") {
             return (
-                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "150px", height: "190px" }}></img>)
+                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "145px", height: "190px" , padding: "1px"}}></img>)
         } else {
             return null;
         }
@@ -187,7 +187,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         return (
             <div>
                 <h style={{ display: 'flex', justifyContent: 'center'}}>Discarded: {numDiscardProclamations}</h>
-                <img src={require('../../../constants/images/Discard.png')} alt="Proclamacion" style={{ width: "150px", height: "190px" }}></img>
+                <img src={require('../../../constants/images/Discard.png')} alt="Proclamacion" style={{ width: "150px", height: "190px"}}></img>
             </div>
         );
     }
@@ -275,14 +275,13 @@ const useStyles = makeStyles((theme) => ({
     },
     imageBackdrop: {
         position: 'absolute',
-        left: 0,
+        left: 55,
         right: 0,
         top: 0,
         bottom: 0,
         opacity: 1,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
         color: theme.palette.common.white,
         transition: theme.transitions.create('opacity'),
     },

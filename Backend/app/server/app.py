@@ -158,7 +158,7 @@ def get_player(player_name: str, params = Depends(get_game)):
 def quit_game(params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
-    if game.status != 'CREATED' or game.status != 'FINISHED':
+    if game.status != 'CREATED' and game.status != 'FINISHED':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot quit game at this moment")
 
     game.delete_player(player_name)

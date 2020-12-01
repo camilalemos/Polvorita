@@ -254,7 +254,9 @@ class Game(BaseModel):
             self.status = 'FINISHED'
 
     def send_message(self, msg: str, player_name: str):
-        self.chat.append(f"{player_name}: {msg}")
+        msg = ['***' if word.lower() in CENSORED_WORDS else word for word in msg.split()]
+        filtered_msg = " ".join(msg)
+        self.chat.append(f"{player_name}: {filtered_msg}")
 
     def sys_message(self, msg: str):
         self.send_message(msg, "system")

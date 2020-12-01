@@ -99,7 +99,7 @@ const ShowRole = ({ user, gameInfo }) => {
     return (
 
         <div style={{ display: 'flex', flexDirection: 'column', padding: 20 }}>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <img src={handelSelectImgRole(userRole, userLoyalty)} alt="Role" style={{ display: 'flex', width: '200px', height: '270', padding: 5 }} />
                 <img src={handleSelectImgLoyalty(userLoyalty)} alt="Loyalty" style={{ display: 'flex', width: '200px', height: '270', padding: 5 }} />
             </div>

@@ -84,9 +84,9 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     }   
 
     return (
-        <div style={{ padding:20, display:'flex', flexDirection:'column' }}>
-            <div style={{ display:'flex', justifyContent:'flex-end' }}>
-                {gameInfo !== null && gameInfo.elections && <h> Elections: {gameInfo.elections.rejected} </h>}
+        <div style={{ padding:20, display:'flex', flexDirection:'column', paddingLeft:'10%'}}>
+            <div style={{ display:'flex', justifyContent:'flex-end', paddingRight:'10%' }}>
+                {gameInfo !== null && gameInfo.elections && <h style={{ fontSize:14 }}> Elections: {gameInfo.elections.rejected} </h>}
             </div>
             {gameInfo !== null && 
                 <>
@@ -96,24 +96,24 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
                     <h style={{ flex:1, textAlign:'left', fontSize:23 }}>Director Candidate: {directorCandidate ? directorCandidate : 'Not selected'}</h>
                 </>
             }
-            {isCandidateMinister && !voting && gameInfo.status === "STARTED" && currentPlayer.is_alive &&
-                <Button color='secondary' style={{ backgroundColor: 'lightblue', width:200 }} onClick={() => setOpenModal(true)}>
+            {isCandidateMinister && !voting && gameInfo.status === "STARTED" && currentPlayer && currentPlayer.is_alive &&
+                <Button color='secondary' style={{ backgroundColor: 'darkslategrey', width:200 }} onClick={() => setOpenModal(true)}>
                     Choose director
                 </Button>
             }
-            {voting && !voted && currentPlayer.is_alive &&
+            {voting && !voted && currentPlayer && currentPlayer.is_alive &&
                 <>
                     <div style={{ display:'flex', flexDirection:'row', justifyContent:'center', marginTop:30 }} >
-                        <Button size='large' style={{ backgroundColor: 'lightblue', marginRight:40 }} onClick={() => handleVote("LUMOS")}>
+                        <Button color='secondary' size='large' style={{ backgroundColor: 'darkslategrey', marginRight:40 }} onClick={() => handleVote("LUMOS")}>
                             LUMOS
                         </Button>
-                        <Button size='large' style={{ backgroundColor: 'lightblue' }} onClick={() => handleVote("NOX")} >
+                        <Button color='secondary' size='large' style={{ backgroundColor: 'darkslategrey' }} onClick={() => handleVote("NOX")} >
                             NOX
                         </Button>
                     </div>
                 </>
             }
-            {voted && voting && currentPlayer.is_alive &&
+            {voted && voting && currentPlayer && currentPlayer.is_alive &&
                 <h style={{ flex:1, textAlign:'center', fontSize:30 }}>Your vote is: {voteChoice} </h>
             }
 

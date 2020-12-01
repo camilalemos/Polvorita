@@ -157,12 +157,12 @@ class Game(BaseModel):
     def create_player(self, player_name: str, username: str):
         self.players[player_name] = Player(name=player_name, user_name=username)
         self.num_players += 1
-        self.send_message(f"{player_name} has joined the room!", "system")
+        self.sys_message(f"{player_name} has joined the room!")
 
     def delete_player(self, player_name: str):
         player = self.players.pop(player_name)
         self.num_players -= 1
-        self.send_message(f"{player_name} has left the room!", "system")
+        self.sys_message(f"{player_name} has left the room!")
         if player.user_name == self.owner and self.num_players:
             self.owner = random.choice(list(self.players.values())).user_name
 
@@ -174,7 +174,7 @@ class Game(BaseModel):
         self.assign_spells()
         self.elections = Elections()
         self.elections.init(list(self.players))
-        self.send_message("Game started!", "system")
+        self.sys_message("Game started!")
 
     def assign_loyalties(self):
         num_death_eaters = math.ceil(self.num_players / 2)-1
@@ -216,19 +216,19 @@ class Game(BaseModel):
             if target == self.elections.minister_candidate:
                 self.elections.next_minister()
             self.elections.players.remove(target)
-            self.send_message(f"The Minister of Magic has used the AVADA KEDAVRA spell against {target}!", "system")
+            self.sys_message(f"The Minister of Magic has used the AVADA KEDAVRA spell against {target}!")
         elif spell == 'CRUCIO':
             result = self.players[target].loyalty
-            self.send_message(f"The Minister of Magic has used the CRUCIO spell against {target}!", "system")
+            self.sys_message(f"The Minister of Magic has used the CRUCIO spell against {target}!")
         elif spell == 'DIVINATION':
             self.proclamations.shuffle()
             result = self.proclamations.deck[:3]
-            self.send_message("The Minister of Magic has used the DIVINATION spell!", "system")
+            self.sys_message("The Minister of Magic has used the DIVINATION spell!")
         elif spell == 'IMPERIO':
             if not target:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Target not selected")
             self.elections.nominate('MINISTER', target)
-            self.send_message(f"The Minister of Magic has used the IMPERIO spell against {target}!", "system")
+            self.sys_message(f"The Minister of Magic has used the IMPERIO spell against {target}!")
         elif spell == 'NONE_SPELL':
             self.status = 'STARTED'
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Spell is not available")
@@ -236,25 +236,27 @@ class Game(BaseModel):
         self.spells[self.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
         return result
 
-    def check_win(self):
-        if self.proclamations.PO_enacted_proclamations == 5:
+    def check_win(self, win_condition: WinCondition):
+        if win_condition == 'PROCLAMATIONS' and self.proclamations.PO_enacted_proclamations == 5:
             self.winner = 'PHOENIX_ORDER'
-            self.send_message(f"The game is over, the Order of the Phoenix has enacted 5 proclamations and wins the match!", "system")
-        elif self.proclamations.DE_enacted_proclamations == 6:
+            self.sys_message(f"The game is over, the Order of the Phoenix has enacted 5 proclamations and wins the match!")
+        elif win_condition == 'PROCLAMATIONS' and self.proclamations.DE_enacted_proclamations == 6:
             self.winner = 'DEATH_EATERS'
-            self.send_message(f"The game is over, the Death Eaters has enacted 6 proclamations and wins the match!", "system")
-        elif not self.players[self.voldemort].is_alive:
+            self.sys_message(f"The game is over, the Death Eaters has enacted 6 proclamations and wins the match!")
+        elif win_condition == 'EXECUTION' and not self.players[self.voldemort].is_alive:
             self.winner = 'PHOENIX_ORDER'
-            self.send_message(f"The game is over, Voldemort has been executed and the Order of the Phoenix wins the match!", "system")
-        elif self.elections.headmaster == self.voldemort and self.proclamations.DE_enacted_proclamations >= 3:
+            self.sys_message(f"The game is over, Voldemort has been executed and the Order of the Phoenix wins the match!")
+        elif win_condition == 'ELECTIONS' and self.voldemort == self.elections.headmaster and self.proclamations.DE_enacted_proclamations >= 3:
             self.winner = 'DEATH_EATERS'
-            self.send_message(f"The game is over, Voldemort has been promoted to Headmaster and the Death Eaters wins the match!", "system")
+            self.sys_message(f"The game is over, Voldemort has been promoted to Headmaster and the Death Eaters wins the match!")
 
         if self.winner:
             self.status = 'FINISHED'
 
     def send_message(self, msg: str, player_name: str):
-        self.chat.append(f"{player_name}: {msg}")
+        msg = ['***' if word.lower() in CENSORED_WORDS else word for word in msg.split()]
+        filtered_msg = " ".join(msg)
+        self.chat.append(f"{player_name}: {filtered_msg}")
 
-    def finish(self):
-        self.status = 'FINISHED'
+    def sys_message(self, msg: str):
+        self.send_message(msg, "system")

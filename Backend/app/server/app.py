@@ -95,13 +95,10 @@ def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^
     manager.create_game(game)
     return game
 
-#GET GAME
+#GET ACTIVE GAMES
 @app.get("/game/")
-def get_game(own: bool, user: User = Depends(get_current_active_user)):
-    if own:
-        return [game.name for game in manager.games.values() if game.exist(user.username) and game.status != 'CREATED']
-    else:
-        return [game for game in manager.games.values() if game.status == 'CREATED']
+def get_active_games(own: bool, user: User = Depends(get_current_active_user)):
+    return [game.name for game in manager.games.values() if game.exist(user.username) and game.status != 'CREATED']
 
 def get_game(game_name: str, user: User = Depends(get_current_active_user)):
     game = manager.games.get(game_name)
@@ -161,7 +158,7 @@ def get_player(player_name: str, params = Depends(get_game)):
 def quit_game(params = Depends(get_player)):
     game = params["game"]
     player_name = params["player"].name
-    if game.status != 'CREATED' or game.status != 'FINISHED':
+    if game.status != 'CREATED' and game.status != 'FINISHED':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot quit game at this moment")
 
     game.delete_player(player_name)
@@ -202,6 +199,7 @@ def choose_director(candidate_name:str, params = Depends(check_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The candidate is not eligible")
 
     game.elections.nominate('HEADMASTER', candidate_name)
+    game.sys_message("Voting has started!")
     game.status = 'VOTING'
     return game
 
@@ -218,22 +216,24 @@ def vote(vote:Vote, params = Depends(check_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The player has already voted")
 
     game.elections.vote(player_name, vote)
+    game.sys_message(f"{player_name} has just voted!")
     if len(game.elections.votes) == len(game.elections.players):
         game.elections.set_result()
         if game.elections.result == 'LUMOS':
-            game.send_message("The result of the election has been LUMOS!", "system")
+            game.sys_message("The result of the election has been LUMOS!")
             game.status = 'LEGISLATIVE'
         elif game.elections.result == 'NOX':
-            game.send_message("The result of the election has been NOX!", "system")
+            game.sys_message("The result of the election has been NOX!")
             game.status = 'STARTED'
+
+        game.check_win('ELECTIONS')
 
     if game.elections.check_for_chaos():
         game.proclamations.get_proclamations(1)
         game.proclamations.enact()
         game.spells[game.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
-        game.send_message("The government has entered a situation of chaos!", "system")
+        game.sys_message("The government has entered a situation of chaos!")
 
-    game.check_win()
     return game
 
 #GET PROCLAMATIONS
@@ -267,13 +267,13 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
     is_headmaster = player_name == game.elections.headmaster
     game.proclamations.discard(loyalty, is_headmaster)
     if is_headmaster:
-        game.send_message("The Director has enacted a proclamation!", "system")
+        game.sys_message("The Director has enacted a proclamation!")
         if game.spells[game.proclamations.DE_enacted_proclamations] == 'NONE_SPELL':
             game.status = 'STARTED'
         else:
             game.status = 'EXECUTIVE'
 
-    game.check_win()
+    game.check_win('PROCLAMATIONS')
     return game
 
 #EXPELLIARMUS
@@ -318,7 +318,7 @@ def cast_spell(target_name: Optional[str] = None, params = Depends(check_player)
 
     result = game.cast_spell(target_name)
     game.status = 'STARTED'
-    game.check_win()
+    game.check_win('EXECUTION')
     return result
 
 #LOBBY WEBSOCKET

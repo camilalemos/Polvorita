@@ -119,7 +119,10 @@ class Proclamations(BaseModel):
         elif loyalty == 'DEATH_EATERS':
             self.DE_enacted_proclamations += 1
 
-    def discard(self, loyalty: Loyalty):
+    def discard(self, loyalty: Loyalty, is_headmaster: bool):
+        if is_headmaster and len(self.hand) == 2:
+            loyalty = self.hand[1 - self.hand.index(loyalty)]
+
         self.hand.remove(loyalty)
         self.discarded.append(loyalty)
         if len(self.hand) == 1:

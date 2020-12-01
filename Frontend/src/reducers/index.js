@@ -13,6 +13,7 @@ import playerActionsReducer from '../features/game/reducers/playerActionsReducer
 import chat from '../features/chat/reducers/chatReducer'
 import spellsReducer from '../features/game/reducers/spellsReducer'
 import expelliarmus from '../features/game/reducers/expelliarmus'
+import winPopUp from '../features/game/reducers/quitGameReducer'
 
 
 
@@ -26,7 +27,8 @@ const rootReducer = combineReducers({
 	playerActionsReducer,
 	chat,
 	spellsReducer,
-	expelliarmus
+	expelliarmus,
+	winPopUp,
 });
 
 export default rootReducer;

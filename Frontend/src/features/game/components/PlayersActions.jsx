@@ -86,7 +86,7 @@ const PlayersAction = ({ gameInfo, user, selectDirector, vote, statusResults,res
     return (
         <div style={{ padding:20, display:'flex', flexDirection:'column', paddingLeft:'10%'}}>
             <div style={{ display:'flex', justifyContent:'flex-end', paddingRight:'10%' }}>
-                {gameInfo !== null && gameInfo.elections && <h style={{ fontSize:14 }}> Elections: {gameInfo.elections.rejected} </h>}
+                {gameInfo !== null && gameInfo.elections && <h style={{ fontSize:18 }}> Rejected Elections: {gameInfo.elections.rejected} </h>}
             </div>
             {gameInfo !== null && 
                 <>

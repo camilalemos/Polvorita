@@ -29,7 +29,7 @@ export default function PlayerList({ gameInfo, user }) {
     }, [currentPlayer, setIsDeathEaters])
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', padding: 10, paddingLeft:'10%' }}>
             {playersInfo.map((player) => {
 
                 let textcolorlist

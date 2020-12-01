@@ -202,6 +202,7 @@ def choose_director(candidate_name:str, params = Depends(check_player)):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The candidate is not eligible")
 
     game.elections.nominate('HEADMASTER', candidate_name)
+    game.sys_message("The voting has started!")
     game.status = 'VOTING'
     return game
 
@@ -221,17 +222,17 @@ def vote(vote:Vote, params = Depends(check_player)):
     if len(game.elections.votes) == len(game.elections.players):
         game.elections.set_result()
         if game.elections.result == 'LUMOS':
-            game.send_message("The result of the election has been LUMOS!", "system")
+            game.sys_message("The result of the election has been LUMOS!")
             game.status = 'LEGISLATIVE'
         elif game.elections.result == 'NOX':
-            game.send_message("The result of the election has been NOX!", "system")
+            game.sys_message("The result of the election has been NOX!")
             game.status = 'STARTED'
 
     if game.elections.check_for_chaos():
         game.proclamations.get_proclamations(1)
         game.proclamations.enact()
         game.spells[game.proclamations.DE_enacted_proclamations] = 'NONE_SPELL'
-        game.send_message("The government has entered a situation of chaos!", "system")
+        game.sys_message("The government has entered a situation of chaos!")
 
     game.check_win()
     return game
@@ -267,7 +268,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
     is_headmaster = player_name == game.elections.headmaster
     game.proclamations.discard(loyalty, is_headmaster)
     if is_headmaster:
-        game.send_message("The Director has enacted a proclamation!", "system")
+        game.sys_message("The Director has enacted a proclamation!")
         if game.spells[game.proclamations.DE_enacted_proclamations] == 'NONE_SPELL':
             game.status = 'STARTED'
         else:

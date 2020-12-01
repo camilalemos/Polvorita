@@ -97,7 +97,7 @@ def create_game(game_name: str = Form(..., min_length=5, max_length=20, regex="^
 
 #GET ACTIVE GAMES
 @app.get("/game/")
-def get_active_games(own: bool, user: User = Depends(get_current_active_user)):
+def get_active_games(user: User = Depends(get_current_active_user)):
     return [game.name for game in manager.games.values() if game.exist(user.username) and game.status != 'CREATED']
 
 def get_game(game_name: str, user: User = Depends(get_current_active_user)):

@@ -105,10 +105,10 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
 
         if (proclamations === "PHOENIX_ORDER") {
             return (
-                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "145px", height: "190px" , padding: "3px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "140px", height: "190px", padding: "2px"}}></img>)
         } else if (proclamations === "DEATH_EATERS") {
             return (
-                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "145px", height: "190px" , padding: "1px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "140px", height: "190px" , padding: "3px"}}></img>)
         } else {
             return null;
         }
@@ -216,7 +216,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
 
     return (
         <div className={classes.root} >
-            <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ width: '70%'}} disable>
+            <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ width: '70%', display: 'flex'}} disable>
                 <div style={{display: 'flex', flex: 2.8, borderLeft: 'solid', borderLeftWidth: 1, padding: 145, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover",backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`, }} />
                 <div className={classes.imageBackdrop}>
                     {ShowSquare(DEenactedProclamations, "DEATH_EATERS")}
@@ -242,7 +242,6 @@ const useStyles = makeStyles((theme) => ({
         flexWrap: 'wrap',
         minWidth: 300,
         width: '100%',
-        flexDirection:'column',
         placeContent: 'center',
     },
     image: {

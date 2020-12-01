@@ -54,21 +54,21 @@ export default function PlayerList({ gameInfo, user }) {
                     textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> 
                         {player.name}
                         {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role !== 'VOLDEMORT' &&
-                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'Death Eater'}</h>}
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}> is {'Death Eater'}</h>}
                         {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role === 'VOLDEMORT' &&
-                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'Voldemort'}</h>}
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}> is {'Voldemort'}</h>}
                     </h>
                     } else {
                         textcolorlist = <h style={{ fontSize: 26, padding: 3 }}> 
                         {player.name}
                         {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role !== 'VOLDEMORT' && !isVoldemort &&
-                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'Death Eater'}</h>}
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}> is {'Death Eater'}</h>}
                         {isDeathEaters && player.loyalty === 'DEATH_EATERS' && player.role === 'VOLDEMORT' && !isVoldemort &&
-                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}>{'Voldemort'}</h>}
+                            <h style={{ fontSize: 26, padding: 3, color: '#34203b' }}> is {'Voldemort'}</h>}
                         </h>
                     }
                 } else {
-                    textcolorlist = <h style={{ color: "grey", textDecoration: 'line-through', fontSize: 26, padding: 3 }}>
+                    textcolorlist = <h style={{ color: "#6b1e24", textDecoration: 'line-through', fontSize: 26, padding: 3 }}>
                         {player.name} </h>
                     }
                 return textcolorlist

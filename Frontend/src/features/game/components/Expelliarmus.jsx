@@ -87,7 +87,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
         if (status === 'failed') {
             console.log("ERROR " + errorMsg)
         }
-    }, [status])
+    }, [status])    
 
     return (
         <div>
@@ -98,7 +98,7 @@ const Expelliarmus = ({ gameInfo, errorMsg, status, user, expelliarmus }) => {
                     </Button>
                 }
                 {expelliarmusActivated() && !isMinister && !isHeadMaster &&
-                    <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> Expelliarmus Aviable</a>
+                    <a style={{ flex: 1, textAlign: 'center', fontSize: 30 }}> Expelliarmus Available</a>
                 }
             </div>
             <div display='flex' style={{ width: 'min-content' }}>

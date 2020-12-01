@@ -6,7 +6,7 @@ import PlayersActions from '../containers/PlayerActionsContainers'
 import Chat from '../../chat/containers/ChatContainer'
 import Spells from '../containers/SpellsContainers'
 import PlayerList from '../containers/ListPlayersContainers'
-import WinPopUp from './winPopUp.jsx'
+import WinPopUp from '../containers/quitGameContainers'
 import Expelliarmus from '../containers/ExpelliarmusContainer'
 
 export default function Game() {

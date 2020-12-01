@@ -126,7 +126,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         })
 
         useEffect(() => {
-            if (hand.length === 3) {
+            if (gameInfo.status === "LEGISLATIVE") {
                 setOpen(true)
             }
         })

@@ -5,7 +5,7 @@ import WinPopUp from '../components/winPopUp';
 
 function mapStateToProps(state) {
     return {
-        status: state.quitGame.status,
+        status: state.winPopUp.status,
         user: state.login.user,
     };
 }

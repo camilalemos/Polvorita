@@ -17,6 +17,7 @@ const WinPopUp = function ({ open, gameInfo, quitGame, user }) {
 
     const [gameName, setGameName] = useState('');
     const [players, setPlayers] = useState([]);
+    const [currentPlayer, setCurrentPlayer] = useState(null);
 
     useEffect(() => {
         if (gameInfo) {
@@ -29,10 +30,16 @@ const WinPopUp = function ({ open, gameInfo, quitGame, user }) {
             setPlayers(Object.values(gameInfo.players));
         }
     }, [gameInfo, setPlayers])
+
+    useEffect(() => {
+        setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
+    }, [user, players])
     
     const handleClickRedirectToLobby = () => {
-        quitGame((players.filter(player => player.user_name === user.username)), gameName);
-        history.push(`/lobby`)
+        if (currentPlayer) {
+            //quitGame(gameName,currentPlayer.name);
+            history.push(`/lobby`)
+        }
     }
 
     return (

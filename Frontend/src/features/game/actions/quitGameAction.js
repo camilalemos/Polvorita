@@ -15,6 +15,9 @@ const _quitGame = async ( gameName, playerName, dispatch, getState) => {
 
         let {access_token} = {...getState().login}
 
+        console.log(gameName)
+        console.log(playerName)
+
         await axios({
             method: 'delete',
             url: `${api.url}/game/?player_name=${playerName}&game_name=${gameName}`,
@@ -24,7 +27,6 @@ const _quitGame = async ( gameName, playerName, dispatch, getState) => {
             }
         });
 
-        console.log(response.data , "RESPONSE");
         dispatch({type: QUIT_GAME_SUCCESS})
         
     } catch (error){

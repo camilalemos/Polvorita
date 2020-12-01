@@ -1,0 +1,3 @@
+export const QUIT_GAME = "QUIT_GAME"
+export const QUIT_GAME_SUCCESS = "QUIT_GAME_SUCCESS"
+export const QUIT_GAME_FAIL = "QUIT_GAME_FAIL"

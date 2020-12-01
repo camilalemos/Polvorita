@@ -63,6 +63,8 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
             setCurrentPlayer(players.filter(player => player.user_name === user.username)[0]);
     }, [user, players])
 
+    //console.log(currentPlayer)
+
     useEffect(() => {
         if (currentPlayer && gameInfo.elections) {
             if (gameInfo.elections.minister === currentPlayer.name) {
@@ -124,7 +126,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         })
 
         useEffect(() => {
-            if (hand.length === 3) {
+            if (gameInfo.status === "LEGISLATIVE") {
                 setOpen(true)
             }
         })

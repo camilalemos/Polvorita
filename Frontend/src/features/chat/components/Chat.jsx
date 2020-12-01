@@ -25,7 +25,6 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
     useEffect(scrollToBottom, [messages]);
 
     const handleSend = () => {
-        console.log("SENDING " + newMessage)
         if(currentPlayer && gameInfo){
             sendMessage( currentPlayer.name, gameInfo.name, newMessage )
         }
@@ -46,16 +45,13 @@ const Chat = function ({ gameInfo, user, sendMessage, status, errorMsg}) {
 
     useEffect(() => {
         setMessages(gameInfo.chat)
-        //console.log("SETTING UP")
     },[gameInfo.chat])
 
     useEffect(() => {
         if (status === 'failed') console.log(errorMsg)
         if(status === 'success') setNewMessage('')
     },[status])
-    //if (messages !== undefined && messages !==null) console.log(messages[0] + " MESSAGES")
-    
-    //console.log(gameInfo.chat + " CHATINFO")
+
    
     const splitMessage = (message, type) => {
         let result =  message.split(':')

@@ -17,7 +17,7 @@ const ExitPopUp = function ({ open, onClose, quitGame, user, gameInfo }) {
     const history = useHistory();
 
     const handleClick = () => {
-        quitGame()
+        quitGame(gameInfo.name, Object.values(gameInfo.players).filter(players => players.user_name === user.username).name)
         history.push("/lobby/");
     }
 

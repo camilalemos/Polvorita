@@ -6,11 +6,9 @@ import PlayersActions from '../containers/PlayerActionsContainers'
 import Chat from '../../chat/containers/ChatContainer'
 import Spells from '../containers/SpellsContainers'
 import PlayerList from '../containers/ListPlayersContainers'
-import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import WinPopUp from '../containers/quitGameContainers';
-import ExitPopUp from '../containers/ExitPopUpContainer'
 import Expelliarmus from '../containers/ExpelliarmusContainer'
 
 export default function Game() {
@@ -66,11 +64,9 @@ export default function Game() {
             </div>
             <div className="game-info" style={{ display: 'flex', flexDirection:'column', flex: .7, borderLeft: 'solid', borderLeftWidth: 1, padding: 20,backgroundImage: `url(${require('../../../constants/images/fondo_chat.jpeg')})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover" }}>
                 <div style={{ display:'flex', flexDirection:'row', justifyContent:'flex-end' }}>
-                    <IconButton  onClick={() => null}> <CloseIcon color='primary' fontSize='large' /> </IconButton>
                     <IconButton  onClick={() => history.push('/lobby/')}> <ExitToAppIcon color='primary' fontSize='large' /> </IconButton>
                 </div>
                 <Chat gameInfo={gameInfo} />
-                <ExitPopUp open={openModal} onClose={() => setOpenModal(false)} gameInfo={gameInfo} />
             </div>
         </div>
     );

@@ -105,10 +105,10 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
 
         if (proclamations === "PHOENIX_ORDER") {
             return (
-                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "140px", height: "190px", padding: "2px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "110px", height: "150px", padding: "3px"}}></img>)
         } else if (proclamations === "DEATH_EATERS") {
             return (
-                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "140px", height: "190px" , padding: "3px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "110px", height: "150px" , padding: "3px"}}></img>)
         } else {
             return null;
         }
@@ -126,7 +126,7 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
         })
 
         useEffect(() => {
-            if (gameInfo.status === "LEGISLATIVE") {
+            if (gameInfo.status === "LEGISLATIVE" || hand.length === 3 ) {
                 setOpen(true)
             }
         })
@@ -217,15 +217,15 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
     return (
         <div className={classes.root} >
             <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ width: '70%', display: 'flex'}} disable>
-                <div style={{display: 'flex', flex: 2.8, borderLeft: 'solid', borderLeftWidth: 1, padding: 145, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover",backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`, }} />
+                <div style={{display: 'flex', flex: 2.8, padding: 115, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover",backgroundImage: `url(${imgdeathEatersBoard(numPlayers)})`, }} />
                 <div className={classes.imageBackdrop}>
                     {ShowSquare(DEenactedProclamations, "DEATH_EATERS")}
                 </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row', width: '80%'}}>
+            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row', width: '100%'}}>
                 {Deck(hand, numProclamations)}
-                <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ display:'flex', width: '80%', }} disable>
-                    <div className={classes.imageSrc} style={{display: 'flex', flex: 2.8, borderLeft: 'solid', borderLeftWidth: 1, padding: 145, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover",backgroundImage: `url(${require('../../../constants/images/TableroPO.png')})`, }}/>
+                <div focusRipple className={classes.image} focusVisibleClassName={classes.focusVisible} style={{ display:'flex', width: '55%', }} disable>
+                    <div className={classes.imageSrc} style={{display: 'flex', flex: 2.8, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "cover",backgroundImage: `url(${require('../../../constants/images/TableroPO.png')})`, }}/>
                     <div className={classes.imageBackdrop}>
                         {ShowSquare(POenactedProclamations, "PHOENIX_ORDER")}
                     </div>
@@ -275,7 +275,7 @@ const useStyles = makeStyles((theme) => ({
     },
     imageBackdrop: {
         position: 'absolute',
-        left: 55,
+        left: 47,
         right: 0,
         top: 0,
         bottom: 0,

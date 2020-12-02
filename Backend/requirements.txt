@@ -1,0 +1,10 @@
+uvloop==0.14.0
+uvicorn==0.11.8
+fastapi==0.61.1
+pony==0.7.13
+pydantic[email]
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+pytest==5.3.5
+requests

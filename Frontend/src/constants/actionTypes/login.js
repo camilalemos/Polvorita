@@ -1,0 +1,11 @@
+export const LOGIN_USER='LOGIN_USER';
+export const LOGIN_USER_SUCCESS='LOGIN_USER_SUCCESS';
+export const LOGIN_USER_FAIL='LOGIN_USER_FAIL';
+
+export const GET_USER='GET_USER';
+export const GET_USER_SUCCESS='GET_USER_SUCCESS';
+export const GET_USER_FAIL='GET_USER_FAIL';
+
+export const USER_DATA='USER_DATA';
+
+export const LOGOUT_USER='LOGOUT_USER';

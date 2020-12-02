@@ -222,11 +222,10 @@ def vote(vote:Vote, params = Depends(check_player)):
         if game.elections.result == 'LUMOS':
             game.sys_message("The result of the election has been LUMOS!")
             game.status = 'LEGISLATIVE'
+            game.check_win('ELECTIONS')
         elif game.elections.result == 'NOX':
             game.sys_message("The result of the election has been NOX!")
             game.status = 'STARTED'
-
-        game.check_win('ELECTIONS')
 
     if game.elections.check_for_chaos():
         game.proclamations.get_proclamations(1)
@@ -268,7 +267,7 @@ def discard_proclamation(loyalty: Loyalty, params = Depends(check_player)):
     game.proclamations.discard(loyalty, is_headmaster)
     if is_headmaster:
         game.sys_message("The Director has enacted a proclamation!")
-        if game.spells[game.proclamations.DE_enacted_proclamations] == 'NONE_SPELL':
+        if game.spells[game.proclamations.DE_enacted_proclamations % 6] == 'NONE_SPELL':
             game.status = 'STARTED'
         else:
             game.status = 'EXECUTIVE'

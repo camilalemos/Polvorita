@@ -51,4 +51,4 @@ class Spell(str, Enum):
 
 PHOENIX_ORDER_ROLES = ['DUMBLEDORE', 'FRED', 'GEORGE', 'HARRY', 'HERMIONE', 'NEVILLE', 'RON', 'SIRIUS', 'SNAPE']
 DEATH_EATERS_ROLES = ['BELLATRIX', 'DOLORES', 'DRACO', 'LUCIUS', 'SNAPE']
-CENSORED_WORDS = ['comunismo', 'peronismo', 'comunism', 'peronism', 'peron']
+CENSORED_WORDS = ['tonto', 'sonso', 'tonton', 'sonson', 'tontuelo', 'sonsuelo']

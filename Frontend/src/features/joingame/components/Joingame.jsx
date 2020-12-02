@@ -31,7 +31,7 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg, r
 
 	useEffect(() => {
 
-		ws.current = new WebSocket('ws://190.190.133.175:8000/lobby/');
+		ws.current = new WebSocket('ws://localhost:8000/lobby/');
 
 		ws.current.onmessage = (event) => {
 			setGameInfo(JSON.parse(event.data));
@@ -80,7 +80,7 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg, r
 				<div style={{ display: 'flex', flexDirection: 'column', flex: 3, justifyContent: 'center' }}>
 					<div style={{ display: 'flex', height: '70%' }}>
 						<Grid component={Paper} style={{ padding: 40, flex: 3, opacity: 0.8, overflow: 'auto', backgroundColor: 'black' }}>
-							{reconnectGames && reconnectGames.length &&
+							{reconnectGames && reconnectGames.length !== 0 &&
 								<div style={{display:'flex', justifyContent:'flex-end', flexDirection:'row', alignItems:'center', paddingBottom:20}}>
 									<h style={{color:'white'}} >Games started</h>
 									<Switch

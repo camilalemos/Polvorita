@@ -105,10 +105,10 @@ export default function Board({ user, gameInfo, statusGetProclamation, getProcla
 
         if (proclamations === "PHOENIX_ORDER") {
             return (
-                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "100px", height: "135px", padding: "2px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationOP.png')} alt="Proclamation Phoenix Order" style={{ width: "110px", height: "150px", padding: "3px"}}></img>)
         } else if (proclamations === "DEATH_EATERS") {
             return (
-                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "110px", height: "150px" , padding: "2px"}}></img>)
+                <img src={require('../../../constants/images/ProclamationDE.png')} alt="Proclamation Death Eater" style={{ width: "110px", height: "150px" , padding: "3px"}}></img>)
         } else {
             return null;
         }
@@ -275,7 +275,7 @@ const useStyles = makeStyles((theme) => ({
     },
     imageBackdrop: {
         position: 'absolute',
-        left: 45,
+        left: 47,
         right: 0,
         top: 0,
         bottom: 0,

@@ -31,7 +31,7 @@ const Joingame = ({ joingame, status, enqueueSnackbar, user, logout, errorMsg, r
 
 	useEffect(() => {
 
-		ws.current = new WebSocket('ws://localhost:8000/lobby/');
+		ws.current = new WebSocket('ws://190.190.133.175:8000/lobby/');
 
 		ws.current.onmessage = (event) => {
 			setGameInfo(JSON.parse(event.data));
